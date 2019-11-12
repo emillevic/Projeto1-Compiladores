@@ -16,14 +16,12 @@ import java.util.Scanner;
  *
  * @author Mille
  */
-public class Problema1Compiladores {
+public class ManipuladorArquivo {
 
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
-        // TODO code application logic here
-    }
+
     
     public static void leitor(String path) throws IOException {
         BufferedReader buffRead = new BufferedReader(new FileReader(path));
