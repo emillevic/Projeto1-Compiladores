@@ -13,6 +13,7 @@ public class AutomatoOperadorAri {
      public void começa(char[] palavra, int pos){
         if(palavra[pos]=='+'|| palavra[pos]=='-'|| palavra[pos]=='*'||palavra[pos]=='/')
             q1(palavra, pos+1);
+        
         /*
         
         */

@@ -20,6 +20,12 @@ public class Tokens {
         this.linha = linha;
         this.lexema = lexema;
     }
+    public String toString(){
+        String linhaSaida;
+        linhaSaida= linha+" "+tipo+" "+lexema;
+        return linhaSaida;
+    
+    }
 
     public String getTipo() {
         return tipo;

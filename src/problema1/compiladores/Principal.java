@@ -5,12 +5,40 @@
  */
 package problema1.compiladores;
 
+import java.io.IOException;
+
 /**
  *
  * @author Mille
  */
-public class Principal {
-        public static void main(String[] args) {
+public class Principal  {
+    Automatos automatos;
+    ManipuladorArquivo codigo;
+    Tokens atual;
+    
+        public  void main(String[] args) throws IOException {
+            SetUp();
+            for(int i; i++; i<automatos.getTokens().lenght ){
+            atual = automatos.getTokens().get(i);
+            atual.toString();
+            codigo.setPath(".../PastaSaida/codigo1Saida");
+            codigo.escritor();
+            }
+            
         // TODO code application logic here
     }
+    
+
+    public void SetUp() throws IOException {
+      String caminho =".../PastaEntrada/codigo1";
+      codigo = new ManipuladorArquivo(caminho);
+      automatos= new Automatos(codigo.leitor());
+      
+    }
+    
+    
+    
+    
+    
+    
 }

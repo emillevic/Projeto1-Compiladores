@@ -10,6 +10,7 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
@@ -21,29 +22,51 @@ public class ManipuladorArquivo {
     /**
      * @param args the command line arguments
      */
+    private String path;
 
+    public ManipuladorArquivo(String path) {
+        this.path = path;
+    }
+   
     
-    public static void leitor(String path) throws IOException {
-        BufferedReader buffRead = new BufferedReader(new FileReader(path));
+    public  ArrayList<String> leitor() throws IOException {
+        BufferedReader buffRead = new BufferedReader(new FileReader(this.path));
         String linha = "";
+        ArrayList<String> arquivo = null;
         while (true) {
-            if (linha != null) {
-                System.out.println(linha);
- 
-            } else
-                break;
             linha = buffRead.readLine();
+            if (linha != null) {
+                arquivo.add(linha);
+             return arquivo;
+            }  
+            else{ 
+                buffRead.close();
+                return null;
+                }
         }
-        buffRead.close();
     }
  
-    public static void escritor(String path) throws IOException {
+    public  void escritor(String path, String escrito) throws IOException {
         BufferedWriter buffWrite = new BufferedWriter(new FileWriter(path));
-        String linha = "";
+        escrito = "";
         Scanner in = new Scanner(System.in);
         System.out.println("Escreva algo: ");
-        linha = in.nextLine();
-        buffWrite.append(linha + "\n");
+        escrito = in.nextLine();
+        buffWrite.append(escrito + "\n");
         buffWrite.close();
+    }
+
+    /**
+     * @return the path
+     */
+    public String getPath() {
+        return path;
+    }
+
+    /**
+     * @param path the path to set
+     */
+    public void setPath(String path) {
+        this.path = path;
     }
 }
