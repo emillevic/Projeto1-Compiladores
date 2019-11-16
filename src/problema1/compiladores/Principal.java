@@ -16,7 +16,7 @@ public class Principal  {
     ManipuladorArquivo codigo;
     Tokens atual;
     
-        public  void main(String[] args) throws IOException {
+        public   void main(String[] args) throws IOException {
             SetUp();
             for(int i; i++; i<automatos.getTokens().lenght ){
             atual = automatos.getTokens().get(i);
