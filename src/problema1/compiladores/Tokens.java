@@ -14,15 +14,17 @@ public class Tokens {
     private final String tipo;
     private final int linha;
     private final char[] lexema;
+    private final String lexemaString;
 
     public Tokens(int linha, String tipo, char[] lexema) {
         this.tipo = tipo;
         this.linha = linha;
         this.lexema = lexema;
+        this.lexemaString = new String();
     }
     public String toString(){
         String linhaSaida;
-        linhaSaida= linha+" "+tipo+" "+lexema;
+        linhaSaida= "linha "+ linha+" - "+tipo+" - "+String.valueOf(lexema);
         return linhaSaida;
     
     }
@@ -36,4 +38,5 @@ public class Tokens {
     public char[] getLexema() {
 	return lexema;
     }
+
 }

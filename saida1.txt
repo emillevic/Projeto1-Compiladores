@@ -1,0 +1,22 @@
+linha 0 - OPERADOR ARITMETICO - +
+linha 0 - OPERADOR ARITMETICO - /
+linha 0 - OPERADOR ARITMETICO - +
+linha 0 - OPERADOR RELACIONAL - !=
+linha 1 - OPERADOR ARITMETICO - *
+linha 1 - OPERADOR ARITMETICO - +
+linha 1 - OPERADOR ARITMETICO - -
+linha 1 - DELIMITADOR - ;
+linha 1 - DELIMITADOR - ;
+linha 1 - OPERADOR ARITMETICO - -
+linha 2 - COMENTARIO - //
+linha 3 - DELIMITADOR - .
+linha 3 - DELIMITADOR - ;
+linha 3 - DELIMITADOR - .
+linha 3 - DELIMITADOR - ;
+linha 3 - DELIMITADOR - {
+linha 3 - DELIMITADOR - }
+linha 3 - DELIMITADOR - [
+linha 3 - DELIMITADOR - ]
+linha 3 - DELIMITADOR - [
+linha 3 - DELIMITADOR - [
+linha 3 - DELIMITADOR - [

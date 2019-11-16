@@ -18,11 +18,11 @@ public class EstruturaLexica {
     private final ArrayList<String> numeros = new ArrayList<>();
     private final ArrayList<String> digitos = new ArrayList<>();
     private final ArrayList<String> letras = new ArrayList<>();
-    private final ArrayList<String> operadoresAritmeticos = new ArrayList<>();
-    private final ArrayList<String> operadoresRelacionais = new ArrayList<>();
-    private final ArrayList<String> operadoresLogicos = new ArrayList<>();
+    private final ArrayList<Character> operadoresAritmeticos = new ArrayList<>();
+    private final ArrayList<Character> operadoresRelacionais = new ArrayList<>();
+    private final ArrayList<Character> operadoresLogicos = new ArrayList<>();
     private final ArrayList<String> comentarios = new ArrayList<>();
-    private final ArrayList<String> delimitadores = new ArrayList<>();
+    private final ArrayList<Character> delimitadores = new ArrayList<>();
     private final ArrayList<String> cadeiaDeCaracteres = new ArrayList<>();
     private final ArrayList<String> simbolos = new ArrayList<>();
     private final ArrayList<String> simboloInvalido = new ArrayList<>();
@@ -62,34 +62,31 @@ public class EstruturaLexica {
         for(char k= 'A'; k<='Z'; k++)
             letras.add(String.valueOf(k));
         
-        operadoresAritmeticos.add("+");
-        operadoresAritmeticos.add("-");
-        operadoresAritmeticos.add("*");
-        operadoresAritmeticos.add("/");
-        operadoresAritmeticos.add("++");
-        operadoresAritmeticos.add("--");
+        operadoresAritmeticos.add('+');
+        operadoresAritmeticos.add('-');
+        operadoresAritmeticos.add('*');
+        operadoresAritmeticos.add('/');
+  /*      operadoresAritmeticos.add('++');
+        operadoresAritmeticos.add('--');*/
         
-        operadoresRelacionais.add("!=");
-        operadoresRelacionais.add("==");
-        operadoresRelacionais.add("<");
-        operadoresRelacionais.add("<=");
-        operadoresRelacionais.add(">");
-        operadoresRelacionais.add(">=");
-        operadoresRelacionais.add("=");
+        operadoresRelacionais.add('!');
+        operadoresRelacionais.add('=');
+        operadoresRelacionais.add('<');
+        operadoresRelacionais.add('>');
         
-        operadoresLogicos.add("!");
-        operadoresLogicos.add("&&");
-        operadoresLogicos.add("||");
+        operadoresLogicos.add('!');
+        operadoresLogicos.add('&');
+        operadoresLogicos.add('|');
         
-        delimitadores.add(";");
-        delimitadores.add(",");
-        delimitadores.add("(");
-        delimitadores.add(")");
-        delimitadores.add("[");
-        delimitadores.add("]");
-        delimitadores.add("{");
-        delimitadores.add("}");
-        delimitadores.add(".");
+        delimitadores.add(';');
+        delimitadores.add(',');
+        delimitadores.add('(');
+        delimitadores.add(')');
+        delimitadores.add('[');
+        delimitadores.add(']');
+        delimitadores.add('{');
+        delimitadores.add('}');
+        delimitadores.add('.');
     }
     
     public boolean verificaPalavraReservada(String string){

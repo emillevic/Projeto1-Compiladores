@@ -13,24 +13,39 @@ import java.util.ArrayList;
  */
 public class Automatos {
     private static final char FIM = '\0';
-    private ArrayList<String> codigo;
+    private ArrayList<String> codigoSemTratamento;
+    private ArrayList<char[]> codigo;
     private char linha[];
-    private char lexema[];
     private int posicao;
     private int auxPosicao;
     private int numLinha;
     private ArrayList<Tokens> tokens;
+    private ArrayList<String> tabela;
     private EstruturaLexica estruturaLexica;
     
-    public Automatos(ArrayList<String> codigo){
-        this.codigo = codigo;
+    public Automatos(ArrayList<String> codigoSemTratamento){
+        this.tokens = new ArrayList<Tokens>();
+        this.codigoSemTratamento = codigoSemTratamento;
+        this.codigo = new ArrayList<char[]>();
+        this.tabela = new ArrayList<String>();
         this.posicao = 0;
         this.auxPosicao = 0;
         this.numLinha = 0;
+        //this.lexema = new char[10];
         estruturaLexica = new EstruturaLexica();
     }
-    public void analisadorLexico(){
-        
+    public ArrayList<String> analisadorLexico(){
+        for(int j = 0; j<codigoSemTratamento.size(); j++){
+            codigo.add(codigoSemTratamento.get(j).toCharArray());
+        }
+        linha = codigo.get(0);
+        controle();
+        System.out.println(tokens);
+        for(int i = 0; i<tokens.size(); i++){
+            System.out.println("it" +tokens);
+            tabela.add(tokens.get(i).toString());
+        }
+        return tabela;
     }
     
     /*Método para pegar o próximo caractere do código
@@ -40,60 +55,91 @@ public class Automatos {
     
     */
 
+    public ArrayList<Tokens> getTokens(){
+        return tokens;
+    }
+    
+    /*public void zerarLexema(){
+        for(int i = 0; i<lexema.length; i++){
+            lexema[i] = '\0';
+        }
+    }*/
+    
     public boolean proximaLinha(){
-        if(posicao+1 == linha.length)
-            if(codigo.size() > numLinha){
+        if(posicao == linha.length){
+            if(numLinha+1 < codigo.size()){
+            System.out.println("aqui1" + codigo.size() + numLinha);
                 numLinha++;
+            System.out.println("aqui1" + codigo.get(numLinha) + numLinha);
+                linha = codigo.get(numLinha);
                 return true;
             }
+        }
         return false;
     }
     
     public int ignorarEspaco(int pos){
-        while(estruturaLexica.verificaEspaco(linha[pos])){
-            pos++;
+        if(pos < linha.length){
+            while(estruturaLexica.verificaEspaco(linha[pos]) && pos < linha.length){
+                pos++;
+            }
         }
         return pos;
     }
     
     public String controle(){
-        if(posicao > linha.length){
-            if(linha[posicao] == '/'){
-                comentarios();
-            } else if(estruturaLexica.verificaOperadorAritmetico(linha[posicao])){
-                operadorAritmetico();
-            } else if(estruturaLexica.verificaOperadorLogico(linha[posicao])){
-                operadorLogico();
-            } else if(estruturaLexica.verificaOperadorRelacional(linha[posicao])){
-                operadorRelacional();
-            } else if(estruturaLexica.verificaDelimitador(linha[posicao])){
-                delimitador();
+        while(true){
+            //zerarLexema();
+            if(posicao < linha.length){
+                System.out.println(posicao);
+                System.out.println(linha[posicao]);
+                if(linha[posicao] == '/'){
+                    comentarios();
+                } else if(estruturaLexica.verificaOperadorAritmetico(linha[posicao])){
+                    operadorAritmetico();
+                } else if(estruturaLexica.verificaOperadorLogico(linha[posicao])){
+                    System.out.println("euuuuuuuuuuuu");
+                    operadorRelacional();
+                } else if(estruturaLexica.verificaOperadorRelacional(linha[posicao])){
+                    operadorLogico();
+                } else if(estruturaLexica.verificaDelimitador(linha[posicao])){
+                    delimitador();
+                }
+            } else if(proximaLinha()){
+                posicao = 0;
+            } else if(numLinha <= codigo.size()){
+                System.out.println(codigo.size());
+                System.out.println("final" + numLinha);
+                return "FIM";
             }
-        } else if(proximaLinha()){
-            controle();
-        } else if(numLinha-1 == codigo.size()){
-            return "FIM";
         }
-        return null;
+        
     }
 
     public boolean operadorAritmetico(){
-        auxPosicao = posicao+1;
+        char[] lexema;
         while(true){
+        auxPosicao = posicao+1;
             if(posicao < linha.length){
                 switch(linha[posicao]){
                     case '-':
                         auxPosicao = ignorarEspaco(auxPosicao);
                         proximaLinha();
                         auxPosicao = ignorarEspaco(auxPosicao);
-                        if(linha[auxPosicao] == '-'){
-                            Tokens token = new Tokens(numLinha, "OPERADOR ARITMETICO", lexema);
-                            tokens.add(token);
-                            posicao = auxPosicao;
+                        if(auxPosicao < linha.length && linha[auxPosicao] == '-'){
+                            lexema = new char[2];
+                            lexema[0] = linha[posicao];
+                            lexema[1] = linha[auxPosicao];
+                            Tokens token1 = new Tokens(numLinha, "OPERADOR ARITMETICO", lexema);
+                            tokens.add(token1);
+                            posicao = auxPosicao+1;
                             return true;
                         } else{
-                            Tokens token = new Tokens(numLinha, "OPERADOR ARITMETICO", lexema);
-                            tokens.add(token);
+                            lexema = new char[1];
+                            lexema[0] = linha[posicao];
+                            Tokens token2 = new Tokens(numLinha, "OPERADOR ARITMETICO", lexema);
+                            tokens.add(token2);
+                            
                             posicao = auxPosicao;
                             return true;
                         }
@@ -102,150 +148,96 @@ public class Automatos {
                         auxPosicao = ignorarEspaco(auxPosicao);
                         proximaLinha();
                         auxPosicao = ignorarEspaco(auxPosicao);
-                        if(linha[auxPosicao] == '+'){
-                            Tokens token = new Tokens(numLinha, "OPERADOR ARITMETICO", lexema);
-                            tokens.add(token);
-                            posicao = auxPosicao;
+                        if(auxPosicao < linha.length && linha[auxPosicao] == '+'){
+                            lexema = new char[2];
+                            lexema[0] = linha[posicao];
+                            lexema[1] = linha[auxPosicao];
+                            Tokens token3 = new Tokens(numLinha, "OPERADOR ARITMETICO", lexema);
+                            tokens.add(token3);
+                            posicao = auxPosicao+1;
                             return true;
                         } else{
-                            Tokens token = new Tokens(numLinha, "OPERADOR ARITMETICO", lexema);
-                            tokens.add(token);
+                            lexema = new char[1];
+                            lexema[0] = linha[posicao];
+                            Tokens token4 = new Tokens(numLinha, "OPERADOR ARITMETICO", lexema);
+                            tokens.add(token4);
                             posicao = auxPosicao;
                             return true;
                         }
                     case '*':
-                        Tokens token1 = new Tokens(numLinha, "OPERADOR ARITMETICO", lexema);
-                        tokens.add(token1);
+                        lexema = new char[1];
+                        lexema[0] = linha[posicao];
+                        Tokens token5 = new Tokens(numLinha, "OPERADOR ARITMETICO", lexema);
+                        tokens.add(token5);
                         posicao = auxPosicao;
                         return true;
                         
                     case '/':
-                        Tokens token = new Tokens(numLinha, "OPERADOR ARITMETICO", lexema);
-                        tokens.add(token);
+                        lexema = new char[1];
+                        lexema[0] = linha[posicao];
+                        Tokens token6 = new Tokens(numLinha, "OPERADOR ARITMETICO", lexema);
+                        tokens.add(token6);
                         posicao = auxPosicao;
                         return true;
                     default:
-                        Tokens token2 = new Tokens(numLinha, "ERRO OPERADOR ARITMETICO", lexema);
-                        tokens.add(token2);
+                        lexema = new char[1];
+                        Tokens token7 = new Tokens(numLinha, "ERRO OPERADOR ARITMETICO", lexema);
+                        tokens.add(token7);
                         posicao = auxPosicao;
                         return true;
                 }
-            } else if(posicao-1 == linha.length){
-                proximaLinha();
             }
+
         }
     }
     
-/*    public boolean operadorAritmetico(){
-        auxPosicao = posicao;
-        if(posicao < linha.length){
-            switch (linha[posicao]) {
-                case '-':
-                    auxPosicao++;
-                    if(linha[auxPosicao] == '-'){
-                        Tokens token = new Tokens(posicao, "OPERADOR ARITMETICO '--' ", linha);
-                        tokens.add(token);
-                        posicao = auxPosicao+1;
-                        return true;
-                    }else{
-                        Tokens token = new Tokens(posicao, "OPERADOR ARITMETICO '-' ", linha);
-                        tokens.add(token);
-                        posicao++;
-                        return true;
-                    }
-                case '+':
-                    auxPosicao++;
-                    if(linha[auxPosicao] == '+'){
-                        Tokens token = new Tokens(posicao, "OPERADOR ARITMETICO '++' ", linha);
-                        tokens.add(token);
-                        posicao = auxPosicao+1;
-                        return true;
-                    }else{
-                        Tokens token = new Tokens(posicao, "OPERADOR ARITMETICO '+' ", linha);
-                        tokens.add(token);
-                        posicao++;
-                        return true;
-                    }
-                case '*':
-                case '/':
-                {
-                    Tokens token = new Tokens(posicao, "OPERADOR ARITMETICO", linha);
-                    tokens.add(token);
-                    posicao++;
-                    return true;
-                }
-                default:
-                {
-                    Tokens token = new Tokens(posicao, "ERRO OPERADOR ARITMETICO", linha);
-                    tokens.add(token);
-                    return false;
-                }
-            }
-        }
-        return false;
-    }*/
-    
     public boolean operadorRelacional(){
-        auxPosicao = posicao+1;
+        char[] lexema;
         while(true){
+        auxPosicao = posicao+1;
             if(posicao < linha.length){
-                if(linha[posicao]== '!' || linha[posicao] == '=' || linha[posicao] == '>' || linha[posicao] == '>'){
+                if(linha[posicao]== '!' || linha[posicao] == '=' || linha[posicao] == '>' || linha[posicao] == '<'){
                     auxPosicao = ignorarEspaco(auxPosicao);
                     proximaLinha();
                     auxPosicao = ignorarEspaco(auxPosicao);
-                    if(linha[auxPosicao] == '='){
+                    if(auxPosicao < linha.length && linha[auxPosicao] == '='){
+                        lexema = new char[2];
+                        lexema[0] = linha[posicao];
+                        lexema[1] = linha[auxPosicao];
                         Tokens token = new Tokens(numLinha, "OPERADOR RELACIONAL", lexema);
                         tokens.add(token);
                         posicao = auxPosicao+1;
                         return true;
                     } else if(linha[posicao] != '!'){
+                        lexema = new char[1];
+                        lexema[0] = linha[posicao];
                         Tokens token = new Tokens(numLinha, "OPERADOR RELACIONAL", lexema);
                         tokens.add(token);
                         posicao = auxPosicao;
                         return true;
                     } else{
+                        lexema = new char[1];
                         Tokens token = new Tokens(numLinha, "ERRO OPERARDOR RELACIONAL", lexema);
                         tokens.add(token);
                         posicao = auxPosicao;
                         return true;
                     }
                 }
-            } else{
-                proximaLinha();
             }
         }
     }
     
-   /* public void operadorRelacional(){
-        while(posicao < linha.length){
-            if(linha[posicao]== '!' || linha[posicao] == '=' || linha[posicao] == '>' || linha[posicao] == '>'){
-                auxPosicao = posicao+1;
-                if(linha[auxPosicao] == '='){
-                    Tokens token = new Tokens(posicao, "OPERADOR RELACIONAL", linha);
-                    tokens.add(token);
-                    posicao = auxPosicao+1;
-                    break;
-                }else if(linha[posicao] != '!'){
-                    Tokens token = new Tokens(posicao, "OPERADOR RELACIONAL", linha);
-                    tokens.add(token);
-                    posicao++;
-                    break;
-                } else{
-                    Tokens token = new Tokens(posicao, "ERRO OPERADOR RELACIONAL", linha);
-                    tokens.add(token);
-                }
-                
-            }
-        }
-    }*/
-    
     public boolean operadorLogico(){
-        auxPosicao = posicao+1;
+        char[] lexema;
         while(true){
+        auxPosicao = posicao+1;
             if(posicao <linha.length){
                 switch(linha[posicao]){
                     case '!':
-                        Tokens token = new Tokens(numLinha, "OPERADOR LOGICO", linha);
+                                                    lexema = new char[1];
+
+                        lexema[0] = linha[posicao];
+                        Tokens token = new Tokens(numLinha, "OPERADOR LOGICO", lexema);
                         tokens.add(token);
                         posicao++;
                         return true;
@@ -253,13 +245,19 @@ public class Automatos {
                         auxPosicao = ignorarEspaco(auxPosicao);
                         proximaLinha();
                         auxPosicao = ignorarEspaco(auxPosicao);
-                        if(linha[auxPosicao] == '&'){
-                            Tokens token1 = new Tokens(numLinha, "OPERADOR LOGICO", linha);
+                        if(auxPosicao < linha.length && linha[auxPosicao] == '&'){
+                                                        lexema = new char[2];
+
+                            lexema[0] = linha[posicao];
+                            lexema[0] = linha[auxPosicao];
+                            Tokens token1 = new Tokens(numLinha, "OPERADOR LOGICO", lexema);
                             tokens.add(token1);
                             posicao = auxPosicao+1;
                             return true;
                         } else{
-                            Tokens token2 = new Tokens(numLinha, "ERRO OPERADOR LOGICO", linha);
+                                                        lexema = new char[1];
+
+                            Tokens token2 = new Tokens(numLinha, "ERRO OPERADOR LOGICO", lexema);
                             tokens.add(token2);
                             posicao = auxPosicao;
                             return true;
@@ -268,13 +266,19 @@ public class Automatos {
                         auxPosicao = ignorarEspaco(auxPosicao);
                         proximaLinha();
                         auxPosicao = ignorarEspaco(auxPosicao);
-                        if(linha[auxPosicao] == '|'){
-                            Tokens token1 = new Tokens(numLinha, "OPERADOR LOGICO", linha);
+                        if(auxPosicao < linha.length && linha[auxPosicao] == '|'){
+                                                        lexema = new char[2];
+
+                            lexema[0] = linha[posicao];
+                            lexema[0] = linha[auxPosicao];
+                            Tokens token1 = new Tokens(numLinha, "OPERADOR LOGICO", lexema);
                             tokens.add(token1);
                             posicao = auxPosicao+1;
                             return true;
                         } else{
-                            Tokens token2 = new Tokens(numLinha, "ERRO OPERADOR LOGICO", linha);
+                                                        lexema = new char[2];
+
+                            Tokens token2 = new Tokens(numLinha, "ERRO OPERADOR LOGICO", lexema);
                             tokens.add(token2);
                             posicao = auxPosicao;
                             return true;
@@ -284,87 +288,69 @@ public class Automatos {
         }
     }
     
-   /* public void operadorLogico(){
-        boolean erro = false;
-        while(posicao < linha.length){
-            if(linha[posicao] == '!'){
-                Tokens token = new Tokens(posicao, "OPERADOR ARITMETICO", linha);
-                tokens.add(token);
-                posicao++;
-                break;
-            }else if(linha[posicao] == '&'){
-                auxPosicao = posicao+1;
-                if(linha[auxPosicao] == '&'){
-                    Tokens token = new Tokens(posicao, "OPERADOR ARITMETICO", linha);
-                    tokens.add(token);
-                    posicao = auxPosicao+1;
-                    break;
-                }
-                else{
-                    posicao++;
-                    erro = true;
-                }
-            }else if(linha[posicao] == '|'){
-                auxPosicao = posicao+1;
-                if(linha[auxPosicao] == '|'){
-                    Tokens token = new Tokens(posicao, "OPERADOR ARITMETICO", linha);
-                    tokens.add(token);
-                    posicao = auxPosicao+1;
-                    break;
-                }else{
-                    posicao++;
-                    erro = true;
-                }
-            }
-            if(erro == true){
-                Tokens token = new Tokens(posicao, "ERRO OPERADOR LOGICO", linha);
-                tokens.add(token);
-                posicao++;
-            }
-        }
-    }
-    */
-    
-    
-    public void comentarios(){ // não salvar no array de tokens, apenas no arquivo
-        while(posicao < linha.length){
-            if(linha[posicao]== '/'){
-                auxPosicao = posicao+1;
-                if(linha[auxPosicao] == '/'){
-                    //colocar pra printar apenas no arquivo
-                    Tokens token = new Tokens(posicao, "COMENTARIO", linha);
-                    tokens.add(token);
-                    posicao = auxPosicao+1;
-                    break;
-                }
-                else if(linha[auxPosicao] == '*'){
-                    auxPosicao++;
-                    for(int b = numLinha; b <codigo.size(); b++){
-                        for(int a = auxPosicao; a<linha.length; a++){
-                            if(linha[a] == '*' && linha[a+1] == '/'){
-                                //colocar pra printar no arquivo
+    public boolean comentarios(){ // não salvar no array de tokens, apenas no arquivo
+        char[] lexema;
+        while(true){
+        auxPosicao = posicao+1;
+            if(posicao < linha.length && auxPosicao < linha.length ){
+                if(linha[auxPosicao] != '/' && linha[auxPosicao] != '*'){
+                    operadorAritmetico();
+                    return true;
+                }else if(linha[posicao]== '/'){
+                    if(linha[auxPosicao] == '/'){
+                        //colocar pra printar apenas no arquivo
+                        lexema = new char[2];
+                        lexema[0] = linha[posicao];
+                        lexema[1] = linha[auxPosicao];
+                        Tokens token = new Tokens(numLinha, "COMENTARIO", lexema);
+                        tokens.add(token);
+                        posicao = 0;
+                        numLinha++;
+                        linha = codigo.get(numLinha);
+                        return true;
+                    }
+                    else if(linha[auxPosicao] == '*'){
+                        auxPosicao++;
+                        for(int b = numLinha; b <codigo.size(); b++){
+                            for(int a = auxPosicao; a<linha.length; a++){
+                                if(linha[a] == '*' && linha[a+1] == '/'){
+                                    //colocar pra printar no arquivo
+                                    return true;
+                                }
                             }
                         }
-                    }
-                    
-                }
-                else{
-                    Tokens token = new Tokens(posicao, "ERRO COMENTARIO", linha);
-                }
-            }
 
+                    }
+                    else{
+                        lexema = new char[2];
+
+                        Tokens token = new Tokens(numLinha, "ERRO COMENTARIO", lexema);
+                        tokens.add(token);
+                        return true;
+                    }
+                }
+            } else{
+                operadorAritmetico();
+                    return true;
+            }
         }
     }
     
-    public void delimitador(){
-        auxPosicao = posicao+1;
+    public boolean delimitador(){
+        char[] lexema;
         while(posicao < linha.length){
+        auxPosicao = posicao+1;
             if(linha[posicao] == ';' || linha[posicao] == ',' || linha[posicao] == '(' || linha[posicao] == ')' || linha[posicao] == '[' || linha[posicao] == ']' || linha[posicao] == '{' || linha[posicao] == '}' || linha[posicao] == '.'){
-                Tokens token = new Tokens(posicao, "DELIMITADOR", linha);
+                lexema = new char[1];
+                lexema[0] = linha[posicao];
+                Tokens token = new Tokens(numLinha, "DELIMITADOR", lexema);
                 tokens.add(token);
                 posicao = auxPosicao;
+                
+                return true;
             }
             
         }
+        return false;
     }
 }
