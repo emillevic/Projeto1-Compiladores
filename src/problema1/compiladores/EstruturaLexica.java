@@ -124,4 +124,14 @@ public class EstruturaLexica {
     public boolean verificaEspaco(char caractere){
         return (Character.isSpaceChar(caractere) || caractere == 9);
     }    
+
+    
+
+    boolean verificaNumero(char[] linha) {
+        for(int i=0;i< linha.length; i++){
+            if(Character.isDigit( linha[i]))
+                return true;
+        }
+        return false;
+    }
 }

@@ -104,6 +104,8 @@ public class Automatos {
                     operadorLogico();
                 } else if(estruturaLexica.verificaDelimitador(linha[posicao])){
                     delimitador();
+                } else if(estruturaLexica.verificaNumero(linha)){
+                    
                 }
             } else if(proximaLinha()){
                 posicao = 0;
@@ -350,6 +352,68 @@ public class Automatos {
                 return true;
             }
             
+        }
+        return false;
+    }
+    public boolean negativo(){
+        char[] lexema = null;
+        
+        while(true){
+             posicao=auxPosicao;
+             auxPosicao++;
+             if(posicao < linha.length){
+                if(linha[posicao]=='-'){
+                        lexema[0]='-';
+                        auxPosicao = ignorarEspaco(auxPosicao);
+                        
+                        if(linha[auxPosicao] == '-'){
+                            lexema[1]='-';
+                            Tokens token = new Tokens(numLinha, "OPERADOR ARITMETICO", lexema);
+                            
+                            tokens.add(token);
+                            posicao = auxPosicao;
+                            return true;
+                        }
+                        else{
+                            return numero();
+                                
+                        }
+                    }
+            }
+        }
+    }
+
+    private boolean numero() {
+        char[] lexema =null;
+        int tamanho =0;
+        if(linha[posicao]=='-'){
+            lexema[0]='-';
+            tamanho++;
+        }
+        while (Character.isDigit(linha[posicao])|| auxPosicao<linha.length){
+            posicao=auxPosicao;
+            auxPosicao= posicao +1;
+            lexema[tamanho]=linha[posicao];
+            if(!Character.isDigit(linha[posicao])){
+                if(linha[posicao]== '.'){
+                    while (Character.isDigit(linha[posicao])){
+                        posicao=auxPosicao;
+                        auxPosicao= posicao +1;
+                        lexema[tamanho]=linha[posicao];
+                    }
+                    Tokens token = new Tokens(numLinha, "Numero", lexema);
+                    tokens.add(token);
+                    posicao = auxPosicao;
+                    return true;
+                }
+                else{
+                    Tokens token = new Tokens(numLinha, "Numero", lexema);
+                    tokens.add(token);
+                    posicao = auxPosicao;
+                    return true;
+                }
+            }
+          tamanho++;  
         }
         return false;
     }
