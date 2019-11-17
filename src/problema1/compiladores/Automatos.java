@@ -105,7 +105,7 @@ public class Automatos {
                 } else if(estruturaLexica.verificaDelimitador(linha[posicao])){
                     delimitador();
                 } else if(estruturaLexica.verificaNumero(linha)){
-                    
+                   negativo(); 
                 }
             } else if(proximaLinha()){
                 posicao = 0;
@@ -417,4 +417,32 @@ public class Automatos {
         }
         return false;
     }
+    public boolean cadeia(){
+        char[] lexema;
+        auxPosicao = posicao+1;
+        if(linha[posicao]=='"'){
+                posicao=auxPosicao;
+                auxPosicao++;
+            while(linha[posicao]!='"'||linha[posicao]!='\\' ){
+                posicao=auxPosicao;
+                auxPosicao++;
+                if(linha[posicao]=='"'){
+                    lexema= "String".toCharArray();
+                    Tokens token = new Tokens(numLinha, "Cadeia de Carcteres", lexema);
+                    tokens.add(token);
+                    posicao = auxPosicao;
+                    return true;
+                }else if(linha[posicao]!='\\'){ 
+                    posicao=auxPosicao+1;
+                    auxPosicao= auxPosicao+2;
+                }
+            }
+        lexema= "String".toCharArray();
+        Tokens token = new Tokens(numLinha, "Cadeia de Carcteres", lexema);
+        tokens.add(token);
+        posicao = auxPosicao;
+        return true;
+        }
+        return false;
+    }      
 }
