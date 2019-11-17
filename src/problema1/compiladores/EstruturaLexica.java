@@ -125,9 +125,11 @@ public class EstruturaLexica {
         return (Character.isSpaceChar(caractere) || caractere == 9);
     }    
 
-    
+    public boolean verificaDigito(char caractere){
+        return Character.isDigit(caractere);
+    }
 
-    boolean verificaNumero(char[] linha) {
+    public boolean verificaNumero(char[] linha) {
         for(int i=0;i< linha.length; i++){
             if(Character.isDigit( linha[i]))
                 return true;

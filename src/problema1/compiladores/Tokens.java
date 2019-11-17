@@ -7,6 +7,7 @@ package problema1.compiladores;
 
 /**
  *
+ * erros termina com um - aritmetico(duplo), relacional(duplo), logico(todos)
  * @author Mille
  */
 public class Tokens {

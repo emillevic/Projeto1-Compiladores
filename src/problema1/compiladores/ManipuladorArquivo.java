@@ -74,7 +74,7 @@ public class ManipuladorArquivo {
             escrito = tabela.get(i);
             bw.append(escrito + "\n");
         }
-
+        bw.flush();
         bw.close();
     }
 
