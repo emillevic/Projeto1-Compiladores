@@ -17,14 +17,14 @@ public class EstruturaLexica {
     private final ArrayList<String> identificadores = new ArrayList<>();
     private final ArrayList<String> numeros = new ArrayList<>();
     private final ArrayList<String> digitos = new ArrayList<>();
-    private final ArrayList<String> letras = new ArrayList<>();
+    private final ArrayList<Character> letras = new ArrayList<>();
     private final ArrayList<Character> operadoresAritmeticos = new ArrayList<>();
     private final ArrayList<Character> operadoresRelacionais = new ArrayList<>();
     private final ArrayList<Character> operadoresLogicos = new ArrayList<>();
     private final ArrayList<String> comentarios = new ArrayList<>();
     private final ArrayList<Character> delimitadores = new ArrayList<>();
     private final ArrayList<String> cadeiaDeCaracteres = new ArrayList<>();
-    private final ArrayList<String> simbolos = new ArrayList<>();
+    private final ArrayList<Character> simbolos = new ArrayList<>();
     private final ArrayList<String> simboloInvalido = new ArrayList<>();
     private final ArrayList<String> espaco = new ArrayList<>();
     
@@ -57,10 +57,15 @@ public class EstruturaLexica {
             digitos.add(String.valueOf(i));
        
         for(char j= 'a'; j<='z'; j++)
-            letras.add(String.valueOf(j));
+            letras.add(j);
        
         for(char k= 'A'; k<='Z'; k++)
-            letras.add(String.valueOf(k));
+            letras.add(k);
+        
+        for(int i=32; i<=126; i++){
+            if(i != 34)
+                simbolos.add((char)i);
+        }
         
         operadoresAritmeticos.add('+');
         operadoresAritmeticos.add('-');
@@ -88,7 +93,9 @@ public class EstruturaLexica {
         delimitadores.add('}');
         delimitadores.add('.');
     }
-    
+    public ArrayList<Character> getSimbolos(){
+        return simbolos;
+    }
     public boolean verificaPalavraReservada(String string){
         return this.palavrasReservadas.contains(string);
     }
@@ -110,6 +117,7 @@ public class EstruturaLexica {
     }
 
     public boolean verificaLetra(char caractere){
+        System.out.println(caractere);
         return this.letras.contains(caractere);
     }
 
