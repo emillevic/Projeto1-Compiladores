@@ -1,6 +1,7 @@
-typedef 009
-star
-while 
+if a>=b
 then
-a89_100
-return
+c++
+start
+a45
+//
+a3

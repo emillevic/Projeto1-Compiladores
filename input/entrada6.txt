@@ -1,7 +1,7 @@
-if a>=b
-then
-c++
-start
-a45
-//
-a3
+na
+7;
+5.8
+70000
+//sai
+return false
+print "sei la"

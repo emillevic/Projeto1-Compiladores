@@ -1,7 +1,10 @@
-if a==b
-else
-a!=c
-kkjnnms
-const 34
-4-56
-c--
+indentifica
+var 
+struct
+pepe
+pele
+--
+++
+//cometario
+string a="sei"
+start
