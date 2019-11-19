@@ -35,26 +35,24 @@ public class Automatos {
         estruturaLexica = new EstruturaLexica();
     }
     public ArrayList<String> analisadorLexico(){
-        System.out.println(estruturaLexica.getSimbolos());
         for(int j = 0; j<codigoSemTratamento.size(); j++){
             codigo.add(codigoSemTratamento.get(j).toCharArray());
         }
         linha = codigo.get(0);
         controle();
+        boolean erro = false;
         for(int i = 0; i<tokens.size(); i++){
-            System.out.println("it" +tokens);
             tabela.add(tokens.get(i).toString());
+            if(tabela.get(i).contains("ERRO")){
+                erro = true;
+            }
+        }
+        if(erro == false){
+            tabela.add("CODIGO SEM ERRO!");
         }
         return tabela;
     }
     
-    /*Método para pegar o próximo caractere do código
-    
-    Ainda está em construção, pois provavelmente eu mudarei a lógica para acessar
-    isso nos automatos.
-    
-    */
-
     public ArrayList<Tokens> getTokens(){
         return tokens;
     }
@@ -66,24 +64,15 @@ public class Automatos {
     }*/
     
     public boolean proximaLinha(){
-        System.out.println("repito aqui:" + posicao + "---------" + linha.length);
         if(posicao == linha.length){
             numLinha++;
             if(numLinha < codigo.size()){
-            System.out.println("kkkkkkkkkkkkkkkk");
                 linha = codigo.get(numLinha);
-                System.out.println("entrei aqui");
                 return true;
             } else if(numLinha >= codigo.size()){
                 numLinha = codigo.size();
                 return false;
             }
-            /*if(numLinha+1 < codigo.size()){
-                System.out.println("bbbbbbbbbbbb");
-                numLinha++;
-                linha = codigo.get(numLinha);
-                return true; 
-            }*/
         }
         return false;
     }
@@ -95,7 +84,6 @@ public class Automatos {
         }else if(pos < linha.length){
             while(estruturaLexica.verificaEspaco(linha[pos]) && pos < linha.length){
                 pos++;
-                System.out.println("ITERACAO");
             }
         }
         return pos;
@@ -103,8 +91,6 @@ public class Automatos {
     
     public String controle(){
         while(true){
-            System.out.println(numLinha + "controle" + codigo.size());
-            //zerarLexema();
             if(posicao < linha.length && numLinha < codigo.size()){
                 if(!estruturaLexica.verificaSimbolo(linha[posicao])){
                     simboloInvalido();
@@ -113,26 +99,18 @@ public class Automatos {
                 }else if(estruturaLexica.verificaLetra(linha[posicao])){
                     identificadores();
                 }else if(estruturaLexica.verificaOperadorAritmetico(linha[posicao])){
-                    System.out.println("aritmetico");
                     operadorAritmetico();
                 }else if(estruturaLexica.verificaOperadorRelacional(linha[posicao])){
-                    System.out.println("relacional");
                     operadorRelacional();
                 }else if(estruturaLexica.verificaOperadorLogico(linha[posicao])){
-                    System.out.println("logico");
                     operadorLogico();
                 } else if(estruturaLexica.verificaDelimitador(linha[posicao])){
                     delimitador();
                 } else if(estruturaLexica.verificaDigito(linha[posicao])){
                    numero(); 
                 }else if(estruturaLexica.verificaEspaco(linha[posicao])){
-                    System.out.println("ESTOU AQUIIIIIIIIIII");
                     posicao = ignorarEspaco(posicao+1);
                 } else if(linha[posicao] == '"'){
-                    System.out.println("cadeia");
-                    System.out.println(linha[posicao]);
-                    System.out.println(posicao);
-                    System.out.println(numLinha);
                     cadeia();
                 }
             } else if(proximaLinha()){
@@ -412,9 +390,7 @@ public class Automatos {
         char[] arrayChar = new char[charList.size()];
         for (int i = 0; i<charList.size(); i++){
             arrayChar[i] = charList.get(i);
-            System.out.println("iteracao");
         }
-        System.out.println(arrayChar);
         return arrayChar;
     }
     private boolean numero() {
@@ -431,7 +407,6 @@ public class Automatos {
                     lexema.add('.');
                     controlePonto = true;
                     if(auxPosicao == linha.length){
-                        System.out.println(auxPosicao + "ERRO PONTO" + linha.length);
                         Tokens token = new Tokens(numLinha, "ERRO NUMERO", toCharArray(lexema));
                         tokens.add(token);
                         proximaLinha();
@@ -446,15 +421,13 @@ public class Automatos {
                     }
                     posicao++;
                 } else if(linha[posicao] == '.' && controlePonto == true){
-                    
                     Tokens token = new Tokens(numLinha, "ERRO NUMERO", toCharArray(lexema));
                     tokens.add(token);
-                    
                     return true;
                 } else if(!estruturaLexica.verificaDigito(linha[posicao])){
                     Tokens token = new Tokens(numLinha, "NUMERO", toCharArray(lexema));
                     tokens.add(token);
-                    posicao++;
+                    //posicao++;
                     return true;
                 }
             } else{
@@ -471,11 +444,9 @@ public class Automatos {
         ArrayList<Character> lexema = new ArrayList<Character>();
         if(linha[posicao] == '"'){
             lexema.add('"');
-            System.out.println("entrei no if");
         }
         posicao++;
         while(true){
-            System.out.println(auxPosicao + "ESSE EHO AUX");
             auxPosicao=posicao+1;
             if(posicao < linha.length && linha[posicao] != '"' && auxPosicao != linha.length){
                 if(estruturaLexica.verificaDigito(linha[posicao]) || estruturaLexica.verificaLetra(linha[posicao]) 
@@ -484,25 +455,21 @@ public class Automatos {
                     lexema.add(linha[posicao]);
                     if(auxPosicao != linha.length)
                         posicao++;
-                    System.out.println("hm");
                 } else if(linha[posicao] == '\\' && linha[auxPosicao] == '"'){
                     lexema.add(linha[posicao]);
                     posicao++;
-                    System.out.println("SERA QUE TO AQUIIIIIIIIIII" + posicao);
                 }
             }else if(linha[posicao] == '"' && linha[posicao-1] != '\\'){
                 lexema.add(linha[posicao]);
                 Tokens token = new Tokens(numLinha, "CADEIRA DE CARACTERES", toCharArray(lexema));
                 tokens.add(token);
                 posicao++;
-                System.out.println("repetindo aqui??????????");
                 return true;
             }else if(linha[posicao] == '"' && linha[posicao-1] == '\\'){
                 lexema.add(linha[posicao]);
                 posicao++;
             }
             else if(auxPosicao == linha.length && linha[posicao] != '"'){
-                System.out.println("SERASSE TO AQUI");
                 lexema.add(linha[posicao]);
                 Tokens token = new Tokens(numLinha, "ERRO CADEIRA DE CARACTERES", toCharArray(lexema));
                 tokens.add(token);
@@ -520,7 +487,6 @@ public class Automatos {
             palavra = palavra + String.valueOf(lista.get(i));
             //palavra = palavra.concat(Character.toString(lista.get(i)));
         }
-        System.out.println(palavra);
         return palavra;
     }
     
@@ -528,7 +494,6 @@ public class Automatos {
         ArrayList<Character> lexema = new ArrayList<Character>();
         lexema.add(linha[posicao]);
         posicao++;
-        System.out.println(lexema + "first");
         if(posicao == linha.length){
             Tokens token = new Tokens(numLinha, "IDENTIFICADOR", toCharArray(lexema));
             tokens.add(token);
@@ -537,9 +502,7 @@ public class Automatos {
             return true;
         }
         while(true){
-            System.out.println(lexema);
             auxPosicao = posicao+1;
-            System.out.println(tokens);
             if(posicao <linha.length){
                 if(estruturaLexica.verificaLetra(linha[posicao]) || estruturaLexica.verificaDigito(linha[posicao])
                         || linha[posicao] == '_'){
@@ -553,8 +516,6 @@ public class Automatos {
                 }
                 if(posicao == linha.length){
                     Tokens token;
-                    System.out.println("to string:" + listToString(lexema));
-                    System.out.println(lexema);
                     if(estruturaLexica.verificaPalavraReservada( listToString(lexema))){
                         token = new Tokens(numLinha, "PALAVRA RESERVADA", toCharArray(lexema));
                     } else{
@@ -572,7 +533,10 @@ public class Automatos {
                         token = new Tokens(numLinha, "IDENTIFICADOR", toCharArray(lexema));
                     }
                     tokens.add(token);
-                    posicao = ignorarEspaco(posicao);
+                    
+                    while(posicao < linha.length && estruturaLexica.verificaEspaco(linha[posicao])){
+                        posicao++;
+                    }
                     return true;
                 }
             }

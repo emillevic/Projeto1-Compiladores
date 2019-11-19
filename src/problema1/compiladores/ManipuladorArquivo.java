@@ -33,9 +33,7 @@ public class ManipuladorArquivo {
    
     
     public  ArrayList<String> leitor(String nome) throws IOException {
-        input = input + nome;
-        System.out.println(nome);
-        System.out.println(input);
+        input = "input/" + nome;
         BufferedReader buffRead = new BufferedReader(new FileReader(this.input));
         String linha = "";
         ArrayList<String> arquivo = new ArrayList<String>();
@@ -55,9 +53,9 @@ public class ManipuladorArquivo {
     }
  
     public void escritor(String nome, ArrayList<String> tabela) throws IOException {
-        output.concat(nome);
+        output = "output/" + nome;
          // Cria arquivo
-            File file = new File(nome);
+            File file = new File(output);
 
             // Se o arquivo nao existir, ele gera
             if (!file.exists()) {

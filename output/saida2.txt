@@ -1,0 +1,5 @@
+linha 0 - IDENTIFICADOR - fdsfds
+linha 1 - NUMERO - 5.5
+linha 1 - IDENTIFICADOR - a6
+linha 1 - NUMERO - 6
+linha 2 - ERRO OPERADOR LOGICO - |

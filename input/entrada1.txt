@@ -1,2 +1,6 @@
-áuhfds32+=
-; ...]
+typedef 009
+star
+while 
+then
+a89_100
+return

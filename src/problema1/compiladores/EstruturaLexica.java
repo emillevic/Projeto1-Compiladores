@@ -117,7 +117,6 @@ public class EstruturaLexica {
     }
 
     public boolean verificaLetra(char caractere){
-        System.out.println(caractere);
         return this.letras.contains(caractere);
     }
 

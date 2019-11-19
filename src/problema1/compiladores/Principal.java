@@ -7,6 +7,7 @@ package problema1.compiladores;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 /**
  *
@@ -22,20 +23,23 @@ public class Principal  {
     private static ArrayList<String> saida;
    
     public static void main(String[] args) throws IOException {
-        arquivoEntrada = "entrada" + numeroArquivo + ".txt";
-        arquivoSaida = "saida" + numeroArquivo + ".txt";
-        System.out.println(arquivoEntrada);
-        entrada = manipuladorArquivo.leitor(arquivoEntrada);
-        System.out.println(entrada.size());
-        System.out.println(entrada);
-        if(!entrada.isEmpty()){
-            automatos = new Automatos(entrada);
-            saida = automatos.analisadorLexico();
-            manipuladorArquivo.escritor(arquivoSaida, saida);
-            System.out.println("Analise do arquivo" + arquivoEntrada + "feita no arquivo" + arquivoSaida);
-        }
-        else{
-            System.out.println("Arquivo em Branco");
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Insira a quantidade de arquivos de entrada:");
+        int quantidade = scanner.nextInt();
+        for(int i = 0; i<quantidade;i++){
+            arquivoEntrada = "entrada" + numeroArquivo + ".txt";
+            arquivoSaida = "saida" + numeroArquivo + ".txt";
+            entrada = manipuladorArquivo.leitor(arquivoEntrada);
+            if(!entrada.isEmpty()){
+                automatos = new Automatos(entrada);
+                saida = automatos.analisadorLexico();
+                manipuladorArquivo.escritor(arquivoSaida, saida);
+                System.out.println("Analise do arquivo" + arquivoEntrada + "feita no arquivo" + arquivoSaida);
+            }
+            else{
+                System.out.println("Arquivo em Branco");
+            }
+            numeroArquivo++;
         }
     }
              
