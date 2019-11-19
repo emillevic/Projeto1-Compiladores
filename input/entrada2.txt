@@ -1,0 +1,4 @@
+a+a
+b-a7
+"cadeia"
+"cadeia com \""

@@ -1,0 +1,10 @@
+indentifica
+var 
+struct
+pepe
+pele
+--
+++
+//cometario
+string a="sei"
+start
