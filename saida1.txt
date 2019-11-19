@@ -1,8 +1,0 @@
-linha 0 - SIMBOLO INVALIDO - á
-linha 0 - IDENTIFICADOR - hfds32
-linha 0 - OPERADOR RELACIONAL - =
-linha 1 - DELIMITADOR - ;
-linha 1 - DELIMITADOR - .
-linha 1 - DELIMITADOR - .
-linha 1 - DELIMITADOR - .
-linha 1 - DELIMITADOR - ]
