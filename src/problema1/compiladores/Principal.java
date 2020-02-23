@@ -15,6 +15,7 @@ import java.util.Scanner;
  */
 public class Principal  {
     private static Automatos automatos;
+    private static AnalisadorSintatico analisadorSintatico;
     private static ManipuladorArquivo manipuladorArquivo = new ManipuladorArquivo();
     private static int numeroArquivo =1;
     private static String arquivoEntrada = new String();

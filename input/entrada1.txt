@@ -48,6 +48,8 @@ programa{
         while(a < 10){
             a++;
         }
+        print("pessoa: ", p.nome);
+        read(p.idade);
 
         altera_cidade("fsa");
     }

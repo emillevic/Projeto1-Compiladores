@@ -1,46 +1,163 @@
-linha 0 - PALAVRA RESERVADA - var
-linha 0 - DELIMITADOR - ,
-linha 0 - PALAVRA RESERVADA - const
-linha 0 - DELIMITADOR - ,
-linha 0 - PALAVRA RESERVADA - typedef
-linha 0 - DELIMITADOR - ,
-linha 0 - PALAVRA RESERVADA - struct
-linha 0 - DELIMITADOR - ,
-linha 1 - PALAVRA RESERVADA - extends
-linha 1 - DELIMITADOR - ,
-linha 1 - PALAVRA RESERVADA - procedure
-linha 1 - DELIMITADOR - ,
-linha 1 - PALAVRA RESERVADA - function
-linha 1 - DELIMITADOR - ,
-linha 2 - PALAVRA RESERVADA - start
-linha 2 - DELIMITADOR - ,
-linha 2 - PALAVRA RESERVADA - return
-linha 2 - DELIMITADOR - ,
-linha 2 - PALAVRA RESERVADA - if
-linha 2 - DELIMITADOR - ,
-linha 2 - PALAVRA RESERVADA - else
-linha 2 - DELIMITADOR - ,
-linha 2 - PALAVRA RESERVADA - then
-linha 2 - DELIMITADOR - ,
-linha 2 - PALAVRA RESERVADA - while
-linha 2 - DELIMITADOR - ,
-linha 3 - PALAVRA RESERVADA - read
-linha 3 - DELIMITADOR - ,
-linha 3 - PALAVRA RESERVADA - print
-linha 3 - DELIMITADOR - ,
-linha 3 - PALAVRA RESERVADA - int
-linha 3 - DELIMITADOR - ,
-linha 3 - PALAVRA RESERVADA - real
-linha 3 - DELIMITADOR - ,
-linha 3 - PALAVRA RESERVADA - boolean
-linha 3 - DELIMITADOR - ,
-linha 4 - PALAVRA RESERVADA - string
-linha 4 - DELIMITADOR - ,
-linha 4 - PALAVRA RESERVADA - true
-linha 4 - DELIMITADOR - ,
-linha 4 - PALAVRA RESERVADA - false
-linha 4 - DELIMITADOR - ,
-linha 4 - PALAVRA RESERVADA - global
-linha 4 - DELIMITADOR - ,
-linha 4 - PALAVRA RESERVADA - local
+linha 0 - IDENTIFICADOR - programa
+linha 0 - DELIMITADOR - {
+linha 1 - IDENTIFICADOR - structs
+linha 1 - DELIMITADOR - {
+linha 2 - PALAVRA RESERVADA - struct
+linha 2 - IDENTIFICADOR - pessoa
+linha 2 - DELIMITADOR - {
+linha 3 - PALAVRA RESERVADA - string
+linha 3 - IDENTIFICADOR - nome
+linha 3 - DELIMITADOR - ;
+linha 4 - PALAVRA RESERVADA - int
+linha 4 - IDENTIFICADOR - idade
+linha 4 - DELIMITADOR - ;
+linha 5 - DELIMITADOR - }
+linha 5 - DELIMITADOR - ;
+linha 7 - PALAVRA RESERVADA - struct
+linha 7 - IDENTIFICADOR - funcionario
+linha 7 - PALAVRA RESERVADA - extends
+linha 7 - IDENTIFICADOR - pessoa
+linha 7 - DELIMITADOR - {
+linha 8 - PALAVRA RESERVADA - real
+linha 8 - IDENTIFICADOR - salario
+linha 8 - DELIMITADOR - ;
+linha 9 - DELIMITADOR - }
+linha 9 - DELIMITADOR - ;
+linha 10 - DELIMITADOR - }
+linha 12 - IDENTIFICADOR - typedefs
+linha 12 - DELIMITADOR - {
+linha 13 - PALAVRA RESERVADA - typedef
+linha 13 - PALAVRA RESERVADA - struct
+linha 13 - IDENTIFICADOR - funcionario
+linha 13 - IDENTIFICADOR - func
+linha 13 - DELIMITADOR - ;
+linha 14 - DELIMITADOR - }
+linha 16 - PALAVRA RESERVADA - const
+linha 16 - DELIMITADOR - {
+linha 17 - PALAVRA RESERVADA - real
+linha 17 - IDENTIFICADOR - base_calculo
+linha 17 - OPERADOR RELACIONAL - =
+linha 17 - NUMERO - 0.2
+linha 17 - DELIMITADOR - ;
+linha 18 - DELIMITADOR - }
+linha 20 - PALAVRA RESERVADA - var
+linha 20 - DELIMITADOR - {
+linha 21 - PALAVRA RESERVADA - int
+linha 21 - IDENTIFICADOR - codigo
+linha 21 - DELIMITADOR - ;
+linha 22 - PALAVRA RESERVADA - string
+linha 22 - IDENTIFICADOR - cidade
+linha 22 - OPERADOR RELACIONAL - =
+linha 22 - CADEIRA DE CARACTERES - "salvador"
+linha 22 - DELIMITADOR - ;
+linha 23 - IDENTIFICADOR - func
+linha 23 - IDENTIFICADOR - a
+linha 23 - DELIMITADOR - ;
+linha 24 - DELIMITADOR - }
+linha 26 - IDENTIFICADOR - functions
+linha 26 - DELIMITADOR - {
+linha 27 - PALAVRA RESERVADA - function
+linha 27 - PALAVRA RESERVADA - real
+linha 27 - IDENTIFICADOR - calcula_extra
+linha 27 - DELIMITADOR - (
+linha 27 - PALAVRA RESERVADA - real
+linha 27 - IDENTIFICADOR - salario
+linha 27 - DELIMITADOR - )
+linha 27 - DELIMITADOR - {
+linha 28 - PALAVRA RESERVADA - return
+linha 28 - PALAVRA RESERVADA - local
+linha 28 - DELIMITADOR - .
+linha 28 - IDENTIFICADOR - salario
+linha 28 - OPERADOR ARITMETICO - *
+linha 28 - IDENTIFICADOR - base_calculo
+linha 28 - DELIMITADOR - ;
+linha 29 - DELIMITADOR - }
+linha 30 - DELIMITADOR - }
+linha 32 - IDENTIFICADOR - procedures
+linha 32 - DELIMITADOR - {
+linha 33 - PALAVRA RESERVADA - procedure
+linha 33 - IDENTIFICADOR - altera_cidade
+linha 33 - DELIMITADOR - (
+linha 33 - PALAVRA RESERVADA - string
+linha 33 - IDENTIFICADOR - cidade
+linha 33 - DELIMITADOR - )
+linha 33 - DELIMITADOR - {
+linha 34 - PALAVRA RESERVADA - global
+linha 34 - DELIMITADOR - .
+linha 34 - IDENTIFICADOR - cidade
+linha 34 - OPERADOR RELACIONAL - =
+linha 34 - PALAVRA RESERVADA - local
+linha 34 - DELIMITADOR - .
+linha 34 - IDENTIFICADOR - cidade
+linha 34 - DELIMITADOR - ;
+linha 35 - DELIMITADOR - }
+linha 36 - DELIMITADOR - }
+linha 38 - PALAVRA RESERVADA - start
+linha 38 - DELIMITADOR - {
+linha 39 - PALAVRA RESERVADA - var
+linha 39 - DELIMITADOR - {
+linha 40 - PALAVRA RESERVADA - int
+linha 40 - IDENTIFICADOR - a
+linha 40 - OPERADOR RELACIONAL - =
+linha 40 - NUMERO - 1
+linha 40 - DELIMITADOR - ;
+linha 41 - IDENTIFICADOR - func
+linha 41 - IDENTIFICADOR - p
+linha 41 - DELIMITADOR - ;
+linha 42 - DELIMITADOR - }
+linha 43 - IDENTIFICADOR - p
+linha 43 - DELIMITADOR - .
+linha 43 - IDENTIFICADOR - nome
+linha 43 - OPERADOR RELACIONAL - =
+linha 43 - CADEIRA DE CARACTERES - "emille"
+linha 43 - DELIMITADOR - ;
+linha 44 - IDENTIFICADOR - p
+linha 44 - DELIMITADOR - .
+linha 44 - IDENTIFICADOR - idade
+linha 44 - OPERADOR RELACIONAL - =
+linha 44 - NUMERO - 21
+linha 44 - DELIMITADOR - ;
+linha 45 - IDENTIFICADOR - p
+linha 45 - DELIMITADOR - .
+linha 45 - IDENTIFICADOR - salario
+linha 45 - OPERADOR RELACIONAL - =
+linha 45 - IDENTIFICADOR - calcula_extra
+linha 45 - DELIMITADOR - (
+linha 45 - NUMERO - 1000
+linha 45 - DELIMITADOR - )
+linha 45 - DELIMITADOR - ;
+linha 47 - PALAVRA RESERVADA - while
+linha 47 - DELIMITADOR - (
+linha 47 - IDENTIFICADOR - a
+linha 47 - OPERADOR RELACIONAL - <
+linha 47 - NUMERO - 10
+linha 47 - DELIMITADOR - )
+linha 47 - DELIMITADOR - {
+linha 48 - IDENTIFICADOR - a
+linha 48 - OPERADOR ARITMETICO - ++
+linha 48 - DELIMITADOR - ;
+linha 49 - DELIMITADOR - }
+linha 50 - PALAVRA RESERVADA - print
+linha 50 - DELIMITADOR - (
+linha 50 - CADEIRA DE CARACTERES - "pessoa: "
+linha 50 - DELIMITADOR - ,
+linha 50 - IDENTIFICADOR - p
+linha 50 - DELIMITADOR - .
+linha 50 - IDENTIFICADOR - nome
+linha 50 - DELIMITADOR - )
+linha 50 - DELIMITADOR - ;
+linha 51 - PALAVRA RESERVADA - read
+linha 51 - DELIMITADOR - (
+linha 51 - IDENTIFICADOR - p
+linha 51 - DELIMITADOR - .
+linha 51 - IDENTIFICADOR - idade
+linha 51 - DELIMITADOR - )
+linha 51 - DELIMITADOR - ;
+linha 53 - IDENTIFICADOR - altera_cidade
+linha 53 - DELIMITADOR - (
+linha 53 - CADEIRA DE CARACTERES - "fsa"
+linha 53 - DELIMITADOR - )
+linha 53 - DELIMITADOR - ;
+linha 54 - DELIMITADOR - }
+linha 55 - DELIMITADOR - }
 CODIGO SEM ERRO!
