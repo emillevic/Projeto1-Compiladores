@@ -1,8 +1,46 @@
+linha 0 - PALAVRA RESERVADA - var
+linha 0 - DELIMITADOR - ,
+linha 0 - PALAVRA RESERVADA - const
+linha 0 - DELIMITADOR - ,
 linha 0 - PALAVRA RESERVADA - typedef
-linha 0 - NUMERO - 009
-linha 1 - IDENTIFICADOR - star
+linha 0 - DELIMITADOR - ,
+linha 0 - PALAVRA RESERVADA - struct
+linha 0 - DELIMITADOR - ,
+linha 1 - PALAVRA RESERVADA - extends
+linha 1 - DELIMITADOR - ,
+linha 1 - PALAVRA RESERVADA - procedure
+linha 1 - DELIMITADOR - ,
+linha 1 - PALAVRA RESERVADA - function
+linha 1 - DELIMITADOR - ,
+linha 2 - PALAVRA RESERVADA - start
+linha 2 - DELIMITADOR - ,
+linha 2 - PALAVRA RESERVADA - return
+linha 2 - DELIMITADOR - ,
+linha 2 - PALAVRA RESERVADA - if
+linha 2 - DELIMITADOR - ,
+linha 2 - PALAVRA RESERVADA - else
+linha 2 - DELIMITADOR - ,
+linha 2 - PALAVRA RESERVADA - then
+linha 2 - DELIMITADOR - ,
 linha 2 - PALAVRA RESERVADA - while
-linha 3 - PALAVRA RESERVADA - then
-linha 4 - IDENTIFICADOR - a89_100
-linha 5 - PALAVRA RESERVADA - return
+linha 2 - DELIMITADOR - ,
+linha 3 - PALAVRA RESERVADA - read
+linha 3 - DELIMITADOR - ,
+linha 3 - PALAVRA RESERVADA - print
+linha 3 - DELIMITADOR - ,
+linha 3 - PALAVRA RESERVADA - int
+linha 3 - DELIMITADOR - ,
+linha 3 - PALAVRA RESERVADA - real
+linha 3 - DELIMITADOR - ,
+linha 3 - PALAVRA RESERVADA - boolean
+linha 3 - DELIMITADOR - ,
+linha 4 - PALAVRA RESERVADA - string
+linha 4 - DELIMITADOR - ,
+linha 4 - PALAVRA RESERVADA - true
+linha 4 - DELIMITADOR - ,
+linha 4 - PALAVRA RESERVADA - false
+linha 4 - DELIMITADOR - ,
+linha 4 - PALAVRA RESERVADA - global
+linha 4 - DELIMITADOR - ,
+linha 4 - PALAVRA RESERVADA - local
 CODIGO SEM ERRO!

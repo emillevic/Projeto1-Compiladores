@@ -78,6 +78,7 @@ public class Automatos {
     }
     
     public int ignorarEspaco(int pos){
+        System.out.println("Entrei em ignorar espaco");
         if(pos == linha.length && estruturaLexica.verificaEspaco(linha[pos-1])){
             posicao = pos;
             return pos;
@@ -91,10 +92,10 @@ public class Automatos {
     
     public String controle(){
         while(true){
+            System.out.println("controle - " + posicao + "linha - " + numLinha);
+            System.out.println(tokens.toString());
             if(posicao < linha.length && numLinha < codigo.size()){
-                if(!estruturaLexica.verificaSimbolo(linha[posicao])){
-                    simboloInvalido();
-                }else if(linha[posicao] == '/'){
+                if(linha[posicao] == '/'){
                     comentarios();
                 }else if(estruturaLexica.verificaLetra(linha[posicao])){
                     identificadores();
@@ -112,6 +113,14 @@ public class Automatos {
                     posicao = ignorarEspaco(posicao+1);
                 } else if(linha[posicao] == '"'){
                     cadeia();
+                }else if(!estruturaLexica.verificaSimbolo(linha[posicao])){
+//                    simboloInvalido();
+                    char[] lexema = new char[1];
+                    lexema[0] = linha[posicao];
+                    Tokens token1 = new Tokens(numLinha, "SIMBOLO INVALIDO",lexema);
+                    tokens.add(token1);
+                    posicao++;
+                    auxPosicao = posicao+1;
                 }
             } else if(proximaLinha()){
                 posicao = 0;
@@ -342,11 +351,24 @@ public class Automatos {
                         return true;
                     }
                     else if(linha[auxPosicao] == '*'){
+                        ArrayList<Character> lex = new ArrayList<>();
                         auxPosicao++;
                         for(int b = numLinha; b <codigo.size(); b++){
+                            linha = codigo.get(b);
+
                             for(int a = auxPosicao; a<linha.length; a++){
+                                lex.add(linha[a]);
                                 if(linha[a] == '*' && linha[a+1] == '/'){
-                                    //colocar pra printar no arquivo
+                                    lexema = new char[lex.size()];
+                                    for(int e = 0; e<lexema.length; e++){
+                                        lexema[e] = lex.get(e);
+                                    }
+                                    
+                                    Tokens token = new Tokens(b, "COMENTARIO BLOCO", lexema);
+                                    tokens.add(token);
+                                    
+                                    posicao = 0;
+                                    numLinha = b+1;
                                     return true;
                                 }
                             }
@@ -509,9 +531,14 @@ public class Automatos {
                     lexema.add(linha[posicao]);
                     posicao++;
                 } else{
-                    Tokens token = new Tokens(numLinha, "IDENTIFICADOR", toCharArray(lexema));
+                     Tokens token;
+                    if(estruturaLexica.verificaPalavraReservada( listToString(lexema))){
+                        token = new Tokens(numLinha, "PALAVRA RESERVADA", toCharArray(lexema));
+                    } else{
+                        token = new Tokens(numLinha, "IDENTIFICADOR", toCharArray(lexema));
+                    }
                     tokens.add(token);
-                    posicao++;
+//                    posicao++;
                     return true;
                 }
                 if(posicao == linha.length){

@@ -62,6 +62,7 @@ public class EstruturaLexica {
         for(char k= 'A'; k<='Z'; k++)
             letras.add(k);
         
+        simbolos.add((char) 9);
         for(int i=32; i<=126; i++){
             if(i != 34)
                 simbolos.add((char)i);
