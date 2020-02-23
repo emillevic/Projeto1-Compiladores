@@ -83,7 +83,7 @@ public class Automatos {
             posicao = pos;
             return pos;
         }else if(pos < linha.length){
-            while(estruturaLexica.verificaEspaco(linha[pos]) && pos < linha.length){
+            while(pos < linha.length && estruturaLexica.verificaEspaco(linha[pos])){
                 pos++;
             }
         }
