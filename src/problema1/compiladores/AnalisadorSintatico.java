@@ -49,9 +49,9 @@ public class AnalisadorSintatico {
            AnaliseStart();
        }else if((atual.getLexema()).toString()=="var"){
            AnaliseVariavel();
-       }else if((atual.getLexema()).toString()=="struct"){
+       }else if((atual.getLexema()).toString()=="structs"){
            AnaliseStruct();
-       }else if((atual.getLexema()).toString()=="typedef"){
+       }else if((atual.getLexema()).toString()=="typedefs"){
            AnaliseTypedef();
        }
        return null;
@@ -136,6 +136,10 @@ public class AnalisadorSintatico {
                     
                     while(atual.getTipo()!="DELIMITADOR" && atual.getLexema().toString()!= "}"){
                        andaUm();
+                       if(atual.getLexema().toString() == "var" )
+                       AnaliseVariavel();
+                       comandos();
+                       
                     }
             }
          }
@@ -277,19 +281,22 @@ public class AnalisadorSintatico {
                  andaUm();
                  if(atual.getTipo()=="IDENTIFICADOR"){
                      andaUm();
-                     if(atual.getLexema().toString()==";"){
+                     if(atual.getTipo()=="IDENTIFICADOR"){
                          andaUm();
-                         typedef();
-                         return;
-                     }
-                 }
-             }
-         }
+                        if(atual.getLexema().toString()==";"){
+                            andaUm();
+                            return;
+                        }
+                    }
+                }
+            }
+        }
     }
     
     private void Incremments(){
         if(atual.getTipo()=="IDENTIFICADOR"){
             andaUm();
+            variavel();
             incremment();
             andaUm();
             if(atual.getLexema().toString()==";"){
@@ -355,6 +362,167 @@ public class AnalisadorSintatico {
          }
     }
 
+    private void comandos() {
+         //To change body of generated methods, choose Tools | Templates.
+         if((atual.getLexema()).toString()=="print"){
+           andaUm();
+           AnalisePrint();
+           return;
+       } else if((atual.getLexema()).toString()=="read"){
+           andaUm();
+           AnaliseRead();
+           return;
+       }else if((atual.getLexema()).toString()=="while"){
+           andaUm();
+           AnaliseWhile();
+           return;
+       }else if((atual.getLexema()).toString()=="if"){
+           andaUm();
+           AnaliseIf();
+           return;
+       }else if(proximo.getLexema().toString()=="++"||proximo.getLexema().toString()=="--"){
+           Incremments();
+           return;
+       }else if(atual.getTipo()=="IDENTIFICADOR" || atual.getLexema().toString()=="global" 
+               ||atual.getLexema().toString()=="local"){
+           AssignmentVariable();
+           return;
+       }
+       
+    }
+
+    private void AnalisePrint() {
+         if(atual.getLexema().toString() =="("){
+             while(atual.getLexema().toString()!=")"){
+                 andaUm();
+                 if(atual.getTipo()=="cadeiaDeCaracteres" || atual.getTipo()
+                        == "numeros" ){
+                     andaUm();
+                 }
+                 else{
+                     variavel();
+                 }
+                if(atual.getLexema().toString() ==","){
+                    andaUm();
+                }
+             }
+             return;
+             
+         }
+    }
+
+    private void AnaliseRead() {
+       if(atual.getLexema().toString() =="("){
+             while(atual.getLexema().toString()!=")"){
+                 andaUm();
+                 if(atual.getTipo()=="cadeiaDeCaracteres" || atual.getTipo()
+                        == "numeros" ){
+                     andaUm();
+                 }
+                 else{
+                     variavel();
+                 }
+                if(atual.getLexema().toString() ==","){
+                    andaUm();
+                }
+             }
+             return;
+         }
+    }
+
+    private void AnaliseWhile() {
+         if(atual.getLexema().toString() =="("){
+             while(atual.getLexema().toString()!=")"){
+                 andaUm();
+                 Condicao();
+             }
+           return;
+        }
+    }
+
+    private void AnaliseIf() {
+        if(atual.getLexema().toString() =="("){
+            while(atual.getLexema().toString()!=")"){
+                andaUm();
+                Condicao();
+             }
+            if(atual.getLexema().toString() =="then"){
+                andaUm();
+                    if(atual.getLexema().toString() =="{"){
+                        while(atual.getLexema().toString()!="}"){
+                          andaUm();
+                          comandos();
+                      }
+                    }
+                }
+            if(atual.getLexema().toString() =="else"){
+               andaUm();
+               comandos();
+           }
+        }
+        
+    }
+
+    private void variavel() {
+         if(atual.getTipo()=="IDENTIFICADOR"){
+            andaUm();
+            if(atual.getLexema().toString()=="."){
+                andaUm();
+               if(atual.getTipo()=="IDENTIFICADOR") {
+                   return;
+               }
+            }else if(atual.getLexema().toString()=="["){
+                andaUm();
+                if(atual.getTipo()=="IDENTIFICADOR"|| atual.getTipo()=="Numeros"){
+                    andaUm();
+                    if(atual.getLexema().toString()=="]"){
+                        andaUm();
+                        if(atual.getLexema().toString()!="["){
+                            return;
+                        }else{
+                            andaUm();
+                            if(atual.getTipo()=="IDENTIFICADOR"|| atual.getTipo()=="Numeros"){
+                                andaUm();
+                                if(atual.getLexema().toString()=="]"){
+                                    andaUm();
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }else if(atual.getLexema().toString()=="local" ||atual.getLexema().toString()=="global"){
+                andaUm();
+                if(atual.getLexema().toString()=="."){
+                    andaUm();
+                    if(atual.getTipo()=="IDENTIFICADOR") {
+                        return;
+                    }
+            }
+        }
+    }
+
+    private void Condicao() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private void AssignmentVariable() {
+        variavel();
+        if(atual.getLexema().toString()=="="){
+            andaUm();
+            if(atual.getTipo()=="IDENTIFICADOR" || atual.getLexema().toString()=="global" 
+                ||atual.getLexema().toString()=="local"){
+                variavel();
+                return;
+            }else if(atual.getTipo() == "numeros"||atual.getTipo() == "cadeia de caracteres"||atual.getTipo() == "booleano"){
+                return;
+            }
+        
+        }
+    }
+
    
 
-}
+} 
+
