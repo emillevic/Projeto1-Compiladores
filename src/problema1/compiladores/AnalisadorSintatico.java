@@ -53,9 +53,9 @@ public class AnalisadorSintatico {
            AnaliseStruct();
        }else if((atual.getLexema()).toString()=="typedefs"){
            AnaliseTypedef();
-       }else if((atual.getLexema()).toString()=="typedefs"){
+       }else if((atual.getLexema()).toString()=="functions"){
            AnaliseFunctions();
-       }else if((atual.getLexema()).toString()=="typedefs"){
+       }else if((atual.getLexema()).toString()=="procedures"){
            AnaliseProcedures();
        }
        return null;
@@ -156,6 +156,12 @@ public class AnalisadorSintatico {
         anterior=atual;
         atual=proximo;
         proximo=codigoTratado.get(indice+1);
+    }
+    private void voltaUm(){
+        indice--;
+        proximo=atual;
+        atual=anterior;
+        anterior=codigoTratado.get(indice-1);
     }
 
     private void AnaliseVariavel() {
@@ -370,10 +376,38 @@ public class AnalisadorSintatico {
             andaUm();
         {
             while(atual.getTipo()!="DELIMITADOR" && atual.getLexema().toString()!= "}"){
-                AnaliseVariavel();
-                andaUm();
-                comandos();
-                return;
+                if(atual.getLexema().toString()=="int"||atual.getLexema().toString()=="real"||
+                        atual.getLexema().toString()=="boolean"||atual.getLexema().toString()=="string"){
+                    andaUm();
+                    if(atual.getTipo()== "IDENTIFICADOR"){
+                        andaUm();
+                        if(atual.getLexema().toString()=="("){
+                            while(atual.getLexema().toString()!=")"){
+                               andaUm();
+                               DeclaraParam();
+                            }
+                            AnaliseVariavel();
+                            andaUm();
+                            comandos();
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    private void DeclaraParam(){
+        if(atual.getLexema().toString()=="int"||atual.getLexema().toString()=="real"||
+                        atual.getLexema().toString()=="boolean"||atual.getLexema().toString()=="string"){
+            andaUm();
+            if(atual.getTipo()=="IDENTIFICADOR"){
+                if(proximo.getLexema().toString()==","){
+                    andaUm();
+                    DeclaraParam();
+                }else{
+                    return;
+                }
             }
         }
     }
@@ -417,8 +451,10 @@ public class AnalisadorSintatico {
         if(atual.getLexema().toString()=="-"){
         andaUm();
         ValorNumerico();
+        return;
         }else{
             ValorNumerico();
+            return;
         }
         
     }
@@ -426,8 +462,16 @@ public class AnalisadorSintatico {
     private void ValorNumerico(){
     if(atual.getTipo()=="numeros"){
         return;
+    }else if(atual.getLexema().toString()=="("){
+        andaUm();
+        ExpressaoAritimetica();
+        if(atual.getLexema().toString()==")"){
+            andaUm();
+            return;
+        }
     }else{
         variavel();
+        return;
     }
     }
 
@@ -454,9 +498,18 @@ public class AnalisadorSintatico {
            return;
        }else if(atual.getTipo()=="IDENTIFICADOR" || atual.getLexema().toString()=="global" 
                ||atual.getLexema().toString()=="local"){
+           andaUm(); andaUm();
+           if(proximo.getLexema().toString()=="="){
+           voltaUm(); voltaUm();
            AssignmentVariable();
            return;
+           }else if(proximo.getTipo()=="operador aritimético"){
+           voltaUm(); voltaUm();
+           ExpressaoAritimetica();
+           return;  
+           }
        }
+     return;
        
     }
 
