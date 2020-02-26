@@ -53,6 +53,10 @@ public class AnalisadorSintatico {
            AnaliseStruct();
        }else if((atual.getLexema()).toString()=="typedefs"){
            AnaliseTypedef();
+       }else if((atual.getLexema()).toString()=="functions"){
+           AnaliseFunctions();
+       }else if((atual.getLexema()).toString()=="procedures"){
+           AnaliseProcedures();
        }
        return null;
        
@@ -152,6 +156,12 @@ public class AnalisadorSintatico {
         anterior=atual;
         atual=proximo;
         proximo=codigoTratado.get(indice+1);
+    }
+    private void voltaUm(){
+        indice--;
+        proximo=atual;
+        atual=anterior;
+        anterior=codigoTratado.get(indice-1);
     }
 
     private void AnaliseVariavel() {
@@ -361,7 +371,110 @@ public class AnalisadorSintatico {
              }
          }
     }
+    private void AnaliseFunctions() {
+        if(proximo.getTipo()=="DELIMITADOR" && proximo.getLexema().toString() == "{")
+            andaUm();
+        {
+            while(atual.getTipo()!="DELIMITADOR" && atual.getLexema().toString()!= "}"){
+                if(atual.getLexema().toString()=="int"||atual.getLexema().toString()=="real"||
+                        atual.getLexema().toString()=="boolean"||atual.getLexema().toString()=="string"){
+                    andaUm();
+                    if(atual.getTipo()== "IDENTIFICADOR"){
+                        andaUm();
+                        if(atual.getLexema().toString()=="("){
+                            while(atual.getLexema().toString()!=")"){
+                               andaUm();
+                               DeclaraParam();
+                            }
+                            AnaliseVariavel();
+                            andaUm();
+                            comandos();
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+    }
     
+    private void DeclaraParam(){
+        if(atual.getLexema().toString()=="int"||atual.getLexema().toString()=="real"||
+                        atual.getLexema().toString()=="boolean"||atual.getLexema().toString()=="string"){
+            andaUm();
+            if(atual.getTipo()=="IDENTIFICADOR"){
+                if(proximo.getLexema().toString()==","){
+                    andaUm();
+                    DeclaraParam();
+                }else{
+                    return;
+                }
+            }
+        }
+    }
+    
+    private void AnaliseProcedures() {
+        if(proximo.getTipo()=="DELIMITADOR" && proximo.getLexema().toString() == "{")
+            andaUm();
+        {
+            while(atual.getTipo()!="DELIMITADOR" && atual.getLexema().toString()!= "}"){
+                AnaliseVariavel();
+                andaUm();
+                comandos();
+                return;
+            }
+        }
+    }
+    
+    private void ExpressaoAritimetica(){
+        if(proximo.getLexema().toString()=="+"||proximo.getLexema().toString()=="-"){
+          ExpressaoAritimetica();
+          andaUm(); andaUm();
+          MultExp();
+        }else {
+            MultExp();
+            return;
+        }
+    }
+    private void MultExp(){
+       if(proximo.getLexema().toString()=="*"|| proximo.getLexema().toString()=="/"){
+           MultExp();
+           andaUm(); andaUm();
+           ValorNeg();
+       }
+       else{
+           ValorNeg();
+           return;
+       }
+        
+    }
+    private void ValorNeg(){
+        if(atual.getLexema().toString()=="-"){
+        andaUm();
+        ValorNumerico();
+        return;
+        }else{
+            ValorNumerico();
+            return;
+        }
+        
+    }
+    
+    private void ValorNumerico(){
+    if(atual.getTipo()=="numeros"){
+        return;
+    }else if(atual.getLexema().toString()=="("){
+        andaUm();
+        ExpressaoAritimetica();
+        if(atual.getLexema().toString()==")"){
+            andaUm();
+            return;
+        }
+    }else{
+        variavel();
+        return;
+    }
+    }
+
     private void comandos() {
          //To change body of generated methods, choose Tools | Templates.
          if((atual.getLexema()).toString()=="print"){
@@ -385,9 +498,18 @@ public class AnalisadorSintatico {
            return;
        }else if(atual.getTipo()=="IDENTIFICADOR" || atual.getLexema().toString()=="global" 
                ||atual.getLexema().toString()=="local"){
+           andaUm(); andaUm();
+           if(proximo.getLexema().toString()=="="){
+           voltaUm(); voltaUm();
            AssignmentVariable();
            return;
+           }else if(proximo.getTipo()=="operador aritimético"){
+           voltaUm(); voltaUm();
+           ExpressaoAritimetica();
+           return;  
+           }
        }
+     return;
        
     }
 
@@ -504,7 +626,15 @@ public class AnalisadorSintatico {
     }
 
     private void Condicao() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if(proximo.getTipo()=="Operador relacional"){
+            expressaoRel();
+        }else if(atual.getTipo()=="boleano"){
+            andaUm();
+            return;
+        }else{ 
+             expressaoLogica();   
+            
+        }
     }
 
     private void AssignmentVariable() {
@@ -521,6 +651,102 @@ public class AnalisadorSintatico {
         
         }
     }
+
+    
+    private void expressaoLogica() {
+        if(atual.getLexema().toString()=="!"||atual.getLexema().toString()=="("){
+            andaUm();
+            auxLogica();
+         if(atual.getTipo()=="operador Logico"){
+             andaUm();
+             expressaoLogica();
+         }else{
+             return;
+         }
+        }
+    }
+    private void auxLogica() {
+        if(atual.getLexema().toString()=="!"){
+            andaUm();
+            if(atual.getLexema().toString()=="("){
+                while(atual.getLexema().toString()!=")"){
+                    andaUm();
+                    auxLogica2();
+                }
+            }else{
+                    auxLogica2();
+                    }
+        }else if(atual.getLexema().toString()=="("){
+             while(atual.getLexema().toString()!=")"){
+                    andaUm();
+                    auxLogica2();
+                }
+        }else{
+            auxLogica2();
+        }
+    }
+    private void auxLogica2() {
+        auxLogica3();
+        if(atual.getTipo() == "operador logico"){
+            andaUm();
+        }
+        auxLogica3();
+    }
+    private void auxLogica3() {
+        if(atual.getTipo() == "IDENTIFICADOR"){
+            variavel();
+            return;
+        }
+        else if(atual.getTipo() == "boleano"){
+            andaUm();
+            return;
+        }else{
+            auxOpRel();
+            return;
+        }   
+    }
+    private void auxOpRel() {
+        if(atual.getLexema().toString()=="!"){
+            andaUm();
+            expressaoRel();
+        }else{
+            expressaoRel();
+        }
+    }
+
+    private void expressaoRel() {
+        if(atual.getTipo() == "cadeiaDeCaracteres" || atual.getTipo()
+                        == "numeros" || atual.getTipo() == "boolean"){
+                andaUm();
+           }
+            else{
+                variavel();
+                andaUm();
+           }
+            if(atual.getTipo()=="Operador relacional"){
+                andaUm();
+                if(atual.getTipo() == "cadeiaDeCaracteres" || atual.getTipo()
+                        == "numeros" || atual.getTipo() == "boolean"){
+                    andaUm();
+                }
+                else{
+                    variavel();
+                    andaUm();
+                }
+            }
+    }
+
+    
+
+   
+
+    
+
+    
+
+    
+
+    
 
    
 
