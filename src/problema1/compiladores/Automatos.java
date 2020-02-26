@@ -78,7 +78,6 @@ public class Automatos {
     }
     
     public int ignorarEspaco(int pos){
-        System.out.println("Entrei em ignorar espaco");
         if(pos == linha.length && estruturaLexica.verificaEspaco(linha[pos-1])){
             posicao = pos;
             return pos;
@@ -92,8 +91,6 @@ public class Automatos {
     
     public String controle(){
         while(true){
-            System.out.println("controle - " + posicao + "linha - " + numLinha);
-            System.out.println(tokens.toString());
             if(posicao < linha.length && numLinha < codigo.size()){
                 if(linha[posicao] == '/'){
                     comentarios();
