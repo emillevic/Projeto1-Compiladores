@@ -43,19 +43,30 @@ public class AnalisadorSintatico {
    public ArrayList<String> AnalisePrograma (){
        atual= codigoTratado.get(indice);
        proximo= codigoTratado.get(indice+1);
-       if((atual.getLexema()).toString()=="const"){
+       System.out.println("analise Programa");
+       System.out.println( "lexema atual - " + atual.getLexemaString());
+       if("const".equals(atual.getLexemaString())){
+           System.out.println("const");
            AnaliseConst();
-       } else if((atual.getLexema()).toString()=="START"){
+       } else if("start".equals(atual.getLexemaString())){
+           System.out.println("start");
            AnaliseStart();
-       }else if((atual.getLexema()).toString()=="var"){
+       }else if("var".equals(atual.getLexemaString())){
+           System.out.println("var");
            AnaliseVariavel();
-       }else if((atual.getLexema()).toString()=="structs"){
+       }else if("structs".equals(atual.getLexemaString())){
+           System.out.println("structs");
            AnaliseStruct();
-       }else if((atual.getLexema()).toString()=="typedefs"){
+       }else if("typedefs".equals(atual.getLexemaString())){
+            System.out.println("typedefs");
            AnaliseTypedef();
-       }else if((atual.getLexema()).toString()=="functions"){
+       }else if("functions".equals(atual.getLexemaString())){
+                       System.out.println("functions");
+
            AnaliseFunctions();
-       }else if((atual.getLexema()).toString()=="procedures"){
+       }else if("procedures".equals(atual.getLexemaString())){
+                       System.out.println("procedures");
+
            AnaliseProcedures();
        }
        return null;
@@ -104,9 +115,9 @@ public class AnalisadorSintatico {
     }
 
     private void AnaliseConst() {
-        if(proximo.getTipo()=="DELIMITADOR" && proximo.getLexema().toString() == "{"){
+        if("DELIMITADOR".equals(proximo.getTipo()) && "{".equals(proximo.getLexemaString())){
             andaUm();
-            while(atual.getTipo()!="DELIMITADOR" && atual.getLexema().toString()!= "}"){
+            while(!"DELIMITADOR".equals(atual.getTipo()) && !"}".equals(atual.getLexemaString())){
                 andaUm();
                 ConstantStructure();
             }
@@ -115,15 +126,15 @@ public class AnalisadorSintatico {
     }
     
     private void ConstantStructure(){
-        if(Tipo.contains(atual.getLexema().toString())){
+        if(Tipo.contains(atual.getLexemaString())){
             andaUm();
-            if(atual.getTipo() == "IDENTIFICADOR" && proximo.getLexema().toString() == "="){
+            if("IDENTIFICADOR".equals(atual.getTipo()) && "=".equals(proximo.getLexemaString())){
                 andaUm();
                 
-                if(proximo.getTipo() == "cadeiaDeCaracteres" || proximo.getTipo()
-                        == "numeros" || proximo.getTipo() == "boolean"){
+                if("cadeiaDeCaracteres".equals(proximo.getTipo()) || "numeros".equals(proximo.getTipo())
+                        || "boolean".equals(proximo.getTipo())){
                    andaUm();
-                    if(proximo.getLexema().toString() == ";"){
+                    if(";".equals(proximo.getLexemaString())){
                         
                     }
                 }
@@ -132,25 +143,24 @@ public class AnalisadorSintatico {
     }
 
     private void AnaliseStart() {
-         if(proximo.getTipo()=="DELIMITADOR" && proximo.getLexema().toString() == "("){
+         if("DELIMITADOR".equals(proximo.getTipo()) && "(".equals(proximo.getLexemaString())){
            andaUm();
-            if(proximo.getTipo() == "DELIMITADOR" && proximo.getLexema().toString() == ")"){
+            if("DELIMITADOR".equals(proximo.getTipo()) && ")".equals(proximo.getLexemaString())){
                 andaUm();
-                if(proximo.getTipo()=="DELIMITADOR" && proximo.getLexema().toString() == "{"){
+                if("DELIMITADOR".equals(proximo.getTipo()) && "{".equals(proximo.getLexemaString())){
                     
-                    while(atual.getTipo()!="DELIMITADOR" && atual.getLexema().toString()!= "}"){
+                    while(!"DELIMITADOR".equals(atual.getTipo()) && !"}".equals(atual.getLexemaString())){
                        andaUm();
-                       if(atual.getLexema().toString() == "var" )
-                       AnaliseVariavel();
-                       comandos();
-                       
+                       if("var".equals(atual.getLexemaString()) ){
+                            AnaliseVariavel();
+                            comandos();
+                       }
                     }
+                }
             }
-         }
-           
-                
         }
     }
+    
     private void andaUm(){
         indice++;
         anterior=atual;
@@ -165,19 +175,17 @@ public class AnalisadorSintatico {
     }
 
     private void AnaliseVariavel() {
-         //To change body of generated methods, choose Tools | Templates.
-           if(proximo.getTipo()=="DELIMITADOR" && proximo.getLexema().toString() == "{")
-        {
-            while(atual.getTipo()!="DELIMITADOR" && atual.getLexema().toString()!= "}"){
-                andaUm();
-                VarV();
-            }
-                
+    //To change body of generated methods, choose Tools | Templates.
+      if("DELIMITADOR".equals(proximo.getTipo()) && "{".equals(proximo.getLexemaString())){
+           while(!"DELIMITADOR".equals(atual.getTipo()) && !"}".equals(atual.getLexemaString())){
+               andaUm();
+               VarV();
+           }
         }
     }
     private void VarV() {
         //To change body of generated methods, choose Tools | Templates.
-        if(Tipo.contains(atual.getLexema().toString())){
+        if(Tipo.contains(atual.getLexemaString())){
             andaUm();
             complementV();
             VarV();
@@ -186,16 +194,16 @@ public class AnalisadorSintatico {
 
     private void complementV() {
         //To change body of generated methods, choose Tools | Templates.
-        if(atual.getTipo()=="IDENTIFICADOR" ){
-            if(proximo.getLexema().toString()==","){
+        if("IDENTIFICADOR".equals(atual.getTipo()) ){
+            if(",".equals(proximo.getLexemaString())){
                 andaUm();
                 varEqType();
-            }else if(proximo.getLexema().toString()=="="){
+            }else if("=".equals(proximo.getLexemaString())){
                 andaUm();
-                if(proximo.getTipo() == "cadeiaDeCaracteres" || proximo.getTipo()
-                       == "numeros" || proximo.getTipo() == "boolean"){
+                if("cadeiaDeCaracteres".equals(proximo.getTipo()) || "numeros".equals(proximo.getTipo())
+                        || "boolean".equals(proximo.getTipo())){
                   andaUm();
-                   if(proximo.getLexema().toString() == ";"){
+                   if(";".equals(proximo.getLexemaString())){
 
                    }
                }
@@ -207,7 +215,7 @@ public class AnalisadorSintatico {
     private void varEqType() {
         //To change body of generated methods, choose Tools | Templates.
         complementV();
-        if(proximo.getLexema().toString()==";"){
+        if(";".equals(proximo.getLexemaString())){
             
         }
         
@@ -215,21 +223,21 @@ public class AnalisadorSintatico {
 
     private void AnaliseStruct() {
          //To change body of generated methods, choose Tools | Templates.
-           if(proximo.getTipo()=="DELIMITADOR" && proximo.getLexema().toString() == "{")
+           if("DELIMITADOR".equals(proximo.getTipo()) && "{".equals(proximo.getLexemaString()))
         {
             andaUm();
-            while(atual.getTipo()!="DELIMITADOR" && atual.getLexema().toString()!= "}"){
+            while(!"DELIMITADOR".equals(atual.getTipo()) && !"}".equals(atual.getLexemaString())){
                 andaUm();
-                 if((atual.getLexema()).toString()=="struct"){
+                 if("struct".equals(atual.getLexemaString())){
                      andaUm();
-                     if(atual.getTipo() == "IDENTIFICADOR" ){
+                     if("IDENTIFICADOR".equals(atual.getTipo()) ){
                          andaUm();
                          Extends();
-                         if(atual.getLexema().toString()=="{"){
+                         if("{".equals(atual.getLexemaString())){
                              attributes();
-                             if(atual.getLexema().toString()=="}"){
+                             if("}".equals(atual.getLexemaString())){
                                  andaUm();
-                                 if(atual.getLexema().toString()==";"){
+                                 if(";".equals(atual.getLexemaString())){
                                      return;
                                  }
                              }
@@ -243,9 +251,9 @@ public class AnalisadorSintatico {
         }
     }
      private void Extends() {
-         if((atual.getLexema()).toString()=="extends"){
+         if("extends".equals(atual.getLexemaString())){
              andaUm();
-             if(atual.getTipo()=="IDENTIFICADOR"){
+             if("IDENTIFICADOR".equals(atual.getTipo())){
                  andaUm();
                  return;
              }
@@ -255,11 +263,11 @@ public class AnalisadorSintatico {
     }
 
     private void attributes() {
-        if(Tipo.contains(atual.getLexema().toString())){
+        if(Tipo.contains(atual.getLexemaString())){
             andaUm();
-            if(atual.getTipo()=="IDENTIFICADOR"){
+            if("IDENTIFICADOR".equals(atual.getTipo())){
                 andaUm();
-                if(atual.getLexema().toString()==";"){
+                if(";".equals(atual.getLexemaString())){
                     andaUm();
                     attributes();
                 }
@@ -272,10 +280,10 @@ public class AnalisadorSintatico {
 
     private void AnaliseTypedef() {
          //To change body of generated methods, choose Tools | Templates.
-           if(proximo.getTipo()=="DELIMITADOR" && proximo.getLexema().toString() == "{")
+           if("DELIMITADOR".equals(proximo.getTipo()) && "{".equals(proximo.getLexemaString()))
                andaUm();
         {
-            while(atual.getTipo()!="DELIMITADOR" && atual.getLexema().toString()!= "}"){
+            while(!"DELIMITADOR".equals(atual.getTipo()) && !"}".equals(atual.getLexemaString())){
                 typedef();
                 
             }
@@ -285,15 +293,15 @@ public class AnalisadorSintatico {
 
     private void typedef() {
          //To change body of generated methods, choose Tools | Templates.
-         if((atual.getLexema()).toString()=="typedef"){
+         if("typedef".equals(atual.getLexemaString())){
              andaUm();
-             if((atual.getLexema()).toString()=="struct"){
+             if("struct".equals(atual.getLexemaString())){
                  andaUm();
-                 if(atual.getTipo()=="IDENTIFICADOR"){
+                 if("IDENTIFICADOR".equals(atual.getTipo())){
                      andaUm();
-                     if(atual.getTipo()=="IDENTIFICADOR"){
+                     if("IDENTIFICADOR".equals(atual.getTipo())){
                          andaUm();
-                        if(atual.getLexema().toString()==";"){
+                        if(";".equals(atual.getLexemaString())){
                             andaUm();
                             return;
                         }
@@ -304,12 +312,12 @@ public class AnalisadorSintatico {
     }
     
     private void Incremments(){
-        if(atual.getTipo()=="IDENTIFICADOR"){
+        if("IDENTIFICADOR".equals(atual.getTipo())){
             andaUm();
             variavel();
             incremment();
             andaUm();
-            if(atual.getLexema().toString()==";"){
+            if(";".equals(atual.getLexemaString())){
                 return;
             }
         }
@@ -317,20 +325,20 @@ public class AnalisadorSintatico {
 
     private void incremment() {
         //To change body of generated methods, choose Tools | Templates.
-        if(atual.getLexema().toString()=="++"||atual.getLexema().toString()=="--"){
+        if("++".equals(atual.getLexemaString())||"--".equals(atual.getLexemaString())){
             return;
         }
     }
     private void chFunProc(){
-        if(atual.getTipo()=="IDENTIFICADOR"){
+        if("IDENTIFICADOR".equals(atual.getTipo())){
             andaUm();
-            if(atual.getLexema().toString()=="("){
+            if("(".equals(atual.getLexemaString())){
                 andaUm();
                 chParam();
                 andaUm();
-                if(atual.getLexema().toString()==")"){
+                if(")".equals(atual.getLexemaString())){
                     andaUm();
-                    if(atual.getLexema().toString() == ";"){
+                    if(";".equals(atual.getLexemaString())){
                         return;
                     }
                 }
@@ -342,13 +350,13 @@ public class AnalisadorSintatico {
 
     private void chParam() {
         //To change body of generated methods, choose Tools | Templates.
-        if(atual.getTipo()=="IDENTIFICADOR"){
+        if("IDENTIFICADOR".equals(atual.getTipo())){
             andaUm();
             chParam2();
             return;
         }
-        else if(atual.getTipo() == "cadeiaDeCaracteres" || atual.getTipo()
-                        == "numeros" || atual.getTipo() == "boolean"){
+        else if("cadeiaDeCaracteres".equals(atual.getTipo()) || "numeros".equals(atual.getTipo())
+                || "boolean".equals(atual.getTipo())){
             andaUm();
             chParam2();
             return;
@@ -357,14 +365,14 @@ public class AnalisadorSintatico {
 
     private void chParam2() {
          //To change body of generated methods, choose Tools | Templates.
-         if(atual.getLexema().toString() == ","){
+         if(",".equals(atual.getLexemaString())){
              andaUm();
-             if(atual.getTipo()=="IDENTIFICADOR"){
+             if("IDENTIFICADOR".equals(atual.getTipo())){
                  andaUm();
                  chParam2();
              }
-             else if(atual.getTipo() == "cadeiaDeCaracteres" || atual.getTipo()
-                        == "numeros" || atual.getTipo() == "boolean"){
+             else if("cadeiaDeCaracteres".equals(atual.getTipo()) || "numeros".equals(atual.getTipo())
+                     || "boolean".equals(atual.getTipo())){
                  
                  andaUm();
                  chParam2();
@@ -372,17 +380,16 @@ public class AnalisadorSintatico {
          }
     }
     private void AnaliseFunctions() {
-        if(proximo.getTipo()=="DELIMITADOR" && proximo.getLexema().toString() == "{")
+        if("DELIMITADOR".equals(proximo.getTipo()) && "{".equals(proximo.getLexemaString())){
             andaUm();
-        {
-            while(atual.getTipo()!="DELIMITADOR" && atual.getLexema().toString()!= "}"){
-                if(atual.getLexema().toString()=="int"||atual.getLexema().toString()=="real"||
-                        atual.getLexema().toString()=="boolean"||atual.getLexema().toString()=="string"){
+            while(!"DELIMITADOR".equals(atual.getTipo()) && !"}".equals(atual.getLexemaString())){
+                if("int".equals(atual.getLexemaString())||"real".equals(atual.getLexemaString())||
+                        "boolean".equals(atual.getLexemaString())||"string".equals(atual.getLexemaString())){
                     andaUm();
-                    if(atual.getTipo()== "IDENTIFICADOR"){
+                    if("IDENTIFICADOR".equals(atual.getTipo())){
                         andaUm();
-                        if(atual.getLexema().toString()=="("){
-                            while(atual.getLexema().toString()!=")"){
+                        if("(".equals(atual.getLexemaString())){
+                            while(!")".equals(atual.getLexemaString())){
                                andaUm();
                                DeclaraParam();
                             }
@@ -398,11 +405,11 @@ public class AnalisadorSintatico {
     }
     
     private void DeclaraParam(){
-        if(atual.getLexema().toString()=="int"||atual.getLexema().toString()=="real"||
-                        atual.getLexema().toString()=="boolean"||atual.getLexema().toString()=="string"){
+        if("int".equals(atual.getLexemaString())||"real".equals(atual.getLexemaString())||
+                "boolean".equals(atual.getLexemaString())||"string".equals(atual.getLexemaString())){
             andaUm();
-            if(atual.getTipo()=="IDENTIFICADOR"){
-                if(proximo.getLexema().toString()==","){
+            if("IDENTIFICADOR".equals(atual.getTipo())){
+                if(",".equals(proximo.getLexemaString())){
                     andaUm();
                     DeclaraParam();
                 }else{
@@ -413,10 +420,10 @@ public class AnalisadorSintatico {
     }
     
     private void AnaliseProcedures() {
-        if(proximo.getTipo()=="DELIMITADOR" && proximo.getLexema().toString() == "{")
+        if("DELIMITADOR".equals(proximo.getTipo()) && "{".equals(proximo.getLexemaString()))
             andaUm();
         {
-            while(atual.getTipo()!="DELIMITADOR" && atual.getLexema().toString()!= "}"){
+            while(atual.getTipo()!="DELIMITADOR" && atual.getLexemaString()!= "}"){
                 AnaliseVariavel();
                 andaUm();
                 comandos();
@@ -426,7 +433,7 @@ public class AnalisadorSintatico {
     }
     
     private void ExpressaoAritimetica(){
-        if(proximo.getLexema().toString()=="+"||proximo.getLexema().toString()=="-"){
+        if("+".equals(proximo.getLexemaString())||"-".equals(proximo.getLexemaString())){
           ExpressaoAritimetica();
           andaUm(); andaUm();
           MultExp();
@@ -436,7 +443,7 @@ public class AnalisadorSintatico {
         }
     }
     private void MultExp(){
-       if(proximo.getLexema().toString()=="*"|| proximo.getLexema().toString()=="/"){
+       if("*".equals(proximo.getLexemaString())|| "/".equals(proximo.getLexemaString())){
            MultExp();
            andaUm(); andaUm();
            ValorNeg();
@@ -448,7 +455,7 @@ public class AnalisadorSintatico {
         
     }
     private void ValorNeg(){
-        if(atual.getLexema().toString()=="-"){
+        if("-".equals(atual.getLexemaString())){
         andaUm();
         ValorNumerico();
         return;
@@ -460,12 +467,12 @@ public class AnalisadorSintatico {
     }
     
     private void ValorNumerico(){
-    if(atual.getTipo()=="numeros"){
+    if("numeros".equals(atual.getTipo())){
         return;
-    }else if(atual.getLexema().toString()=="("){
+    }else if("(".equals(atual.getLexemaString())){
         andaUm();
         ExpressaoAritimetica();
-        if(atual.getLexema().toString()==")"){
+        if(")".equals(atual.getLexemaString())){
             andaUm();
             return;
         }
@@ -477,36 +484,36 @@ public class AnalisadorSintatico {
 
     private void comandos() {
          //To change body of generated methods, choose Tools | Templates.
-         if((atual.getLexema()).toString()=="print"){
+         if("print".equals(atual.getLexemaString())){
            andaUm();
            AnalisePrint();
            return;
-       } else if((atual.getLexema()).toString()=="read"){
+       } else if("read".equals(atual.getLexemaString())){
            andaUm();
            AnaliseRead();
            return;
-       }else if((atual.getLexema()).toString()=="while"){
+       }else if("while".equals(atual.getLexemaString())){
            andaUm();
            AnaliseWhile();
            return;
-       }else if((atual.getLexema()).toString()=="if"){
+       }else if("if".equals(atual.getLexemaString())){
            andaUm();
            AnaliseIf();
            return;
-       }else if(proximo.getLexema().toString()=="++"||proximo.getLexema().toString()=="--"){
+       }else if("++".equals(proximo.getLexemaString())||"--".equals(proximo.getLexemaString())){
            Incremments();
            return;
-       }else if(atual.getTipo()=="IDENTIFICADOR" || atual.getLexema().toString()=="global" 
-               ||atual.getLexema().toString()=="local"){
+       }else if("IDENTIFICADOR".equals(atual.getTipo()) || "global".equals(atual.getLexemaString()) 
+               ||"local".equals(atual.getLexemaString())){
            andaUm(); andaUm();
-           if(proximo.getLexema().toString()=="="){
-           voltaUm(); voltaUm();
-           AssignmentVariable();
-           return;
-           }else if(proximo.getTipo()=="operador aritimético"){
-           voltaUm(); voltaUm();
-           ExpressaoAritimetica();
-           return;  
+           if("=".equals(proximo.getLexemaString())){
+            voltaUm(); voltaUm();
+            AssignmentVariable();
+            return;
+           }else if("operador aritimético".equals(proximo.getTipo())){
+            voltaUm(); voltaUm();
+            ExpressaoAritimetica();
+            return;  
            }
        }
      return;
@@ -514,17 +521,16 @@ public class AnalisadorSintatico {
     }
 
     private void AnalisePrint() {
-         if(atual.getLexema().toString() =="("){
-             while(atual.getLexema().toString()!=")"){
+         if("(".equals(atual.getLexemaString())){
+             while(!")".equals(atual.getLexemaString())){
                  andaUm();
-                 if(atual.getTipo()=="cadeiaDeCaracteres" || atual.getTipo()
-                        == "numeros" ){
+                 if("cadeiaDeCaracteres".equals(atual.getTipo()) || "numeros".equals(atual.getTipo()) ){
                      andaUm();
                  }
                  else{
                      variavel();
                  }
-                if(atual.getLexema().toString() ==","){
+                if(",".equals(atual.getLexemaString())){
                     andaUm();
                 }
              }
@@ -534,17 +540,16 @@ public class AnalisadorSintatico {
     }
 
     private void AnaliseRead() {
-       if(atual.getLexema().toString() =="("){
-             while(atual.getLexema().toString()!=")"){
+       if("(".equals(atual.getLexemaString())){
+             while(!")".equals(atual.getLexemaString())){
                  andaUm();
-                 if(atual.getTipo()=="cadeiaDeCaracteres" || atual.getTipo()
-                        == "numeros" ){
+                 if("cadeiaDeCaracteres".equals(atual.getTipo()) || "numeros".equals(atual.getTipo()) ){
                      andaUm();
                  }
                  else{
                      variavel();
                  }
-                if(atual.getLexema().toString() ==","){
+                if(",".equals(atual.getLexemaString())){
                     andaUm();
                 }
              }
@@ -553,8 +558,8 @@ public class AnalisadorSintatico {
     }
 
     private void AnaliseWhile() {
-         if(atual.getLexema().toString() =="("){
-             while(atual.getLexema().toString()!=")"){
+         if("(".equals(atual.getLexemaString())){
+             while(!")".equals(atual.getLexemaString())){
                  andaUm();
                  Condicao();
              }
@@ -563,21 +568,21 @@ public class AnalisadorSintatico {
     }
 
     private void AnaliseIf() {
-        if(atual.getLexema().toString() =="("){
-            while(atual.getLexema().toString()!=")"){
+        if("(".equals(atual.getLexemaString())){
+            while(!")".equals(atual.getLexemaString())){
                 andaUm();
                 Condicao();
              }
-            if(atual.getLexema().toString() =="then"){
+            if("then".equals(atual.getLexemaString())){
                 andaUm();
-                    if(atual.getLexema().toString() =="{"){
-                        while(atual.getLexema().toString()!="}"){
+                    if("{".equals(atual.getLexemaString())){
+                        while(!"}".equals(atual.getLexemaString())){
                           andaUm();
                           comandos();
                       }
                     }
                 }
-            if(atual.getLexema().toString() =="else"){
+            if("else".equals(atual.getLexemaString())){
                andaUm();
                comandos();
            }
@@ -586,26 +591,26 @@ public class AnalisadorSintatico {
     }
 
     private void variavel() {
-         if(atual.getTipo()=="IDENTIFICADOR"){
+         if("IDENTIFICADOR".equals(atual.getTipo())){
             andaUm();
-            if(atual.getLexema().toString()=="."){
+            if(".".equals(atual.getLexemaString())){
                 andaUm();
-               if(atual.getTipo()=="IDENTIFICADOR") {
+               if("IDENTIFICADOR".equals(atual.getTipo())) {
                    return;
                }
-            }else if(atual.getLexema().toString()=="["){
+            }else if("[".equals(atual.getLexemaString())){
                 andaUm();
-                if(atual.getTipo()=="IDENTIFICADOR"|| atual.getTipo()=="Numeros"){
+                if("IDENTIFICADOR".equals(atual.getTipo())|| "Numeros".equals(atual.getTipo())){
                     andaUm();
-                    if(atual.getLexema().toString()=="]"){
+                    if("]".equals(atual.getLexemaString())){
                         andaUm();
-                        if(atual.getLexema().toString()!="["){
+                        if(!"[".equals(atual.getLexemaString())){
                             return;
                         }else{
                             andaUm();
-                            if(atual.getTipo()=="IDENTIFICADOR"|| atual.getTipo()=="Numeros"){
+                            if("IDENTIFICADOR".equals(atual.getTipo())|| "Numeros".equals(atual.getTipo())){
                                 andaUm();
-                                if(atual.getLexema().toString()=="]"){
+                                if("]".equals(atual.getLexemaString())){
                                     andaUm();
                                     return;
                                 }
@@ -614,11 +619,11 @@ public class AnalisadorSintatico {
                     }
                 }
             }
-        }else if(atual.getLexema().toString()=="local" ||atual.getLexema().toString()=="global"){
+        }else if("local".equals(atual.getLexemaString()) ||"global".equals(atual.getLexemaString())){
                 andaUm();
-                if(atual.getLexema().toString()=="."){
+                if(".".equals(atual.getLexemaString())){
                     andaUm();
-                    if(atual.getTipo()=="IDENTIFICADOR") {
+                    if("IDENTIFICADOR".equals(atual.getTipo())) {
                         return;
                     }
             }
@@ -626,9 +631,9 @@ public class AnalisadorSintatico {
     }
 
     private void Condicao() {
-        if(proximo.getTipo()=="Operador relacional"){
+        if("Operador relacional".equals(proximo.getTipo())){
             expressaoRel();
-        }else if(atual.getTipo()=="boleano"){
+        }else if("boleano".equals(atual.getTipo())){
             andaUm();
             return;
         }else{ 
@@ -639,13 +644,14 @@ public class AnalisadorSintatico {
 
     private void AssignmentVariable() {
         variavel();
-        if(atual.getLexema().toString()=="="){
+        if("=".equals(atual.getLexemaString())){
             andaUm();
-            if(atual.getTipo()=="IDENTIFICADOR" || atual.getLexema().toString()=="global" 
-                ||atual.getLexema().toString()=="local"){
+            if("IDENTIFICADOR".equals(atual.getTipo()) || "global".equals(atual.getLexemaString()) 
+                ||"local".equals(atual.getLexemaString())){
                 variavel();
                 return;
-            }else if(atual.getTipo() == "numeros"||atual.getTipo() == "cadeia de caracteres"||atual.getTipo() == "booleano"){
+            }else if("numeros".equals(atual.getTipo())||"cadeia de caracteres".equals(atual.getTipo())
+                    ||"booleano".equals(atual.getTipo())){
                 return;
             }
         
@@ -654,10 +660,10 @@ public class AnalisadorSintatico {
 
     
     private void expressaoLogica() {
-        if(atual.getLexema().toString()=="!"||atual.getLexema().toString()=="("){
+        if("!".equals(atual.getLexemaString())||"(".equals(atual.getLexemaString())){
             andaUm();
             auxLogica();
-         if(atual.getTipo()=="operador Logico"){
+         if("operador Logico".equals(atual.getTipo())){
              andaUm();
              expressaoLogica();
          }else{
@@ -666,18 +672,18 @@ public class AnalisadorSintatico {
         }
     }
     private void auxLogica() {
-        if(atual.getLexema().toString()=="!"){
+        if("!".equals(atual.getLexemaString())){
             andaUm();
-            if(atual.getLexema().toString()=="("){
-                while(atual.getLexema().toString()!=")"){
+            if("(".equals(atual.getLexemaString())){
+                while(!")".equals(atual.getLexemaString())){
                     andaUm();
                     auxLogica2();
                 }
             }else{
                     auxLogica2();
                     }
-        }else if(atual.getLexema().toString()=="("){
-             while(atual.getLexema().toString()!=")"){
+        }else if("(".equals(atual.getLexemaString())){
+             while(!")".equals(atual.getLexemaString())){
                     andaUm();
                     auxLogica2();
                 }
@@ -687,17 +693,17 @@ public class AnalisadorSintatico {
     }
     private void auxLogica2() {
         auxLogica3();
-        if(atual.getTipo() == "operador logico"){
+        if("operador logico".equals(atual.getTipo())){
             andaUm();
         }
         auxLogica3();
     }
     private void auxLogica3() {
-        if(atual.getTipo() == "IDENTIFICADOR"){
+        if("IDENTIFICADOR".equals(atual.getTipo())){
             variavel();
             return;
         }
-        else if(atual.getTipo() == "boleano"){
+        else if("boleano".equals(atual.getTipo())){
             andaUm();
             return;
         }else{
@@ -706,7 +712,7 @@ public class AnalisadorSintatico {
         }   
     }
     private void auxOpRel() {
-        if(atual.getLexema().toString()=="!"){
+        if("!".equals(atual.getLexemaString())){
             andaUm();
             expressaoRel();
         }else{
@@ -715,18 +721,18 @@ public class AnalisadorSintatico {
     }
 
     private void expressaoRel() {
-        if(atual.getTipo() == "cadeiaDeCaracteres" || atual.getTipo()
-                        == "numeros" || atual.getTipo() == "boolean"){
+        if("cadeiaDeCaracteres".equals(atual.getTipo()) || "numeros".equals(atual.getTipo())
+                || "boolean".equals(atual.getTipo())){
                 andaUm();
            }
             else{
                 variavel();
                 andaUm();
            }
-            if(atual.getTipo()=="Operador relacional"){
+            if("Operador relacional".equals(atual.getTipo())){
                 andaUm();
-                if(atual.getTipo() == "cadeiaDeCaracteres" || atual.getTipo()
-                        == "numeros" || atual.getTipo() == "boolean"){
+                if("cadeiaDeCaracteres".equals(atual.getTipo()) || "numeros".equals(atual.getTipo())
+                        || "boolean".equals(atual.getTipo())){
                     andaUm();
                 }
                 else{
@@ -735,20 +741,6 @@ public class AnalisadorSintatico {
                 }
             }
     }
-
-    
-
-   
-
-    
-
-    
-
-    
-
-    
-
-   
 
 } 
 

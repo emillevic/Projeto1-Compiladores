@@ -21,13 +21,17 @@ public class Tokens {
         this.tipo = tipo;
         this.linha = linha;
         this.lexema = lexema;
-        this.lexemaString = new String();
+        this.lexemaString = String.valueOf(lexema);
     }
     public String toString(){
         String linhaSaida;
         linhaSaida= "linha "+ linha+" - "+tipo+" - "+String.valueOf(lexema);
         return linhaSaida;
     
+    }
+    
+    public String getLexemaString(){
+        return lexemaString;
     }
 
     public String getTipo() {
