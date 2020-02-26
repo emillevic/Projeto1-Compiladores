@@ -17,8 +17,9 @@ public class AnalisadorSintatico {
    private Tokens anterior;
    private Tokens proximo;
    private int indice =0;
-   private ArrayList<String> Tipo;
-   
+   private ArrayList<String> Tipo = new ArrayList<String>();
+   private ArrayList<ErroSintatico> saida = new ArrayList<ErroSintatico>();
+
 //   private String BooleanType[] = {"true", "false"};;;
 //   private String Increment = {"++" | "--"};
 //   private String RelationalOp[] = {'!=' | '==' |'<' | '<=' | '>' |'>='};
@@ -37,39 +38,48 @@ public class AnalisadorSintatico {
 
    public AnalisadorSintatico(ArrayList<Tokens> codigoTratado){
        this.codigoTratado = codigoTratado;
+       Tipo.add("int");
+       Tipo.add("real");
+       Tipo.add("boolean");
+       Tipo.add("string");
        
    }
    
-   public ArrayList<String> AnalisePrograma (){
+   public ArrayList<ErroSintatico> AnalisePrograma (){
        atual= codigoTratado.get(indice);
        proximo= codigoTratado.get(indice+1);
        System.out.println("analise Programa");
        System.out.println( "lexema atual - " + atual.getLexemaString());
-       if("const".equals(atual.getLexemaString())){
-           System.out.println("const");
-           AnaliseConst();
-       } else if("start".equals(atual.getLexemaString())){
-           System.out.println("start");
-           AnaliseStart();
-       }else if("var".equals(atual.getLexemaString())){
-           System.out.println("var");
-           AnaliseVariavel();
-       }else if("structs".equals(atual.getLexemaString())){
-           System.out.println("structs");
-           AnaliseStruct();
-       }else if("typedefs".equals(atual.getLexemaString())){
-            System.out.println("typedefs");
-           AnaliseTypedef();
-       }else if("functions".equals(atual.getLexemaString())){
-                       System.out.println("functions");
-
-           AnaliseFunctions();
-       }else if("procedures".equals(atual.getLexemaString())){
-                       System.out.println("procedures");
-
-           AnaliseProcedures();
+       while(true){
+           System.out.println(atual);
+            if("const".equals(atual.getLexemaString())){
+                System.out.println("const---------------");
+                AnaliseConst();
+            } else if("start".equals(atual.getLexemaString())){
+                System.out.println("start----------------");
+                AnaliseStart();
+            }else if("var".equals(atual.getLexemaString())){
+                System.out.println("var------------------");
+                AnaliseVariavel();
+            }else if("structs".equals(atual.getLexemaString())){
+                System.out.println("structs-----------------");
+                AnaliseStruct();
+            }else if("typedefs".equals(atual.getLexemaString())){
+                 System.out.println("typedefs--------------------");
+                AnaliseTypedef();
+            }else if("functions".equals(atual.getLexemaString())){
+                System.out.println("functions---------------------");
+                AnaliseFunctions();
+            }else if("procedures".equals(atual.getLexemaString())){
+                System.out.println("procedures------------------");
+                AnaliseProcedures();
+            }
+            if(indice+2 < codigoTratado.size())
+                andaUm();
+            else
+                return saida;
        }
-       return null;
+       
        
    }
     /**
@@ -121,7 +131,9 @@ public class AnalisadorSintatico {
                 andaUm();
                 ConstantStructure();
             }
-                
+        } else{
+            ErroSintatico erro = new ErroSintatico("{ expected", atual.getLinha());
+            saida.add(erro);
         }
     }
     
@@ -136,8 +148,17 @@ public class AnalisadorSintatico {
                    andaUm();
                     if(";".equals(proximo.getLexemaString())){
                         
+                    } else{
+                        ErroSintatico erro = new ErroSintatico("; expected", atual.getLinha());
+                        saida.add(erro);
                     }
+                } else{
+                    ErroSintatico erro = new ErroSintatico("String, Number or Boolean expected", atual.getLinha());
+                    saida.add(erro);
                 }
+            } else{
+                ErroSintatico erro = new ErroSintatico("IDENTIFICADOR & '=' expected", atual.getLinha());
+                saida.add(erro);
             }
         }
     }
@@ -223,22 +244,31 @@ public class AnalisadorSintatico {
 
     private void AnaliseStruct() {
          //To change body of generated methods, choose Tools | Templates.
-           if("DELIMITADOR".equals(proximo.getTipo()) && "{".equals(proximo.getLexemaString()))
-        {
-            andaUm();
-            while(!"DELIMITADOR".equals(atual.getTipo()) && !"}".equals(atual.getLexemaString())){
+           if("DELIMITADOR".equals(proximo.getTipo()) && "{".equals(proximo.getLexemaString())){
+            andaUm();                System.out.println(atual);
+
+            while(!"}".equals(atual.getLexemaString())){
                 andaUm();
+                System.out.println(atual);
                  if("struct".equals(atual.getLexemaString())){
-                     andaUm();
+                     andaUm();                System.out.println(atual);
+
                      if("IDENTIFICADOR".equals(atual.getTipo()) ){
-                         andaUm();
-                         Extends();
+                         andaUm();                System.out.println(atual);
+
+                         Extends();                System.out.println(atual);
+
                          if("{".equals(atual.getLexemaString())){
-                             attributes();
+                             andaUm();                System.out.println(atual);
+
+                             attributes();                System.out.println(atual);
+
                              if("}".equals(atual.getLexemaString())){
-                                 andaUm();
+                                 andaUm();                System.out.println(atual);
+
                                  if(";".equals(atual.getLexemaString())){
-                                     return;
+                                                     System.out.println(atual);
+
                                  }
                              }
                         }
@@ -247,6 +277,7 @@ public class AnalisadorSintatico {
                 }
                 
             }
+            return;
                 
         }
     }
@@ -262,13 +293,18 @@ public class AnalisadorSintatico {
          
     }
 
-    private void attributes() {
+    private void attributes() {                
+        System.out.println(" entrou em atributos : " + atual);
+
         if(Tipo.contains(atual.getLexemaString())){
-            andaUm();
+            andaUm();                System.out.println(atual);
+
             if("IDENTIFICADOR".equals(atual.getTipo())){
-                andaUm();
+                andaUm();                System.out.println(atual);
+
                 if(";".equals(atual.getLexemaString())){
-                    andaUm();
+                    andaUm();                System.out.println(atual);
+
                     attributes();
                 }
             }
