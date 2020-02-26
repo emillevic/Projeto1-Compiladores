@@ -361,7 +361,7 @@ public class AnalisadorSintatico {
              }
          }
     }
-
+    
     private void comandos() {
          //To change body of generated methods, choose Tools | Templates.
          if((atual.getLexema()).toString()=="print"){
