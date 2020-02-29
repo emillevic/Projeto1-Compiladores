@@ -19,5 +19,12 @@ public class ErroSintatico {
         this.linha = linha;
     }
     
+    public String toStringLista(){
+        return "linha " + linha + " - Erro: " + erro;
+    }
+    
+    public String getErro(){
+        return erro;
+    }
     
 }

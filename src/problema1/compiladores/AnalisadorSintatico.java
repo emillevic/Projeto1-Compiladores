@@ -95,7 +95,16 @@ public class AnalisadorSintatico {
     public void setAtual(Tokens atual) {
         this.atual = atual;
     }
-
+    public ArrayList<ErroSintatico> getSaida(){
+        return saida;
+    }
+    public ArrayList<String> getSaidaString(){
+        ArrayList<String> arq = new ArrayList<String>();
+        for(int i = 0; i< saida.size(); i++){
+            arq.add(saida.get(i).toStringLista());
+        }
+        return arq;
+    }
     /**
      * @return the anterior
      */
@@ -142,7 +151,6 @@ public class AnalisadorSintatico {
             andaUm();
             if("IDENTIFICADOR".equals(atual.getTipo()) && "=".equals(proximo.getLexemaString())){
                 andaUm();
-                
                 if("cadeiaDeCaracteres".equals(proximo.getTipo()) || "numeros".equals(proximo.getTipo())
                         || "boolean".equals(proximo.getTipo())){
                    andaUm();
@@ -159,7 +167,10 @@ public class AnalisadorSintatico {
             } else{
                 ErroSintatico erro = new ErroSintatico("IDENTIFICADOR & '=' expected", atual.getLinha());
                 saida.add(erro);
-            }
+                }
+        }else{
+            ErroSintatico erro = new ErroSintatico("Tipo unexpected", atual.getLinha());
+            saida.add(erro);
         }
     }
 
@@ -176,10 +187,23 @@ public class AnalisadorSintatico {
                             AnaliseVariavel();
                             comandos();
                        }
+                       else{
+                           ErroSintatico erro = new ErroSintatico("var expected", atual.getLinha());
+                           saida.add(erro);
+                       }
                     }
+                }else{
+                    ErroSintatico erro = new ErroSintatico("{ expected", atual.getLinha());
+                    saida.add(erro);
                 }
+            }else{
+                ErroSintatico erro = new ErroSintatico(") expected", atual.getLinha());
+                saida.add(erro);
             }
-        }
+        } else{
+            ErroSintatico erro = new ErroSintatico("( expected", atual.getLinha());
+            saida.add(erro);
+         }
     }
     
     private void andaUm(){
@@ -197,19 +221,28 @@ public class AnalisadorSintatico {
 
     private void AnaliseVariavel() {
     //To change body of generated methods, choose Tools | Templates.
-      if("DELIMITADOR".equals(proximo.getTipo()) && "{".equals(proximo.getLexemaString())){
+        if("DELIMITADOR".equals(proximo.getTipo()) && "{".equals(proximo.getLexemaString())){
+            andaUm();
            while(!"DELIMITADOR".equals(atual.getTipo()) && !"}".equals(atual.getLexemaString())){
                andaUm();
                VarV();
            }
+        }else{
+            ErroSintatico erro = new ErroSintatico("{ expected", atual.getLinha());
+            saida.add(erro);
         }
     }
     private void VarV() {
+        System.out.println("AQUIIIIIIIIIIIIII " + atual.getLexemaString());
         //To change body of generated methods, choose Tools | Templates.
         if(Tipo.contains(atual.getLexemaString())){
             andaUm();
             complementV();
             VarV();
+        } else{
+            System.out.println(atual.getLexemaString() + "     -     " + Tipo.toString());
+            ErroSintatico erro = new ErroSintatico("Tipo unexpected aqui", atual.getLinha());
+            saida.add(erro);
         }
     }
 
@@ -223,12 +256,24 @@ public class AnalisadorSintatico {
                 andaUm();
                 if("cadeiaDeCaracteres".equals(proximo.getTipo()) || "numeros".equals(proximo.getTipo())
                         || "boolean".equals(proximo.getTipo())){
-                  andaUm();
-                   if(";".equals(proximo.getLexemaString())){
+                    andaUm();
+                    if(";".equals(proximo.getLexemaString())){
 
-                   }
-               }
+                    }else{
+                        ErroSintatico erro = new ErroSintatico("; expected", proximo.getLinha());
+                        saida.add(erro);
+                    }
+               }else{
+                    ErroSintatico erro = new ErroSintatico("String, Number or Boolean expected", proximo.getLinha());
+                    saida.add(erro);
+                }
+            }else{
+                ErroSintatico erro = new ErroSintatico(", or = expected", proximo.getLinha());
+                saida.add(erro);
             }
+        }else{
+            ErroSintatico erro = new ErroSintatico("IDENTIFICADOR expected", atual.getLinha());
+            saida.add(erro);
         }
          
     }
@@ -238,76 +283,96 @@ public class AnalisadorSintatico {
         complementV();
         if(";".equals(proximo.getLexemaString())){
             
+        } else{
+            ErroSintatico erro = new ErroSintatico("; expected", proximo.getLinha());
+            saida.add(erro);
         }
         
     }
 
     private void AnaliseStruct() {
          //To change body of generated methods, choose Tools | Templates.
-           if("DELIMITADOR".equals(proximo.getTipo()) && "{".equals(proximo.getLexemaString())){
-            andaUm();                System.out.println(atual);
-
+        if("DELIMITADOR".equals(proximo.getTipo()) && "{".equals(proximo.getLexemaString())){
+            andaUm();
             while(!"}".equals(atual.getLexemaString())){
                 andaUm();
                 System.out.println(atual);
-                 if("struct".equals(atual.getLexemaString())){
-                     andaUm();                System.out.println(atual);
+                if("struct".equals(atual.getLexemaString())){
+                     andaUm();
+                    if("IDENTIFICADOR".equals(atual.getTipo()) ){
+                         andaUm();
+                         Extends();
+                        if("{".equals(atual.getLexemaString())){
+                             andaUm();
+                             attributes();
+                            if("}".equals(atual.getLexemaString())){
+                                 andaUm();
+                                if(";".equals(atual.getLexemaString())){
 
-                     if("IDENTIFICADOR".equals(atual.getTipo()) ){
-                         andaUm();                System.out.println(atual);
-
-                         Extends();                System.out.println(atual);
-
-                         if("{".equals(atual.getLexemaString())){
-                             andaUm();                System.out.println(atual);
-
-                             attributes();                System.out.println(atual);
-
-                             if("}".equals(atual.getLexemaString())){
-                                 andaUm();                System.out.println(atual);
-
-                                 if(";".equals(atual.getLexemaString())){
-                                                     System.out.println(atual);
-
+                                }else{
+                                    ErroSintatico erro = new ErroSintatico("; expected", atual.getLinha());
+                                    saida.add(erro);
                                  }
-                             }
+                            }else{
+                                ErroSintatico erro = new ErroSintatico("} expected", atual.getLinha());
+                                saida.add(erro);
+                            }
+                        }else{
+                            ErroSintatico erro = new ErroSintatico("{ expected", atual.getLinha());
+                            saida.add(erro);
                         }
                          
-                     }
-                }
-                
+                    }else{
+                        ErroSintatico erro = new ErroSintatico("IDENTIFICADOR expected", atual.getLinha());
+                        saida.add(erro);
+                    }
+                }else{
+                    ErroSintatico erro = new ErroSintatico("'struct' expected", atual.getLinha());
+                    saida.add(erro);
+                }   
             }
-            return;
-                
+            return;     
+        }else{
+            ErroSintatico erro = new ErroSintatico("{ expected", proximo.getLinha());
+            saida.add(erro);
         }
     }
      private void Extends() {
-         if("extends".equals(atual.getLexemaString())){
+        if("extends".equals(atual.getLexemaString())){
              andaUm();
-             if("IDENTIFICADOR".equals(atual.getTipo())){
+            if("IDENTIFICADOR".equals(atual.getTipo())){
                  andaUm();
                  return;
+            }else{
+                ErroSintatico erro = new ErroSintatico("IDENTIFICADOR expected", atual.getLinha());
+                saida.add(erro);
              }
-             
-         }
+        }else{
+            ErroSintatico erro = new ErroSintatico("'extends' expected", atual.getLinha());
+            saida.add(erro);
+        }
          
     }
 
     private void attributes() {                
-        System.out.println(" entrou em atributos : " + atual);
-
         if(Tipo.contains(atual.getLexemaString())){
-            andaUm();                System.out.println(atual);
-
+            andaUm();
             if("IDENTIFICADOR".equals(atual.getTipo())){
-                andaUm();                System.out.println(atual);
-
+                andaUm();
                 if(";".equals(atual.getLexemaString())){
-                    andaUm();                System.out.println(atual);
-
+                    andaUm();
                     attributes();
+                }else{
+                    ErroSintatico erro = new ErroSintatico("; expected", atual.getLinha());
+                    saida.add(erro);
                 }
+            }else{
+                ErroSintatico erro = new ErroSintatico("IDENTIFICADOR expected", atual.getLinha());
+                saida.add(erro);
             }
+        }else{
+            ErroSintatico erro = new ErroSintatico("Tipo unexpected", atual.getLinha());
+            saida.add(erro);
         }
     }   
         
@@ -316,14 +381,14 @@ public class AnalisadorSintatico {
 
     private void AnaliseTypedef() {
          //To change body of generated methods, choose Tools | Templates.
-           if("DELIMITADOR".equals(proximo.getTipo()) && "{".equals(proximo.getLexemaString()))
-               andaUm();
-        {
+        if("DELIMITADOR".equals(proximo.getTipo()) && "{".equals(proximo.getLexemaString())){
+            andaUm();
             while(!"DELIMITADOR".equals(atual.getTipo()) && !"}".equals(atual.getLexemaString())){
                 typedef();
-                
-            }
-                
+            }  
+        } else{
+            ErroSintatico erro = new ErroSintatico("{ expected", proximo.getLinha());
+            saida.add(erro);
         }
     }
 
@@ -340,11 +405,26 @@ public class AnalisadorSintatico {
                         if(";".equals(atual.getLexemaString())){
                             andaUm();
                             return;
+                        }else{
+                            ErroSintatico erro = new ErroSintatico("; expected", atual.getLinha());
+                            saida.add(erro);
                         }
-                    }
-                }
-            }
-        }
+                    }else{
+                         ErroSintatico erro = new ErroSintatico("IDENTIFICADOR expected", atual.getLinha());
+                        saida.add(erro);
+                     }
+                }else{
+                     ErroSintatico erro = new ErroSintatico("IDENTIFICADOR expected", atual.getLinha());
+                    saida.add(erro);
+                 }
+            } else{
+                 ErroSintatico erro = new ErroSintatico("'struct' expected", atual.getLinha());
+                saida.add(erro);
+             }
+        } else{
+             ErroSintatico erro = new ErroSintatico("'typedef' expected", atual.getLinha());
+            saida.add(erro);
+         }
     }
     
     private void Incremments(){
@@ -355,7 +435,13 @@ public class AnalisadorSintatico {
             andaUm();
             if(";".equals(atual.getLexemaString())){
                 return;
+            } else{
+                ErroSintatico erro = new ErroSintatico("; expected", atual.getLinha());
+                saida.add(erro);
             }
+        }else{
+            ErroSintatico erro = new ErroSintatico("IDENTIFICADOR expected", atual.getLinha());
+            saida.add(erro);
         }
     }
 
@@ -363,6 +449,9 @@ public class AnalisadorSintatico {
         //To change body of generated methods, choose Tools | Templates.
         if("++".equals(atual.getLexemaString())||"--".equals(atual.getLexemaString())){
             return;
+        }else{
+            ErroSintatico erro = new ErroSintatico("++ or -- expected", atual.getLinha());
+            saida.add(erro);
         }
     }
     private void chFunProc(){
@@ -376,10 +465,22 @@ public class AnalisadorSintatico {
                     andaUm();
                     if(";".equals(atual.getLexemaString())){
                         return;
+                    }else{
+                        ErroSintatico erro = new ErroSintatico("; expected", atual.getLinha());
+                        saida.add(erro);
                     }
+                } else{
+                    ErroSintatico erro = new ErroSintatico(") expected", atual.getLinha());
+                    saida.add(erro);
                 }
                     
+            }else{
+                ErroSintatico erro = new ErroSintatico("( expected", atual.getLinha());
+                saida.add(erro);
             }
+        }else{
+            ErroSintatico erro = new ErroSintatico("IDENTIFICADOR expected", atual.getLinha());
+            saida.add(erro);
         }
         
     }
@@ -396,6 +497,9 @@ public class AnalisadorSintatico {
             andaUm();
             chParam2();
             return;
+        }else{
+            ErroSintatico erro = new ErroSintatico("IDENTIFICADOR or String or Number or Boolean expected", atual.getLinha());
+            saida.add(erro);
         }
     }
 
@@ -412,7 +516,13 @@ public class AnalisadorSintatico {
                  
                  andaUm();
                  chParam2();
+             }else{
+                ErroSintatico erro = new ErroSintatico("IDENTIFICADOR or String or Number or Boolean expected", atual.getLinha());
+                saida.add(erro);
              }
+         }else{
+            ErroSintatico erro = new ErroSintatico(", expected", atual.getLinha());
+            saida.add(erro);
          }
     }
     private void AnaliseFunctions() {
@@ -433,10 +543,22 @@ public class AnalisadorSintatico {
                             andaUm();
                             comandos();
                             return;
+                        }else{
+                            ErroSintatico erro = new ErroSintatico("( expected", atual.getLinha());
+                            saida.add(erro);
                         }
+                    }else{
+                        ErroSintatico erro = new ErroSintatico("IDENTIFICADOR expected", atual.getLinha());
+                        saida.add(erro);
                     }
+                }else{
+                    ErroSintatico erro = new ErroSintatico("String or Number or Boolean expected", atual.getLinha());
+                    saida.add(erro);
                 }
             }
+        }else{
+            ErroSintatico erro = new ErroSintatico("{ expected", atual.getLinha());
+            saida.add(erro);
         }
     }
     
@@ -449,22 +571,31 @@ public class AnalisadorSintatico {
                     andaUm();
                     DeclaraParam();
                 }else{
-                    return;
+                    ErroSintatico erro = new ErroSintatico(", expected", atual.getLinha());
+                    saida.add(erro);
                 }
+            }else{
+                ErroSintatico erro = new ErroSintatico("IDENTIFICADOR expected", atual.getLinha());
+                saida.add(erro);
             }
+        }else{
+            ErroSintatico erro = new ErroSintatico("String or Number or Boolean expected", atual.getLinha());
+            saida.add(erro);
         }
     }
     
     private void AnaliseProcedures() {
-        if("DELIMITADOR".equals(proximo.getTipo()) && "{".equals(proximo.getLexemaString()))
+        if("DELIMITADOR".equals(proximo.getTipo()) && "{".equals(proximo.getLexemaString())){
             andaUm();
-        {
             while(atual.getTipo()!="DELIMITADOR" && atual.getLexemaString()!= "}"){
                 AnaliseVariavel();
                 andaUm();
                 comandos();
                 return;
             }
+        }else{
+            ErroSintatico erro = new ErroSintatico("{ expected", atual.getLinha());
+            saida.add(erro);
         }
     }
     
@@ -546,7 +677,7 @@ public class AnalisadorSintatico {
             voltaUm(); voltaUm();
             AssignmentVariable();
             return;
-           }else if("operador aritimético".equals(proximo.getTipo())){
+           }else if("OPERADOR ARITMETICO".equals(proximo.getTipo())){
             voltaUm(); voltaUm();
             ExpressaoAritimetica();
             return;  
@@ -572,6 +703,9 @@ public class AnalisadorSintatico {
              }
              return;
              
+         }else{
+             ErroSintatico erro = new ErroSintatico("( expected", atual.getLinha());
+            saida.add(erro);
          }
     }
 
@@ -590,7 +724,10 @@ public class AnalisadorSintatico {
                 }
              }
              return;
-         }
+         } else{
+           ErroSintatico erro = new ErroSintatico("( expected", atual.getLinha());
+            saida.add(erro);
+       }
     }
 
     private void AnaliseWhile() {
@@ -600,7 +737,10 @@ public class AnalisadorSintatico {
                  Condicao();
              }
            return;
-        }
+        } else{
+             ErroSintatico erro = new ErroSintatico("( expected", atual.getLinha());
+            saida.add(erro);
+         }
     }
 
     private void AnaliseIf() {
@@ -616,12 +756,21 @@ public class AnalisadorSintatico {
                           andaUm();
                           comandos();
                       }
+                    } else{
+                        ErroSintatico erro = new ErroSintatico("{ expected", atual.getLinha());
+                        saida.add(erro);
                     }
-                }
+            }else{
+                ErroSintatico erro = new ErroSintatico("'then' expected", atual.getLinha());
+                saida.add(erro);
+            }
             if("else".equals(atual.getLexemaString())){
                andaUm();
-               comandos();
+               comandos(); //precisa de mais coisa aqui no else?
            }
+        } else{
+            ErroSintatico erro = new ErroSintatico("( expected", atual.getLinha());
+            saida.add(erro);
         }
         
     }
@@ -667,14 +816,13 @@ public class AnalisadorSintatico {
     }
 
     private void Condicao() {
-        if("Operador relacional".equals(proximo.getTipo())){
+        if("OPERADOR RELACIONAL".equals(proximo.getTipo())){
             expressaoRel();
         }else if("boleano".equals(atual.getTipo())){
             andaUm();
             return;
         }else{ 
              expressaoLogica();   
-            
         }
     }
 
@@ -689,8 +837,14 @@ public class AnalisadorSintatico {
             }else if("numeros".equals(atual.getTipo())||"cadeia de caracteres".equals(atual.getTipo())
                     ||"booleano".equals(atual.getTipo())){
                 return;
+            } else{
+                ErroSintatico erro = new ErroSintatico("value expected", atual.getLinha());
+                saida.add(erro);
             }
         
+        } else{
+            ErroSintatico erro = new ErroSintatico("= expected", atual.getLinha());
+            saida.add(erro);
         }
     }
 
@@ -765,7 +919,7 @@ public class AnalisadorSintatico {
                 variavel();
                 andaUm();
            }
-            if("Operador relacional".equals(atual.getTipo())){
+            if("OPERADOR RELACIONAL".equals(atual.getTipo())){
                 andaUm();
                 if("cadeiaDeCaracteres".equals(atual.getTipo()) || "numeros".equals(atual.getTipo())
                         || "boolean".equals(atual.getTipo())){
