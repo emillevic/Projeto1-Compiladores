@@ -11,6 +11,7 @@
 
     typedefs{
         typedef struct funcionario func;
+        typedef struct pessoa p;
     }
 
     const{
@@ -35,7 +36,7 @@
         }
     }
 
-    start{
+    start(){
         var{
             int a = 1;
             func p;
