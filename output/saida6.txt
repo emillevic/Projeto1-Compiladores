@@ -1,0 +1,11 @@
+linha 0 - IDENTIFICADOR - na
+linha 1 - NUMERO - 7
+linha 1 - DELIMITADOR - ;
+linha 2 - NUMERO - 5.8
+linha 3 - NUMERO - 70000
+linha 4 - COMENTARIO - //
+linha 5 - PALAVRA RESERVADA - return
+linha 5 - PALAVRA RESERVADA - false
+linha 6 - PALAVRA RESERVADA - print
+linha 6 - CADEIA DE CARACTERES - "sei la"
+CODIGO SEM ERRO!

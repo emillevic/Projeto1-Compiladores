@@ -1,0 +1,12 @@
+linha 0 - PALAVRA RESERVADA - if
+linha 0 - IDENTIFICADOR - a
+linha 0 - OPERADOR RELACIONAL - >=
+linha 0 - IDENTIFICADOR - b
+linha 1 - PALAVRA RESERVADA - then
+linha 2 - IDENTIFICADOR - c
+linha 2 - OPERADOR ARITMETICO - ++
+linha 3 - PALAVRA RESERVADA - start
+linha 4 - IDENTIFICADOR - a45
+linha 5 - COMENTARIO - //
+linha 6 - IDENTIFICADOR - a3
+CODIGO SEM ERRO!

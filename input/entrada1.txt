@@ -16,17 +16,17 @@
 
     const{
         real base_calculo = 0.2;
+        real base_calculo = 0.2;
     }
 
     var{
         int codigo;
-        string cidade = "salvador";
-        func a;
+        real a;
     }
 
     functions{
         function real calcula_extra(real salario){
-            return local.salario * base_calculo;
+            return a;
         }
     }
 

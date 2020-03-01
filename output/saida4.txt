@@ -1,0 +1,8 @@
+linha 0 - PALAVRA RESERVADA - typedef
+linha 0 - NUMERO - 009
+linha 1 - IDENTIFICADOR - star
+linha 2 - PALAVRA RESERVADA - while
+linha 3 - PALAVRA RESERVADA - then
+linha 4 - IDENTIFICADOR - a89_100
+linha 5 - PALAVRA RESERVADA - return
+CODIGO SEM ERRO!

@@ -1,0 +1,5 @@
+linha 0 - ERRO NUMERO - 3.3
+linha 0 - DELIMITADOR - .
+linha 0 - NUMERO - 3
+linha 1 - ERRO CADEIRA DE CARACTERES - "cadeia
+linha 2 - OPERADOR ARITMETICO - +
