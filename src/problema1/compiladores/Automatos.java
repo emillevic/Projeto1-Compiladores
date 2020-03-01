@@ -480,7 +480,7 @@ public class Automatos {
                 }
             }else if(linha[posicao] == '"' && linha[posicao-1] != '\\'){
                 lexema.add(linha[posicao]);
-                Tokens token = new Tokens(numLinha, "CADEIRA DE CARACTERES", toCharArray(lexema));
+                Tokens token = new Tokens(numLinha, "CADEIA DE CARACTERES", toCharArray(lexema));
                 tokens.add(token);
                 posicao++;
                 return true;
