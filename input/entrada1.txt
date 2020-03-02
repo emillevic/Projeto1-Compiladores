@@ -20,13 +20,16 @@
     }
 
     var{
-        int codigo;
-        real a;
+        int codigo
+        real a = 1;
     }
 
     functions{
-        function real calcula_extra(real salario){
-            return a;
+        function real calcula_extra (salario){
+            var{
+                int a;
+            }
+            return local.a;
         }
     }
 
