@@ -254,8 +254,6 @@ public class AnalisadorSintatico {
 
     private void complementV() {
         if("IDENTIFICADOR".equals(atual.getTipo()) ){
-                andaUm();
-                varEqType();
             if("=".equals(proximo.getLexemaString())){
                 andaUm();
                 if("CADEIA DE CARACTERES".equals(proximo.getTipo()) || "NUMERO".equals(proximo.getTipo())
@@ -268,6 +266,9 @@ public class AnalisadorSintatico {
                     ErroSintatico erro = new ErroSintatico("String, Number or Boolean expected", proximo.getLinha());
                     saida.add(erro);
                 }
+            }else{
+                andaUm();
+                varEqType();
             }
         }else{
             ErroSintatico erro = new ErroSintatico("IDENTIFICADOR expected", atual.getLinha());
