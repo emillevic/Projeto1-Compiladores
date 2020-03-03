@@ -182,17 +182,17 @@ public class AnalisadorSintatico {
             if("DELIMITADOR".equals(proximo.getTipo()) && ")".equals(proximo.getLexemaString())){
                 andaUm();
                 if("DELIMITADOR".equals(proximo.getTipo()) && "{".equals(proximo.getLexemaString())){
-                    andaUm();
-                    while(!"DELIMITADOR".equals(atual.getTipo()) && !"}".equals(atual.getLexemaString())){
-                       andaUm();
-                       if("var".equals(atual.getLexemaString()) ){
+                    andaUm(); andaUm();
+                    if("var".equals(atual.getLexemaString()) ){
                             AnaliseVariavel();
-                            comandos();
-                       }
-                       else{
+                            
+                       }else{
                            ErroSintatico erro = new ErroSintatico("var expected", atual.getLinha());
                            saida.add(erro);
                        }
+                    while(  !"}".equals(atual.getLexemaString())){
+                       comandos();
+                       andaUm();
                     }
                 }else{
                     ErroSintatico erro = new ErroSintatico("{ expected", atual.getLinha());
@@ -687,6 +687,7 @@ public class AnalisadorSintatico {
 
     private void comandos() {
          //To change body of generated methods, choose Tools | Templates.
+         System.out.println("entrou");
          if("print".equals(atual.getLexemaString())){
            andaUm();
            AnalisePrint();

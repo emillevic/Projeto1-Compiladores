@@ -38,16 +38,16 @@
 
     start(){
         var{
-            int a = 1;
+            real a = 1;
             func p;
         }
         p.nome = "emille";
         p.idade = 21;
         p.salario = calcula_extra(1000);
-        while(dcds){
+        while()
             local.a++;
         }
-        print("pessoa: ", p.nome);
+        print("pessoa: ", );
         read(p.idade);
 
         altera_cidade("fsa");

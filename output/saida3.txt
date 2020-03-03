@@ -101,7 +101,7 @@ linha 38 - DELIMITADOR - )
 linha 38 - DELIMITADOR - {
 linha 39 - PALAVRA RESERVADA - var
 linha 39 - DELIMITADOR - {
-linha 40 - PALAVRA RESERVADA - int
+linha 40 - PALAVRA RESERVADA - real
 linha 40 - IDENTIFICADOR - a
 linha 40 - OPERADOR RELACIONAL - =
 linha 40 - NUMERO - 1
@@ -133,9 +133,7 @@ linha 45 - DELIMITADOR - )
 linha 45 - DELIMITADOR - ;
 linha 46 - PALAVRA RESERVADA - while
 linha 46 - DELIMITADOR - (
-linha 46 - IDENTIFICADOR - dcds
 linha 46 - DELIMITADOR - )
-linha 46 - DELIMITADOR - {
 linha 47 - PALAVRA RESERVADA - local
 linha 47 - DELIMITADOR - .
 linha 47 - IDENTIFICADOR - a
@@ -146,9 +144,6 @@ linha 49 - PALAVRA RESERVADA - print
 linha 49 - DELIMITADOR - (
 linha 49 - CADEIA DE CARACTERES - "pessoa: "
 linha 49 - DELIMITADOR - ,
-linha 49 - IDENTIFICADOR - p
-linha 49 - DELIMITADOR - .
-linha 49 - IDENTIFICADOR - nome
 linha 49 - DELIMITADOR - )
 linha 49 - DELIMITADOR - ;
 linha 50 - PALAVRA RESERVADA - read
