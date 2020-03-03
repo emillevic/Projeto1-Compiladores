@@ -228,9 +228,10 @@ public class AnalisadorSintatico {
            while(!"}".equals(atual.getLexemaString())){
                if("=".equals(proximo.getLexemaString()) || ";".equals(proximo.getLexemaString()))
                    flag = 1;
+               System.out.println(Tipo.toString());
                if("IDENTIFICADOR".equals(atual.getTipo()) && flag==1 && !Tipo.contains(anterior.getLexemaString())){
-                   flag= 0;
-                    ErroSintatico erro = new ErroSintatico("tipo expected", proximo.getLinha());
+                    flag= 0;
+                    ErroSintatico erro = new ErroSintatico("tipo expected aqui", proximo.getLinha());
                     saida.add(erro);
                 }
                VarV();
@@ -317,6 +318,7 @@ public class AnalisadorSintatico {
         if("struct".equals(atual.getLexemaString())){
             andaUm();
            if("IDENTIFICADOR".equals(atual.getTipo()) ){
+               Tipo.add("struct " + atual.getLexemaString());
                 andaUm();
                 Extends();
                if("{".equals(atual.getLexemaString())){
@@ -414,6 +416,12 @@ public class AnalisadorSintatico {
                  if("IDENTIFICADOR".equals(atual.getTipo())){
                      andaUm();
                      if("IDENTIFICADOR".equals(atual.getTipo())){
+                         for(int i = 0; i< Tipo.size(); i++){
+                             
+                            if(Tipo.get(i).equals("struct " + anterior.getLexemaString())){
+                                Tipo.set(i, atual.getLexemaString());
+                            }
+                         }
                          andaUm();
                         if(";".equals(atual.getLexemaString())){
                             return;
