@@ -46,9 +46,6 @@
         p.salario = calcula_extra(1000);
         
         
-        while()
-            local.a++;
-        }
         print( read)
         read(var);
 

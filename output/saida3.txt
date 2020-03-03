@@ -134,6 +134,7 @@ linha 45 - DELIMITADOR - ;
 linha 48 - PALAVRA RESERVADA - while
 linha 48 - DELIMITADOR - (
 linha 48 - DELIMITADOR - )
+linha 48 - DELIMITADOR - {
 linha 49 - PALAVRA RESERVADA - local
 linha 49 - DELIMITADOR - .
 linha 49 - IDENTIFICADOR - a
