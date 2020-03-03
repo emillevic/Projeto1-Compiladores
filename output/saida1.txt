@@ -52,6 +52,7 @@ linha 21 - PALAVRA RESERVADA - var
 linha 21 - DELIMITADOR - {
 linha 22 - PALAVRA RESERVADA - int
 linha 22 - IDENTIFICADOR - codigo
+linha 22 - DELIMITADOR - ;
 linha 23 - PALAVRA RESERVADA - real
 linha 23 - IDENTIFICADOR - a
 linha 23 - OPERADOR RELACIONAL - =
@@ -65,6 +66,7 @@ linha 27 - PALAVRA RESERVADA - real
 linha 27 - IDENTIFICADOR - calcula_extra
 linha 27 - DELIMITADOR - (
 linha 27 - IDENTIFICADOR - salario
+linha 27 - DELIMITADOR - )
 linha 27 - DELIMITADOR - )
 linha 27 - DELIMITADOR - {
 linha 28 - PALAVRA RESERVADA - var
@@ -110,8 +112,10 @@ linha 43 - IDENTIFICADOR - a
 linha 43 - OPERADOR RELACIONAL - =
 linha 43 - NUMERO - 1
 linha 43 - DELIMITADOR - ;
-linha 44 - IDENTIFICADOR - func
 linha 44 - IDENTIFICADOR - p
+linha 44 - IDENTIFICADOR - a
+linha 44 - OPERADOR RELACIONAL - =
+linha 44 - NUMERO - 1
 linha 44 - DELIMITADOR - ;
 linha 45 - DELIMITADOR - }
 linha 46 - IDENTIFICADOR - p

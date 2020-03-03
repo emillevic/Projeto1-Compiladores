@@ -20,7 +20,7 @@
     }
 
     var{
-        int codigo
+        int codigo;
         real a = 1;
     }
 
@@ -42,7 +42,7 @@
     start(){
         var{
             int a = 1;
-            func p;
+            p a = 1;
         }
         p.nome = "emille";
         p.idade = 21;
