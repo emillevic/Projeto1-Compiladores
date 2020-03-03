@@ -35,9 +35,9 @@ public class Principal  {
                 automatos = new Automatos(entrada);
                 saida = automatos.analisadorLexico();
                 analisadorSintatico = new AnalisadorSintatico(automatos.getTokens());
-                analisadorSintatico.AnalisePrograma();
+                ArrayList<String> sintatico = analisadorSintatico.Sintatico();
                 System.out.println(analisadorSintatico.getSaidaString().toString());
-                manipuladorArquivo.escritor(arquivoSaida, saida);
+                manipuladorArquivo.escritor(arquivoSaida, sintatico);
                 System.out.println("Analise do arquivo" + arquivoEntrada + "feita no arquivo" + arquivoSaida);
             }
             else{

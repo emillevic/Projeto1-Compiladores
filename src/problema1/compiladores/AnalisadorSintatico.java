@@ -45,6 +45,19 @@ public class AnalisadorSintatico {
        
    }
    
+   public ArrayList<String> Sintatico(){
+       ArrayList<ErroSintatico> recebe = AnalisePrograma();
+       ArrayList<String> retorno = new ArrayList<String>();
+       if(recebe.isEmpty()){
+           retorno.add("Sem Erros Sintaticos");
+       } else{
+            for(int i = 0; i < recebe.size(); i++){
+                retorno.add(recebe.get(i).toStringLista());
+            }
+       }
+       return retorno;
+   }
+   
    public ArrayList<ErroSintatico> AnalisePrograma (){
        atual= codigoTratado.get(indice);
        proximo= codigoTratado.get(indice+1);
