@@ -185,7 +185,7 @@ public class AnalisadorSintatico {
                     andaUm(); andaUm();
                     if("var".equals(atual.getLexemaString()) ){
                             AnaliseVariavel();
-                            
+                            andaUm();
                        }else{
                            ErroSintatico erro = new ErroSintatico("var expected", atual.getLinha());
                            saida.add(erro);
@@ -695,7 +695,7 @@ public class AnalisadorSintatico {
 
     private void comandos() {
          //To change body of generated methods, choose Tools | Templates.
-         System.out.println("entrou");
+         
          if("print".equals(atual.getLexemaString())){
            andaUm();
            AnalisePrint();

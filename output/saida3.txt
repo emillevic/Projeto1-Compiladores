@@ -131,32 +131,28 @@ linha 45 - DELIMITADOR - (
 linha 45 - NUMERO - 1000
 linha 45 - DELIMITADOR - )
 linha 45 - DELIMITADOR - ;
-linha 46 - PALAVRA RESERVADA - while
-linha 46 - DELIMITADOR - (
-linha 46 - DELIMITADOR - )
-linha 47 - PALAVRA RESERVADA - local
-linha 47 - DELIMITADOR - .
-linha 47 - IDENTIFICADOR - a
-linha 47 - OPERADOR ARITMETICO - ++
-linha 47 - DELIMITADOR - ;
-linha 48 - DELIMITADOR - }
-linha 49 - PALAVRA RESERVADA - print
-linha 49 - DELIMITADOR - (
-linha 49 - CADEIA DE CARACTERES - "pessoa: "
-linha 49 - DELIMITADOR - ,
-linha 49 - DELIMITADOR - )
+linha 48 - PALAVRA RESERVADA - while
+linha 48 - DELIMITADOR - (
+linha 48 - DELIMITADOR - )
+linha 49 - PALAVRA RESERVADA - local
+linha 49 - DELIMITADOR - .
+linha 49 - IDENTIFICADOR - a
+linha 49 - OPERADOR ARITMETICO - ++
 linha 49 - DELIMITADOR - ;
-linha 50 - PALAVRA RESERVADA - read
-linha 50 - DELIMITADOR - (
-linha 50 - IDENTIFICADOR - p
-linha 50 - DELIMITADOR - .
-linha 50 - IDENTIFICADOR - idade
-linha 50 - DELIMITADOR - )
-linha 50 - DELIMITADOR - ;
-linha 52 - IDENTIFICADOR - altera_cidade
+linha 50 - DELIMITADOR - }
+linha 51 - PALAVRA RESERVADA - print
+linha 51 - DELIMITADOR - (
+linha 51 - PALAVRA RESERVADA - read
+linha 51 - DELIMITADOR - )
+linha 52 - PALAVRA RESERVADA - read
 linha 52 - DELIMITADOR - (
-linha 52 - CADEIA DE CARACTERES - "fsa"
+linha 52 - PALAVRA RESERVADA - var
 linha 52 - DELIMITADOR - )
 linha 52 - DELIMITADOR - ;
-linha 53 - DELIMITADOR - }
+linha 54 - IDENTIFICADOR - altera_cidade
+linha 54 - DELIMITADOR - (
+linha 54 - CADEIA DE CARACTERES - "fsa"
+linha 54 - DELIMITADOR - )
+linha 54 - DELIMITADOR - ;
+linha 55 - DELIMITADOR - }
 CODIGO SEM ERRO!
