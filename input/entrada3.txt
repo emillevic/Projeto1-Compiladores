@@ -44,11 +44,10 @@
         p.nome = "emille";
         p.idade = 21;
         p.salario = calcula_extra(1000);
-        while()
-            local.a++;
-        }
-        print("pessoa: ", );
-        read(p.idade);
+        
+        
+        print( read)
+        read(var);
 
         altera_cidade("fsa");
     }
