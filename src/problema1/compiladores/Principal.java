@@ -44,6 +44,7 @@ public class Principal  {
                 System.out.println("startvar: " + analisadorSemantico.getSTARTVAR().toString());
                 System.out.println("structs: " + analisadorSemantico.getSTRUCTS().toString());
                 System.out.println("tipo: " + analisadorSemantico.getTIPO().toString());
+                System.out.println("ERROSSSSSSSS: " + analisadorSemantico.getERROS().toString());
 //                analisadorSintatico = new AnalisadorSintatico(automatos.getTokens());
 //                ArrayList<String> sintatico = analisadorSintatico.Sintatico();;
 //                System.out.println(analisadorSintatico.getSaidaString().toString());

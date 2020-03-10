@@ -22,6 +22,7 @@ public class AnalisadorSemantico {
     private ArrayList<FunctionsProcedures> FUNCTIONS = new ArrayList<FunctionsProcedures>();
     private ArrayList<FunctionsProcedures> PROCEDURES = new ArrayList<FunctionsProcedures>();
     private ArrayList<Variaveis> LOCALVAR;
+    private ArrayList<Erro> ERROS = new ArrayList<Erro>();
    
     private Tokens atual;
     private Tokens anterior;
@@ -70,7 +71,10 @@ public class AnalisadorSemantico {
     public ArrayList<Variaveis> getLOCALVAR() {
         return LOCALVAR;
     }
-    
+
+    public ArrayList<Erro> getERROS() {
+        return ERROS;
+    }
     
     private void andaUm(){
         indice++;
@@ -271,15 +275,33 @@ public class AnalisadorSemantico {
             complementV(tipo, func);
         }
     }
-
+    
     private void complementV(String tipo, FunctionsProcedures func) {
         if("IDENTIFICADOR".equals(atual.getTipo())){
             Variaveis var = new Variaveis(atual.getLexemaString(), anterior.getLexemaString());
-            if(tipo == "global"){
+            if("global".equals(tipo)){
+                for(int i = 0; i<GLOBALVAR.size()-1; i++){
+                    if(atual.getLexemaString().equals(GLOBALVAR.get(i).getNome())){
+                        Erro e = new Erro("Variavel já existente no escopo", atual.getLinha());
+                        ERROS.add(e);
+                    }
+                }
                 GLOBALVAR.add(var);
-            } else if(tipo == "start"){
+            } else if("start".equals(tipo)){
+                for(int i = 0; i<STARTVAR.size()-1; i++){
+                    if(atual.getLexemaString().equals(STARTVAR.get(i).getNome())){
+                        Erro e = new Erro("Variavel já existente no escopo", atual.getLinha());
+                        ERROS.add(e);
+                    }
+                }
                 STARTVAR.add(var);
-            } else if(tipo == "func"){
+            } else if("func".equals(tipo)){
+                for(int i = 0; i<func.getLocalvar().size()-1; i++){
+                    if(atual.getLexemaString().equals(func.getLocalvar().get(i).getNome())){
+                        Erro e = new Erro("Variavel já existente no escopo", atual.getLinha());
+                        ERROS.add(e);
+                    }
+                }
                 func.addVar(var);
             }
             if("=".equals(proximo.getLexemaString())){
@@ -483,7 +505,7 @@ public class AnalisadorSemantico {
                 }
             }
             if(!existeStruct){
-                ErroSintatico erro = new ErroSintatico("struct não existe", atual.getLinha());
+                Erro erro = new Erro("struct não existe", atual.getLinha());
             }else{
                 for(int j=0;j<STRUCTS.size();j++){
                 if(STRUCTS.get(j).getNome().equals(atual.getLexemaString())){

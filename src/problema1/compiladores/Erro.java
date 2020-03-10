@@ -9,12 +9,12 @@ package problema1.compiladores;
  *
  * @author Mille
  */
-public class ErroSintatico {
+public class Erro {
     private final String erro;
     private final int linha;
     
     
-    public ErroSintatico(String erro, int linha){
+    public Erro(String erro, int linha){
         this.erro = erro;
         this.linha = linha+1;
     }

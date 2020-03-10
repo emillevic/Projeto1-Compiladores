@@ -38,6 +38,5 @@ public class Variaveis {
     public String toString() {
         return "Variaveis{" + "nome=" + nome + ", tipo=" + tipo + '}';
     }
-    
-    
+     
 }
