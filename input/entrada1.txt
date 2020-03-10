@@ -16,7 +16,6 @@
 
     const{
         real base_calculo = 0.2;
-        real base_calculo = 0.2;
     }
 
     var{
@@ -25,7 +24,7 @@
     }
 
     functions{
-        function real calcula_extra (salario){
+        function real calcula_extra (real salario){
             var{
                 int a;
             }
@@ -35,14 +34,17 @@
 
     procedures{
         procedure altera_cidade(string cidade){
+            var{
+                string estado;
+            }
             global.cidade = local.cidade;
         }
     }
 
     start(){
         var{
-            int a = 1;
-            p a = 1;
+            int numero = 1;
+            p pessoa;
         }
         p.nome = "emille";
         p.idade = 21;

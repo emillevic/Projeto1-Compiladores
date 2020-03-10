@@ -15,7 +15,7 @@ public class FunctionsProcedures {
     private String nome;
     private String retorno;
     private ArrayList<Variaveis> parametro = new ArrayList<Variaveis>();
-    private ArrayList<String> localvar = new ArrayList<String>();
+    private ArrayList<Variaveis> localvar = new ArrayList<Variaveis>();
 
     public FunctionsProcedures(String nome, String retorno) {
         this.nome = nome;
@@ -28,7 +28,7 @@ public class FunctionsProcedures {
     public void addParametro(Variaveis var){
         parametro.add(var);
     }
-    public void addVar(String var){
+    public void addVar(Variaveis var){
         localvar.add(var);
     }
     
@@ -56,12 +56,18 @@ public class FunctionsProcedures {
         this.parametro = parametro;
     }
 
-    public ArrayList<String> getLocalvar() {
+    public ArrayList<Variaveis> getLocalvar() {
         return localvar;
     }
 
-    public void setLocalvar(ArrayList<String> localvar) {
+    public void setLocalvar(ArrayList<Variaveis> localvar) {
         this.localvar = localvar;
     }
+
+    @Override
+    public String toString() {
+        return "FunctionsProcedures{" + "nome=" + nome + ", retorno=" + retorno + ", parametro=" + parametro + ", localvar=" + localvar + '}';
+    }
+    
     
 }

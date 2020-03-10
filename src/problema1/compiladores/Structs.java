@@ -38,6 +38,11 @@ public class Structs {
     public void setLocalvar(ArrayList<Variaveis> localvar) {
         this.localvar = localvar;
     }
+
+    @Override
+    public String toString() {
+        return "Structs{" + "nome=" + nome + ", localvar=" + localvar + '}';
+    }
     
     
 }

@@ -16,6 +16,7 @@ import java.util.Scanner;
 public class Principal  {
     private static Automatos automatos;
     private static AnalisadorSintatico analisadorSintatico;
+    private static AnalisadorSemantico analisadorSemantico;
     private static ManipuladorArquivo manipuladorArquivo = new ManipuladorArquivo();
     private static int numeroArquivo =1;
     private static String arquivoEntrada = new String();
@@ -34,10 +35,19 @@ public class Principal  {
             if(!entrada.isEmpty()){
                 automatos = new Automatos(entrada);
                 saida = automatos.analisadorLexico();
-                analisadorSintatico = new AnalisadorSintatico(automatos.getTokens());
-                ArrayList<String> sintatico = analisadorSintatico.Sintatico();
-                System.out.println(analisadorSintatico.getSaidaString().toString());
-                manipuladorArquivo.escritor(arquivoSaida, sintatico);
+                analisadorSemantico = new AnalisadorSemantico(automatos.getTokens());
+                analisadorSemantico.controle();
+                System.out.println("consts: " + analisadorSemantico.getCONSTS().toString());
+                System.out.println("functions: " + analisadorSemantico.getFUNCTIONS().toString());
+                System.out.println("globalvar: " + analisadorSemantico.getGLOBALVAR().toString());
+                System.out.println("procedures: " + analisadorSemantico.getPROCEDURES().toString());
+                System.out.println("startvar: " + analisadorSemantico.getSTARTVAR().toString());
+                System.out.println("structs: " + analisadorSemantico.getSTRUCTS().toString());
+                System.out.println("tipo: " + analisadorSemantico.getTIPO().toString());
+//                analisadorSintatico = new AnalisadorSintatico(automatos.getTokens());
+//                ArrayList<String> sintatico = analisadorSintatico.Sintatico();;
+//                System.out.println(analisadorSintatico.getSaidaString().toString());
+//                manipuladorArquivo.escritor(arquivoSaida, sintatico);
                 System.out.println("Analise do arquivo" + arquivoEntrada + "feita no arquivo" + arquivoSaida);
             }
             else{
