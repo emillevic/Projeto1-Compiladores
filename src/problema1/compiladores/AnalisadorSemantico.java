@@ -88,8 +88,29 @@ public class AnalisadorSemantico {
         atual=anterior;
         anterior=codigoTratado.get(indice-1);
     }
+    
+    public ArrayList<String> Semantico(){
+       ArrayList<Erro> recebe = controle();
+       ArrayList<String> retorno = new ArrayList<String>();
+       if(recebe.isEmpty()){
+           retorno.add("Sem Erros Semanticos");
+       } else{
+            for(int i = 0; i < recebe.size(); i++){
+                retorno.add(recebe.get(i).toStringLista());
+            }
+       }
+       return retorno;
+   }
+    
+    public ArrayList<String> getSaidaString(){
+        ArrayList<String> arq = new ArrayList<String>();
+        for(int i = 0; i< ERROS.size(); i++){
+            arq.add(ERROS.get(i).toStringLista());
+        }
+        return arq;
+    }
 //    Método de controle
-    public void controle(){
+    public ArrayList<Erro> controle(){
         System.out.println("entrei aqui");
         atual= codigoTratado.get(indice);
         proximo= codigoTratado.get(indice+1);
@@ -122,7 +143,7 @@ public class AnalisadorSemantico {
             if(indice+2 < codigoTratado.size())
                 andaUm();
             else
-                return;
+                return ERROS;
         }
     }
     
@@ -272,57 +293,148 @@ public class AnalisadorSemantico {
     private void VarV(String tipo, FunctionsProcedures func) {
         if(TIPO.contains(atual.getLexemaString())){
             andaUm();
-            complementV(tipo, func);
+            complementV(tipo, func, anterior.getLexemaString());
         }
     }
     
-    private void complementV(String tipo, FunctionsProcedures func) {
-        if("IDENTIFICADOR".equals(atual.getTipo())){
-            Variaveis var = new Variaveis(atual.getLexemaString(), anterior.getLexemaString());
-            if("global".equals(tipo)){
-                for(int i = 0; i<GLOBALVAR.size()-1; i++){
-                    if(atual.getLexemaString().equals(GLOBALVAR.get(i).getNome())){
-                        Erro e = new Erro("Variavel já existente no escopo", atual.getLinha());
-                        ERROS.add(e);
-                    }
+    private void verificaVariavelEscopo(String tipo, FunctionsProcedures func){
+        for(int i = 0; i< CONSTS.size(); i++){
+            if(atual.getLexemaString().equals(CONSTS.get(i).getNome())){
+                Erro e = new Erro("Variavel já existente no escopo", atual.getLinha());
+                ERROS.add(e);
+            }
+        }
+        if("global".equals(tipo)){
+            for(int i = 0; i<GLOBALVAR.size(); i++){
+                if(atual.getLexemaString().equals(GLOBALVAR.get(i).getNome())){
+                    Erro e = new Erro("Variavel já existente no escopo", atual.getLinha());
+                    ERROS.add(e);
                 }
-                GLOBALVAR.add(var);
+            }
             } else if("start".equals(tipo)){
-                for(int i = 0; i<STARTVAR.size()-1; i++){
+                for(int i = 0; i<STARTVAR.size(); i++){
                     if(atual.getLexemaString().equals(STARTVAR.get(i).getNome())){
                         Erro e = new Erro("Variavel já existente no escopo", atual.getLinha());
                         ERROS.add(e);
                     }
                 }
-                STARTVAR.add(var);
             } else if("func".equals(tipo)){
-                for(int i = 0; i<func.getLocalvar().size()-1; i++){
+                for(int i = 0; i<func.getLocalvar().size(); i++){
                     if(atual.getLexemaString().equals(func.getLocalvar().get(i).getNome())){
                         Erro e = new Erro("Variavel já existente no escopo", atual.getLinha());
                         ERROS.add(e);
                     }
                 }
+            }
+    }
+    
+    private boolean containsVar(String flag, FunctionsProcedures func, String nome, String tipo){
+        if("global".equals(flag)){
+            for(int i = 0; i< GLOBALVAR.size(); i++){
+                if(nome.equals(GLOBALVAR.get(i).getNome()) && tipo.equals(GLOBALVAR.get(i).getTipo())){
+                    return true;
+                }
+            }
+        }else if("start".equals(flag)){
+            for(int i = 0; i< STARTVAR.size(); i++){
+                if(nome.equals(STARTVAR.get(i).getNome()) && tipo.equals(GLOBALVAR.get(i).getTipo())){
+                    return true;
+                }
+            }
+        }else if("func".equals(flag)){
+            for(int i = 0; i< func.getLocalvar().size(); i++){
+                if(nome.equals(func.getLocalvar().get(i).getNome()) && tipo.equals(GLOBALVAR.get(i).getTipo())){
+                    return true;
+                }
+            }
+        }
+        
+        return false;
+    }
+    
+    private void complementV(String tipo, FunctionsProcedures func, String tipoVar) {
+        String flag = "";
+        if("IDENTIFICADOR".equals(atual.getTipo())){
+            Variaveis var = new Variaveis(atual.getLexemaString(), anterior.getLexemaString());
+            if("global".equals(tipo)){
+                flag = "global";
+                verificaVariavelEscopo(tipo, func);
+                GLOBALVAR.add(var);
+            } else if("start".equals(tipo)){
+                flag = "start";
+                verificaVariavelEscopo(tipo, func);
+                STARTVAR.add(var);
+            } else if("func".equals(tipo)){
+                flag = "func";
+                verificaVariavelEscopo(tipo, func);
                 func.addVar(var);
             }
+            System.out.println("LISTA DE VARIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVEIS " + GLOBALVAR.toString());
             if("=".equals(proximo.getLexemaString())){
                 andaUm();
                 if("CADEIA DE CARACTERES".equals(proximo.getTipo()) || "NUMERO".equals(proximo.getTipo())
                         || "true".equals(proximo.getLexemaString()) || "false".equals(proximo.getLexemaString())
                         || "IDENTIFICADOR".equals(proximo.getTipo())){
-                    andaUm(); andaUm();
-                    varEqType(tipo, func);
+                    andaUm();
+                    if("string".equals(tipoVar)){
+                        if("IDENTIFICADOR".equals(atual.getTipo())){
+                            if(!containsVar(flag, func, atual.getLexemaString(), tipoVar)){
+                                Erro e = new Erro("Atribuição tipo diferente - string", atual.getLinha());
+                                ERROS.add(e);
+                            }
+                        }else if(!"CADEIA DE CARACTERES".equals(atual.getTipo())){
+                            Erro e = new Erro("Atribuição tipo diferente - string", atual.getLinha());
+                            ERROS.add(e);
+                        } 
+                    }else if("boolean".equals(tipoVar)){
+                        if("IDENTIFICADOR".equals(atual.getTipo())){
+                            if(!containsVar(flag, func, atual.getLexemaString(), tipoVar)){
+                                Erro e = new Erro("Atribuição tipo diferente - boolean", atual.getLinha());
+                                ERROS.add(e);
+                            }
+                        }else if(!"true".equals(atual.getLexemaString()) ||
+                                !"false".equals(atual.getLexemaString())){
+                            Erro e = new Erro("Atribuição tipo diferente - boolean", atual.getLinha());
+                            ERROS.add(e);
+                        }
+                    }else if("int".equals(tipoVar) ){
+                         if("IDENTIFICADOR".equals(atual.getTipo())){
+                            if(!containsVar(flag, func, atual.getLexemaString(), tipoVar)){
+                                Erro e = new Erro("Atribuição tipo diferente - int", atual.getLinha());
+                                ERROS.add(e);
+                            }
+                        }else if(!"NUMERO".equals(atual.getTipo()) ||
+                                ( "NUMERO".equals(atual.getTipo()) && atual.getLexemaString().contains("."))){
+                            Erro e = new Erro("Atribuição tipo diferente - int", atual.getLinha());
+                            ERROS.add(e);
+                        }
+                    }else if("real".equals(tipoVar)){
+                        if("IDENTIFICADOR".equals(atual.getTipo())){
+                            if(!containsVar(flag, func, atual.getLexemaString(), tipoVar)){
+                                Erro e = new Erro("Atribuição tipo diferente - real", atual.getLinha());
+                                ERROS.add(e);
+                            }
+                        } else if(!"NUMERO".equals(atual.getTipo()) ||
+                                ( "NUMERO".equals(atual.getTipo()) && !atual.getLexemaString().contains("."))){
+                            Erro e = new Erro("Atribuição tipo diferente - real", atual.getLinha());
+                            ERROS.add(e);
+                            
+                        }
+                    } 
+                    andaUm();
+                    varEqType(tipo, func, tipoVar);
                }
             }else{
                 andaUm();
-                varEqType(tipo, func);
+                varEqType(tipo, func, tipoVar);
             }
         }
     }
 
-    private void varEqType(String tipo, FunctionsProcedures func) {
+    private void varEqType(String tipo, FunctionsProcedures func, String tipoVar) {
         if(",".equals(atual.getLexemaString())){
             andaUm();
-            complementV(tipo, func);
+            complementV(tipo, func, tipoVar);
         }
         else if(";".equals(atual.getLexemaString())){
             return;

@@ -36,7 +36,7 @@ public class Principal  {
                 automatos = new Automatos(entrada);
                 saida = automatos.analisadorLexico();
                 analisadorSemantico = new AnalisadorSemantico(automatos.getTokens());
-                analisadorSemantico.controle();
+                analisadorSemantico.Semantico();
                 System.out.println("consts: " + analisadorSemantico.getCONSTS().toString());
                 System.out.println("functions: " + analisadorSemantico.getFUNCTIONS().toString());
                 System.out.println("globalvar: " + analisadorSemantico.getGLOBALVAR().toString());
@@ -44,7 +44,7 @@ public class Principal  {
                 System.out.println("startvar: " + analisadorSemantico.getSTARTVAR().toString());
                 System.out.println("structs: " + analisadorSemantico.getSTRUCTS().toString());
                 System.out.println("tipo: " + analisadorSemantico.getTIPO().toString());
-                System.out.println("ERROSSSSSSSS: " + analisadorSemantico.getERROS().toString());
+                System.out.println("ERROSSSSSSSS: " + analisadorSemantico.getSaidaString());
 //                analisadorSintatico = new AnalisadorSintatico(automatos.getTokens());
 //                ArrayList<String> sintatico = analisadorSintatico.Sintatico();;
 //                System.out.println(analisadorSintatico.getSaidaString().toString());

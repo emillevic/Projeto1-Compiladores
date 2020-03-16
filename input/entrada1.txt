@@ -19,14 +19,16 @@
     }
 
     var{
-        int codigo;
-        real a = 1;
+        string codigo = "emille";
+        real mille = 3.0;
+        real m = mille;
     }
 
     functions{
         function real calcula_extra (real salario){
             var{
                 int a;
+                int codigo;
             }
             return local.a;
         }
@@ -43,8 +45,9 @@
 
     start(){
         var{
-            int numero = 1;
+            int numero;
             p pessoa;
+            int codigo;
         }
         p.nome = "emille";
         p.idade = 21;
