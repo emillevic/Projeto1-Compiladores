@@ -139,7 +139,6 @@ public class AnalisadorSemantico {
                 System.out.println("start----------------");
                 AnaliseStart();
             }
-
             if(indice+2 < codigoTratado.size())
                 andaUm();
             else
@@ -163,29 +162,54 @@ public class AnalisadorSemantico {
         if("struct".equals(atual.getLexemaString())){
             andaUm();
            if("IDENTIFICADOR".equals(atual.getTipo()) ){
-                Structs str = new Structs("struct " + atual.getLexemaString());
-                TIPO.add("struct " + atual.getLexemaString());
-                STRUCTS.add(str);
-                andaUm();
-                Extends();
-               if("{".equals(atual.getLexemaString())){
+               System.out.println("STRUCTSSSSSSSSSSSSSSSSSSSSSSS " + STRUCTS.toString());
+               if(existStruct("struct " + atual.getLexemaString())){
+                   Erro e = new Erro("Struct já existente", atual.getLinha());
+                   ERROS.add(e);
+               }else{
+                    Structs str = new Structs("struct " + atual.getLexemaString());
+                    TIPO.add("struct " + atual.getLexemaString());
+                    STRUCTS.add(str);
                     andaUm();
-                    attributes();
-                   if("}".equals(atual.getLexemaString()) && ";".equals(proximo.getLexemaString())){
-                       andaUm();
-                        return;
+                    Extends(str.getNome());
+                   if("{".equals(atual.getLexemaString())){
+                        andaUm();
+                        attributes();
+                       if("}".equals(atual.getLexemaString()) && ";".equals(proximo.getLexemaString())){
+                           andaUm();
+                            return;
+                       }
                    }
                }
+                
            }
        }
     }
     
-    private void Extends() {
+    private boolean existStruct(String nome){
+        for(int i = 0; i< STRUCTS.size(); i++){
+            if(nome.equals(STRUCTS.get(i).getNome())){
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    private void Extends(String nome) {
         if("extends".equals(atual.getLexemaString())){
-             andaUm();
+             andaUm(); andaUm();
+        System.out.println("EXTENDS::::::::::::::: " + atual.getLexemaString() );
             if("IDENTIFICADOR".equals(atual.getTipo())){
-                 andaUm();
-                 return;
+                if(nome.equals("struct " + atual.getLexemaString())){
+                    Erro e = new Erro("Extends mesma Struct", atual.getLinha());
+                    ERROS.add(e);
+                }else if(!existStruct("struct " + atual.getLexemaString())){
+                    Erro e = new Erro("Struct inexistente", atual.getLinha());
+                    ERROS.add(e);
+                }else{
+                    andaUm();
+                    return;
+                }  
             }
         }
          
@@ -369,7 +393,6 @@ public class AnalisadorSemantico {
                 verificaVariavelEscopo(tipo, func);
                 func.addVar(var);
             }
-            System.out.println("LISTA DE VARIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVEIS " + GLOBALVAR.toString());
             if("=".equals(proximo.getLexemaString())){
                 andaUm();
                 if("CADEIA DE CARACTERES".equals(proximo.getTipo()) || "NUMERO".equals(proximo.getTipo())

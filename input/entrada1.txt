@@ -4,7 +4,7 @@
             int idade;
         };
 
-        struct funcionario extends pessoa{
+        struct funcionario extends struct pessoa{
             real salario;
         };
     }
@@ -21,7 +21,7 @@
     var{
         string codigo = "emille";
         real mille = 3.0;
-        real m = mille;
+
     }
 
     functions{
