@@ -251,21 +251,32 @@ public class AnalisadorSemantico {
              if("struct".equals(atual.getLexemaString())){
                  andaUm();
                  if("IDENTIFICADOR".equals(atual.getTipo())){
-                     andaUm();
-                     if("IDENTIFICADOR".equals(atual.getTipo())){
-                        for(int i = 0; i< STRUCTS.size(); i++){
-                            if(STRUCTS.get(i).getNome().equals("struct " + anterior.getLexemaString())){
-                                STRUCTS.get(i).setNome(atual.getLexemaString());
-                            }
-                        }
-                        for(int i = 0; i< TIPO.size(); i++){
-                            if(TIPO.get(i).equals("struct " + anterior.getLexemaString())){
-                                TIPO.set(i, atual.getLexemaString());
-                            }
-                         }
+                     if(!existStruct("struct " + atual.getLexemaString())){
+                        Erro e = new Erro("Struct inexistente", atual.getLinha());
+                        ERROS.add(e);
+                     }else{
                         andaUm();
-                        if(";".equals(atual.getLexemaString())){
-                            return;
+                        if("IDENTIFICADOR".equals(atual.getTipo())){
+                            System.out.println("TYPEDEFSSSSSSSSSSSSS:: " + atual.getLexemaString());
+                            if(TIPO.contains(atual.getLexemaString())){
+                                Erro e = new Erro("Tipo já existente", atual.getLinha());
+                                ERROS.add(e);
+                            }else{
+                                for(int i = 0; i< STRUCTS.size(); i++){
+                                    if(STRUCTS.get(i).getNome().equals("struct " + anterior.getLexemaString())){
+                                        STRUCTS.get(i).setNome(atual.getLexemaString());
+                                    }
+                                }
+                                for(int i = 0; i< TIPO.size(); i++){
+                                    if(TIPO.get(i).equals("struct " + anterior.getLexemaString())){
+                                        TIPO.set(i, atual.getLexemaString());
+                                    }
+                                 }
+                                andaUm();
+                                if(";".equals(atual.getLexemaString())){
+                                    return;
+                                }
+                            }
                         }
                     }
                 }
