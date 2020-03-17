@@ -17,6 +17,7 @@
 
     const{
         real base_calculo = 0.2;
+        int valor = true;
     }
 
     var{

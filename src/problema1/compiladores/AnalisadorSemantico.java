@@ -296,18 +296,90 @@ public class AnalisadorSemantico {
         } 
     }
     
+    private boolean existConst(String nome){
+        int flag = 0;
+        for(int i = 0; i< CONSTS.size(); i++){
+            if(nome.equals(CONSTS.get(i).getNome())){
+                flag = 1;
+            }
+        }
+        for(int i = 0; i< GLOBALVAR.size(); i++){
+            if(nome.equals(GLOBALVAR.get(i).getNome())){
+                flag = 1;
+            }
+        }
+        if(flag == 1){
+            return true;
+        }
+        return false;
+    }
+    
     private void ConstantStructure(){
+        String tipoVar;
+        String flag = "global";
+        FunctionsProcedures func = null;
         if(TIPO.contains(atual.getLexemaString())){
+            tipoVar = atual.getLexemaString();
             andaUm();
             if("IDENTIFICADOR".equals(atual.getTipo()) && "=".equals(proximo.getLexemaString())){
-                Variaveis var = new Variaveis(atual.getLexemaString(), anterior.getLexemaString());
-                CONSTS.add(var);
-                andaUm();
-                if("CADEIA DE CARACTERES".equals(proximo.getTipo()) || "NUMERO".equals(proximo.getTipo())
-                        || "true".equals(proximo.getLexemaString()) || "false".equals(proximo.getLexemaString())){
-                   andaUm();
-                    if(";".equals(proximo.getLexemaString())){
-                        
+                if(existConst(atual.getLexemaString())){
+                    Erro e = new Erro("Variável/Constante já existente", atual.getLinha());
+                    ERROS.add(e);
+                } else{
+                    Variaveis var = new Variaveis(atual.getLexemaString(), anterior.getLexemaString());
+                    CONSTS.add(var);
+                    andaUm();
+                    if("CADEIA DE CARACTERES".equals(proximo.getTipo()) || "NUMERO".equals(proximo.getTipo())
+                            || "true".equals(proximo.getLexemaString()) || "false".equals(proximo.getLexemaString())){
+                       andaUm();
+                       if("string".equals(tipoVar)){
+                            if("IDENTIFICADOR".equals(atual.getTipo())){
+                                if(!containsVar(flag, func, atual.getLexemaString(), tipoVar)){
+                                    Erro e = new Erro("Atribuição tipo diferente - string", atual.getLinha());
+                                    ERROS.add(e);
+                                }
+                            }else if(!"CADEIA DE CARACTERES".equals(atual.getTipo())){
+                                Erro e = new Erro("Atribuição tipo diferente - string", atual.getLinha());
+                                ERROS.add(e);
+                            } 
+                        }else if("boolean".equals(tipoVar)){
+                            if("IDENTIFICADOR".equals(atual.getTipo())){
+                                if(!containsVar(flag, func, atual.getLexemaString(), tipoVar)){
+                                    Erro e = new Erro("Atribuição tipo diferente - boolean", atual.getLinha());
+                                    ERROS.add(e);
+                                }
+                            }else if(!"true".equals(atual.getLexemaString()) ||
+                                    !"false".equals(atual.getLexemaString())){
+                                Erro e = new Erro("Atribuição tipo diferente - boolean", atual.getLinha());
+                                ERROS.add(e);
+                            }
+                        }else if("int".equals(tipoVar) ){
+                             if("IDENTIFICADOR".equals(atual.getTipo())){
+                                if(!containsVar(flag, func, atual.getLexemaString(), tipoVar)){
+                                    Erro e = new Erro("Atribuição tipo diferente - int", atual.getLinha());
+                                    ERROS.add(e);
+                                }
+                            }else if(!"NUMERO".equals(atual.getTipo()) ||
+                                    ( "NUMERO".equals(atual.getTipo()) && atual.getLexemaString().contains("."))){
+                                Erro e = new Erro("Atribuição tipo diferente - int", atual.getLinha());
+                                ERROS.add(e);
+                            }
+                        }else if("real".equals(tipoVar)){
+                            if("IDENTIFICADOR".equals(atual.getTipo())){
+                                if(!containsVar(flag, func, atual.getLexemaString(), tipoVar)){
+                                    Erro e = new Erro("Atribuição tipo diferente - real", atual.getLinha());
+                                    ERROS.add(e);
+                                }
+                            } else if(!"NUMERO".equals(atual.getTipo()) ||
+                                    ( "NUMERO".equals(atual.getTipo()) && !atual.getLexemaString().contains("."))){
+                                Erro e = new Erro("Atribuição tipo diferente - real", atual.getLinha());
+                                ERROS.add(e);
+
+                            }
+                        } 
+                        if(";".equals(proximo.getLexemaString())){
+
+                        }
                     }
                 }
             }
