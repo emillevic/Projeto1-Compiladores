@@ -760,7 +760,7 @@ public class AnalisadorSemantico {
     }
       private void variavel() {
           
-         if("IDENTIFICADOR".equals(atual.getTipo())){
+        /* if("IDENTIFICADOR".equals(atual.getTipo())){
              analiseSemStruct(atual,(codigoTratado.get(indice+2)));
              andaUm();
             
@@ -789,8 +789,8 @@ public class AnalisadorSemantico {
                         }
                     }
                 }
-            }
-        }else if("local".equals(atual.getLexemaString()) ||"global".equals(atual.getLexemaString())){
+            }*/
+         if("local".equals(atual.getLexemaString()) ||"global".equals(atual.getLexemaString())){
                 analiseSemVar();
                 andaUm();
                 if(".".equals(atual.getLexemaString())){
@@ -805,12 +805,19 @@ public class AnalisadorSemantico {
         boolean existe  =false;
         Tokens variavel = codigoTratado.get( indice +2);
         Tokens escopo=atual;
+        Tokens struct= codigoTratado.get( indice +2);
+       Tokens atributo= codigoTratado.get( indice +4);
         if(escopo.getLexemaString().equals("global")){
         for(int i=0;i<GLOBALVAR.size();i++){
                 if(GLOBALVAR.get(i).getNome()==variavel.getLexemaString()){
                     existe=true;
                 }
+                else{
+                    analiseSemStruct(struct, atributo);
+                    
+                }
             }
+        
         }else if(escopo.getLexemaString().equals("local")){
            for(int i=0;i<LOCALVAR.size();i++){
                 if(LOCALVAR.get(i).getNome()==variavel.getLexemaString()){
