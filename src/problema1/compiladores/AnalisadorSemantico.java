@@ -115,8 +115,7 @@ public class AnalisadorSemantico {
         atual= codigoTratado.get(indice);
         proximo= codigoTratado.get(indice+1);
         while(true){
-                                System.out.println(atual.getLexemaString() + " linha: " + atual.getLinha());
-
+            System.out.println(atual.getLexemaString() + " linha: " + atual.getLinha());
             if("structs".equals(atual.getLexemaString())){
                 System.out.println("struct--------------------");
                 AnaliseStruct();
@@ -166,20 +165,20 @@ public class AnalisadorSemantico {
                if(existStruct("struct " + atual.getLexemaString())){
                    Erro e = new Erro("Struct já existente", atual.getLinha());
                    ERROS.add(e);
-               }else{
-                    Structs str = new Structs("struct " + atual.getLexemaString());
-                    TIPO.add("struct " + atual.getLexemaString());
-                    STRUCTS.add(str);
+               }
+                Structs str = new Structs("struct " + atual.getLexemaString());
+                TIPO.add("struct " + atual.getLexemaString());
+                STRUCTS.add(str);
+                andaUm();
+                Extends(str.getNome());
+                if("{".equals(atual.getLexemaString())){
                     andaUm();
-                    Extends(str.getNome());
-                   if("{".equals(atual.getLexemaString())){
-                        andaUm();
-                        attributes();
-                       if("}".equals(atual.getLexemaString()) && ";".equals(proximo.getLexemaString())){
-                           andaUm();
-                            return;
-                       }
+                    attributes();
+                   if("}".equals(atual.getLexemaString()) && ";".equals(proximo.getLexemaString())){
+                       andaUm();
+                        return;
                    }
+                   
                }
                 
            }
@@ -198,7 +197,6 @@ public class AnalisadorSemantico {
     private void Extends(String nome) {
         if("extends".equals(atual.getLexemaString())){
              andaUm(); andaUm();
-        System.out.println("EXTENDS::::::::::::::: " + atual.getLexemaString() );
             if("IDENTIFICADOR".equals(atual.getTipo())){
                 if(nome.equals("struct " + atual.getLexemaString())){
                     Erro e = new Erro("Extends mesma Struct", atual.getLinha());
@@ -206,10 +204,9 @@ public class AnalisadorSemantico {
                 }else if(!existStruct("struct " + atual.getLexemaString())){
                     Erro e = new Erro("Struct inexistente", atual.getLinha());
                     ERROS.add(e);
-                }else{
-                    andaUm();
-                    return;
-                }  
+                }
+                andaUm();
+                return;
             }
         }
          
@@ -221,6 +218,10 @@ public class AnalisadorSemantico {
             if("IDENTIFICADOR".equals(atual.getTipo())){
                 Variaveis var = new Variaveis(atual.getLexemaString(), anterior.getLexemaString());
                 STRUCTS.get(STRUCTS.size()-1).addVar(var);
+                if(existVarStruct(STRUCTS.get(STRUCTS.size() - 1), atual.getLexemaString(), anterior.getLexemaString())){
+                    Erro e = new Erro("Variavel ja existente", atual.getLinha());
+                    ERROS.add(e);
+                }
                 andaUm();
                 if(";".equals(atual.getLexemaString())){
                     andaUm();
@@ -229,6 +230,16 @@ public class AnalisadorSemantico {
             }
         }
     }  
+    
+    private boolean existVarStruct(Structs str, String nome, String tipo){
+        for(int i = 0; i < str.getLocalvar().size(); i++){
+            if(nome.equals(str.getLocalvar().get(i).getNome()) && tipo.equals(str.getLocalvar().get(i).getTipo())){
+                return true;
+            }
+        }
+        
+        return false;
+    }
 
     
 //    Método de typedefs
@@ -246,37 +257,35 @@ public class AnalisadorSemantico {
     }
 
     private void typedef() {      
-         if("typedef".equals(atual.getLexemaString())){
-             andaUm();
-             if("struct".equals(atual.getLexemaString())){
-                 andaUm();
-                 if("IDENTIFICADOR".equals(atual.getTipo())){
-                     if(!existStruct("struct " + atual.getLexemaString())){
+        if("typedef".equals(atual.getLexemaString())){
+            andaUm();
+            if("struct".equals(atual.getLexemaString())){
+                andaUm();
+                if("IDENTIFICADOR".equals(atual.getTipo())){
+                    if(!existStruct("struct " + atual.getLexemaString())){
                         Erro e = new Erro("Struct inexistente", atual.getLinha());
                         ERROS.add(e);
-                     }else{
-                        andaUm();
-                        if("IDENTIFICADOR".equals(atual.getTipo())){
-                            System.out.println("TYPEDEFSSSSSSSSSSSSS:: " + atual.getLexemaString());
-                            if(TIPO.contains(atual.getLexemaString())){
-                                Erro e = new Erro("Tipo já existente", atual.getLinha());
-                                ERROS.add(e);
-                            }else{
-                                for(int i = 0; i< STRUCTS.size(); i++){
-                                    if(STRUCTS.get(i).getNome().equals("struct " + anterior.getLexemaString())){
-                                        STRUCTS.get(i).setNome(atual.getLexemaString());
-                                    }
-                                }
-                                for(int i = 0; i< TIPO.size(); i++){
-                                    if(TIPO.get(i).equals("struct " + anterior.getLexemaString())){
-                                        TIPO.set(i, atual.getLexemaString());
-                                    }
-                                 }
-                                andaUm();
-                                if(";".equals(atual.getLexemaString())){
-                                    return;
-                                }
+                    }
+                    andaUm();
+                    if("IDENTIFICADOR".equals(atual.getTipo())){
+                        System.out.println("TYPEDEFSSSSSSSSSSSSS:: " + atual.getLexemaString());
+                        if(TIPO.contains(atual.getLexemaString())){
+                            Erro e = new Erro("Tipo já existente", atual.getLinha());
+                            ERROS.add(e);
+                        }
+                        for(int i = 0; i< STRUCTS.size(); i++){
+                            if(STRUCTS.get(i).getNome().equals("struct " + anterior.getLexemaString())){
+                                STRUCTS.get(i).setNome(atual.getLexemaString());
                             }
+                        }
+                        for(int i = 0; i< TIPO.size(); i++){
+                            if(TIPO.get(i).equals("struct " + anterior.getLexemaString())){
+                                TIPO.set(i, atual.getLexemaString());
+                            }
+                         }
+                        andaUm();
+                        if(";".equals(atual.getLexemaString())){
+                            return;
                         }
                     }
                 }
@@ -325,63 +334,63 @@ public class AnalisadorSemantico {
                 if(existConst(atual.getLexemaString())){
                     Erro e = new Erro("Variável/Constante já existente", atual.getLinha());
                     ERROS.add(e);
-                } else{
-                    Variaveis var = new Variaveis(atual.getLexemaString(), anterior.getLexemaString());
-                    CONSTS.add(var);
-                    andaUm();
-                    if("CADEIA DE CARACTERES".equals(proximo.getTipo()) || "NUMERO".equals(proximo.getTipo())
-                            || "true".equals(proximo.getLexemaString()) || "false".equals(proximo.getLexemaString())){
-                       andaUm();
-                       if("string".equals(tipoVar)){
-                            if("IDENTIFICADOR".equals(atual.getTipo())){
-                                if(!containsVar(flag, func, atual.getLexemaString(), tipoVar)){
-                                    Erro e = new Erro("Atribuição tipo diferente - string", atual.getLinha());
-                                    ERROS.add(e);
-                                }
-                            }else if(!"CADEIA DE CARACTERES".equals(atual.getTipo())){
+                } 
+                Variaveis var = new Variaveis(atual.getLexemaString(), anterior.getLexemaString());
+                CONSTS.add(var);
+                andaUm();
+                if("CADEIA DE CARACTERES".equals(proximo.getTipo()) || "NUMERO".equals(proximo.getTipo())
+                        || "true".equals(proximo.getLexemaString()) || "false".equals(proximo.getLexemaString())){
+                   andaUm();
+                   if("string".equals(tipoVar)){
+                        if("IDENTIFICADOR".equals(atual.getTipo())){
+                            if(!containsVar(flag, func, atual.getLexemaString(), tipoVar)){
                                 Erro e = new Erro("Atribuição tipo diferente - string", atual.getLinha());
                                 ERROS.add(e);
-                            } 
-                        }else if("boolean".equals(tipoVar)){
-                            if("IDENTIFICADOR".equals(atual.getTipo())){
-                                if(!containsVar(flag, func, atual.getLexemaString(), tipoVar)){
-                                    Erro e = new Erro("Atribuição tipo diferente - boolean", atual.getLinha());
-                                    ERROS.add(e);
-                                }
-                            }else if(!"true".equals(atual.getLexemaString()) ||
-                                    !"false".equals(atual.getLexemaString())){
+                            }
+                        }else if(!"CADEIA DE CARACTERES".equals(atual.getTipo())){
+                            Erro e = new Erro("Atribuição tipo diferente - string", atual.getLinha());
+                            ERROS.add(e);
+                        } 
+                    }else if("boolean".equals(tipoVar)){
+                        if("IDENTIFICADOR".equals(atual.getTipo())){
+                            if(!containsVar(flag, func, atual.getLexemaString(), tipoVar)){
                                 Erro e = new Erro("Atribuição tipo diferente - boolean", atual.getLinha());
                                 ERROS.add(e);
                             }
-                        }else if("int".equals(tipoVar) ){
-                             if("IDENTIFICADOR".equals(atual.getTipo())){
-                                if(!containsVar(flag, func, atual.getLexemaString(), tipoVar)){
-                                    Erro e = new Erro("Atribuição tipo diferente - int", atual.getLinha());
-                                    ERROS.add(e);
-                                }
-                            }else if(!"NUMERO".equals(atual.getTipo()) ||
-                                    ( "NUMERO".equals(atual.getTipo()) && atual.getLexemaString().contains("."))){
+                        }else if(!"true".equals(atual.getLexemaString()) ||
+                                !"false".equals(atual.getLexemaString())){
+                            Erro e = new Erro("Atribuição tipo diferente - boolean", atual.getLinha());
+                            ERROS.add(e);
+                        }
+                    }else if("int".equals(tipoVar) ){
+                         if("IDENTIFICADOR".equals(atual.getTipo())){
+                            if(!containsVar(flag, func, atual.getLexemaString(), tipoVar)){
                                 Erro e = new Erro("Atribuição tipo diferente - int", atual.getLinha());
                                 ERROS.add(e);
                             }
-                        }else if("real".equals(tipoVar)){
-                            if("IDENTIFICADOR".equals(atual.getTipo())){
-                                if(!containsVar(flag, func, atual.getLexemaString(), tipoVar)){
-                                    Erro e = new Erro("Atribuição tipo diferente - real", atual.getLinha());
-                                    ERROS.add(e);
-                                }
-                            } else if(!"NUMERO".equals(atual.getTipo()) ||
-                                    ( "NUMERO".equals(atual.getTipo()) && !atual.getLexemaString().contains("."))){
+                        }else if(!"NUMERO".equals(atual.getTipo()) ||
+                                ( "NUMERO".equals(atual.getTipo()) && atual.getLexemaString().contains("."))){
+                            Erro e = new Erro("Atribuição tipo diferente - int", atual.getLinha());
+                            ERROS.add(e);
+                        }
+                    }else if("real".equals(tipoVar)){
+                        if("IDENTIFICADOR".equals(atual.getTipo())){
+                            if(!containsVar(flag, func, atual.getLexemaString(), tipoVar)){
                                 Erro e = new Erro("Atribuição tipo diferente - real", atual.getLinha());
                                 ERROS.add(e);
-
                             }
-                        } 
-                        if(";".equals(proximo.getLexemaString())){
+                        } else if(!"NUMERO".equals(atual.getTipo()) ||
+                                ( "NUMERO".equals(atual.getTipo()) && !atual.getLexemaString().contains("."))){
+                            Erro e = new Erro("Atribuição tipo diferente - real", atual.getLinha());
+                            ERROS.add(e);
 
                         }
+                    } 
+                    if(";".equals(proximo.getLexemaString())){
+
                     }
                 }
+                
             }
         }
     }
@@ -614,7 +623,7 @@ public class AnalisadorSemantico {
     private void retorno(){
         if("return".equals(atual.getLexemaString())){
             andaUm();
-            variavel();
+//            variavel();
         }
     }
     
