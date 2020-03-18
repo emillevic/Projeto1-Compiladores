@@ -553,6 +553,7 @@ public class AnalisadorSemantico {
         if("{".equals(proximo.getLexemaString())){
             andaUm(); andaUm();
             while(!"}".equals(atual.getLexemaString())){
+                System.out.println(atual.getLexemaString()+ "                mmmmmmmmmmmmmmmmmmmmmm          " + FUNCTIONS.size() + "        HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH            " + FUNCTIONS.toString());
                 function();
                 andaUm();
             }
@@ -566,6 +567,7 @@ public class AnalisadorSemantico {
             if(TIPO.contains(atual.getLexemaString())){
                 andaUm();
                 if("IDENTIFICADOR".equals(atual.getTipo())){
+                    System.out.println("NOME DA FUNCAAAAAAAAAAAAAAO " + atual.getLexemaString());
                     func = new FunctionsProcedures(atual.getLexemaString(), anterior.getLexemaString());
                     andaUm();
                     if("(".equals(atual.getLexemaString())){
@@ -573,15 +575,19 @@ public class AnalisadorSemantico {
                            andaUm();
                            func = DeclaraParam(func);
                         }
+                        if(compareFuncProc(func)){
+                            Erro e = new Erro("Função/Procedimento já existente!", atual.getLinha());
+                            ERROS.add(e);
+                        }
                         AnaliseVariavel("func", func);
                         andaUm();
                         if("return".equals(atual.getLexemaString())){
                             retorno();
-                            andaUm();
+//                            andaUm();
                         }else{
                             comandos();
                             retorno();
-                            andaUm();
+//                            andaUm();
                         }
                         FUNCTIONS.add(func);
                         return;
@@ -590,10 +596,25 @@ public class AnalisadorSemantico {
             }
         }
     }
+    
+    private boolean compareFuncProc(FunctionsProcedures func){
+        for(int i = 0; i< FUNCTIONS.size(); i++){
+            if(FUNCTIONS.get(i).compareTo(func)){
+                return true;
+            }
+        }
+        for(int i = 0; i< PROCEDURES.size(); i++){
+            if(PROCEDURES.get(i).compareTo(func)){
+                return true;
+            }
+        }
+        return false;
+    }
+    
     private void retorno(){
         if("return".equals(atual.getLexemaString())){
             andaUm();
-//            variavel();
+            variavel();
         }
     }
     

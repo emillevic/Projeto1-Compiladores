@@ -34,7 +34,7 @@ public class FunctionsProcedures {
     
     public boolean compareTo(FunctionsProcedures obj){
         if(this.nome.equals(obj.getNome())){
-            if(this.parametro == obj.getParametro())
+            if(this.parametro.equals(obj.getParametro()))
                 return true;
         }
         return false;

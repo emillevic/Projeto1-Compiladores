@@ -17,7 +17,6 @@
 
     const{
         real base_calculo = 0.2;
-        int valor = true;
     }
 
     var{
@@ -27,10 +26,16 @@
     }
 
     functions{
-        function real calcula_extra (real salario){
+        function real calcula_extra(real salario){
             var{
                 int a;
                 int codigo;
+            }
+            return local.a;
+        }
+        function int calcula(real salario){
+            var{
+                int a;
             }
             return local.a;
         }
