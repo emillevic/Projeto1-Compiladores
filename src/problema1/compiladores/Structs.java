@@ -22,6 +22,14 @@ public class Structs {
     public void addVar(Variaveis var){
         localvar.add(var);
     }
+    
+    public void extendsVar(ArrayList<Variaveis> var){
+        for(int i = 0; i< var.size(); i++){
+                            System.out.println("LOOOOOOOOOOOOOOOOOOOOOOOOP    " + var.get(i));
+
+            localvar.add(var.get(i));
+        }
+    }
 
     public String getNome() {
         return nome;

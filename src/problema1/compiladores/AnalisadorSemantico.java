@@ -205,6 +205,17 @@ public class AnalisadorSemantico {
                     Erro e = new Erro("Struct inexistente", atual.getLinha());
                     ERROS.add(e);
                 }
+                if(existStruct("struct " + atual.getLexemaString())){
+                    for(int i = 0; i< STRUCTS.size(); i++){
+                        if(("struct "+ atual.getLexemaString()).equals(STRUCTS.get(i).getNome())){
+                            for(int j = 0; j < STRUCTS.size(); j++){
+                                if(nome.equals(STRUCTS.get(j).getNome())){
+                                    STRUCTS.get(j).extendsVar(STRUCTS.get(i).getLocalvar());
+                                }
+                            }
+                        }
+                    }
+                }
                 andaUm();
                 return;
             }
@@ -216,12 +227,12 @@ public class AnalisadorSemantico {
         if(TIPO.contains(atual.getLexemaString())){
             andaUm();
             if("IDENTIFICADOR".equals(atual.getTipo())){
-                Variaveis var = new Variaveis(atual.getLexemaString(), anterior.getLexemaString());
-                STRUCTS.get(STRUCTS.size()-1).addVar(var);
                 if(existVarStruct(STRUCTS.get(STRUCTS.size() - 1), atual.getLexemaString(), anterior.getLexemaString())){
                     Erro e = new Erro("Variavel ja existente", atual.getLinha());
                     ERROS.add(e);
                 }
+                Variaveis var = new Variaveis(atual.getLexemaString(), anterior.getLexemaString());
+                STRUCTS.get(STRUCTS.size()-1).addVar(var);
                 andaUm();
                 if(";".equals(atual.getLexemaString())){
                     andaUm();
@@ -233,7 +244,7 @@ public class AnalisadorSemantico {
     
     private boolean existVarStruct(Structs str, String nome, String tipo){
         for(int i = 0; i < str.getLocalvar().size(); i++){
-            if(nome.equals(str.getLocalvar().get(i).getNome()) && tipo.equals(str.getLocalvar().get(i).getTipo())){
+            if(nome.equals(str.getLocalvar().get(i).getNome())){
                 return true;
             }
         }

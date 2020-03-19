@@ -5,7 +5,7 @@
         };
 
         struct funcionario extends struct pessoa{
-            real salario;
+            real valor;
         };
 
     }
