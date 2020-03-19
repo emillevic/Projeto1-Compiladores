@@ -20,7 +20,7 @@
     }
 
     var{
-        string codigo = "emille";
+        string codigo[];
         real mille = 3.0;
 
     }
@@ -30,8 +30,9 @@
             var{
                 int a;
                 int codigo;
+                p pessoa;
             }
-            return local.a;
+            return local.pessoa;
         }
         function int calcula(real salario){
             var{
@@ -46,7 +47,7 @@
             var{
                 string estado;
             }
-            global.cidade = local.cidade;
+            //global.cidade = local.cidade;
         }
     }
 

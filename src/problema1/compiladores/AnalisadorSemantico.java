@@ -23,6 +23,7 @@ public class AnalisadorSemantico {
     private ArrayList<FunctionsProcedures> PROCEDURES = new ArrayList<FunctionsProcedures>();
     private ArrayList<Variaveis> LOCALVAR;
     private ArrayList<Erro> ERROS = new ArrayList<Erro>();
+    private String escopoAtual = new String();
    
     private Tokens atual;
     private Tokens anterior;
@@ -128,6 +129,7 @@ public class AnalisadorSemantico {
             }else if("var".equals(atual.getLexemaString())){
                 System.out.println("var------------------");
                 AnaliseVariavel("global", null);
+                System.out.println("VARIAVEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEIS      " + GLOBALVAR.toString());
             }else if("functions".equals(atual.getLexemaString())){
                 System.out.println("functions---------------------");
                 AnaliseFunctions();
@@ -581,6 +583,7 @@ public class AnalisadorSemantico {
     }
     
     private void function(){
+        escopoAtual = "func";
         FunctionsProcedures func;
         if("function".equals(atual.getLexemaString())){
             andaUm();
@@ -602,11 +605,11 @@ public class AnalisadorSemantico {
                         AnaliseVariavel("func", func);
                         andaUm();
                         if("return".equals(atual.getLexemaString())){
-                            retorno();
+                            retorno(func);
 //                            andaUm();
                         }else{
                             comandos();
-                            retorno();
+                            retorno(func);
 //                            andaUm();
                         }
                         FUNCTIONS.add(func);
@@ -631,10 +634,10 @@ public class AnalisadorSemantico {
         return false;
     }
     
-    private void retorno(){
+    private void retorno(FunctionsProcedures func){
         if("return".equals(atual.getLexemaString())){
             andaUm();
-//            variavel();
+            variavel(func);
         }
     }
     
@@ -644,6 +647,7 @@ public class AnalisadorSemantico {
             if("IDENTIFICADOR".equals(atual.getTipo())){
                 Variaveis var = new Variaveis(atual.getLexemaString(), anterior.getLexemaString());
                 func.addParametro(var);
+                func.addVar(var);
                 if(",".equals(proximo.getLexemaString())){
                     andaUm();
                     DeclaraParam(func);
@@ -667,6 +671,7 @@ public class AnalisadorSemantico {
     }
     
     private void procedures(){
+        escopoAtual = "func";
         FunctionsProcedures proc;
                     System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa " + atual.getLexemaString());
         if("procedure".equals(atual.getLexemaString())){
@@ -694,6 +699,7 @@ public class AnalisadorSemantico {
     
 //    Método de Start()
     private void AnaliseStart() {
+        escopoAtual = "start";
          if("DELIMITADOR".equals(proximo.getTipo()) && "(".equals(proximo.getLexemaString())){
            andaUm();
             if("DELIMITADOR".equals(proximo.getTipo()) && ")".equals(proximo.getLexemaString())){
@@ -749,36 +755,25 @@ public class AnalisadorSemantico {
      return;
        
     }
-    private boolean analiseSemStruct(Tokens struct, Tokens atributo ){
-        boolean existeStruct=false;
-        boolean existeAtributo=false;
+    private boolean analiseSemStruct(Variaveis var){
+        boolean existeAtributoStruct=false;
         
-       // struct=atual;
-      // atributo= codigoTratado.get( indice +2);
-       
-       int qtdVar;
-        for(int i=0;i<STRUCTS.size();i++){
-                if(STRUCTS.get(i).getNome().equals(atual.getLexemaString())){
-                    existeStruct=true;
-                }
-            }
-            if(!existeStruct){
-                Erro erro = new Erro("struct não existe", atual.getLinha());
-            }else{
-                for(int j=0;j<STRUCTS.size();j++){
-                if(STRUCTS.get(j).getNome().equals(atual.getLexemaString())){
-                    qtdVar =STRUCTS.get(j).getLocalvar().size();
-                    for(int k=0;k<(qtdVar); k++){
-                        if(STRUCTS.get(j).getLocalvar().get(k).getNome().equals(atributo.getLexemaString())){
-                            existeAtributo=true;
-                        }
+        String tipo = var.getTipo();
+        Structs str = null;
+        for(int i = 0; i<STRUCTS.size(); i++){
+            if(STRUCTS.get(i).getNome().equals(tipo)){
+                str = STRUCTS.get(i);
+                for(int j = 0;j< str.getLocalvar().size(); j++){
+                    if(atual.getLexemaString().equals(str.getLocalvar().get(j).getNome())){
+                        existeAtributoStruct = true;
                     }
                 }
             }
         }
-            return existeStruct && existeAtributo;
+        
+        return existeAtributoStruct;
     }
-      private void variavel() {
+      private void variavel(FunctionsProcedures func) {
           
         /* if("IDENTIFICADOR".equals(atual.getTipo())){
              analiseSemStruct(atual,(codigoTratado.get(indice+2)));
@@ -810,40 +805,67 @@ public class AnalisadorSemantico {
                     }
                 }
             }*/
+        String escopoAcesso = "";
          if("local".equals(atual.getLexemaString()) ||"global".equals(atual.getLexemaString())){
-                analiseSemVar();
+            escopoAcesso = atual.getLexemaString();
                 andaUm();
                 if(".".equals(atual.getLexemaString())){
                     andaUm();
                     if("IDENTIFICADOR".equals(atual.getTipo())) {
+                        analiseSemVar(func, escopoAcesso);
                         return;
                     }
             }
         }
     }
-    private void analiseSemVar(){
+      
+
+    private void analiseSemVar(FunctionsProcedures func, String escopoAcesso){
         boolean existe  =false;
-        Tokens variavel = codigoTratado.get( indice +2);
-        Tokens escopo=atual;
-        Tokens struct= codigoTratado.get( indice +2);
-       Tokens atributo= codigoTratado.get( indice +4);
-        if(escopo.getLexemaString().equals("global")){
-        for(int i=0;i<GLOBALVAR.size();i++){
-                if(GLOBALVAR.get(i).getNome()==variavel.getLexemaString()){
+        Variaveis var = null;
+        if(escopoAcesso.equals("global")){
+            for(int i=0;i<GLOBALVAR.size();i++){
+                if(GLOBALVAR.get(i).getNome().equals(atual.getLexemaString())){
                     existe=true;
-                }
-                else{
-                    analiseSemStruct(struct, atributo);
-                    
+                    var = GLOBALVAR.get(i);
                 }
             }
-        
-        }else if(escopo.getLexemaString().equals("local")){
-           for(int i=0;i<LOCALVAR.size();i++){
-                if(LOCALVAR.get(i).getNome()==variavel.getLexemaString()){
+            for(int i = 0; i< CONSTS.size(); i++){
+                if(CONSTS.get(i).getNome().equals(atual.getLexemaString())){
                     existe=true;
+                    var = CONSTS.get(i);
                 }
-            } 
+            }
+        }else if(escopoAcesso.equals("local")){
+            if(escopoAtual.equals("func")){
+                for(int i = 0; i< func.getLocalvar().size(); i++){
+                    if(atual.getLexemaString().equals(func.getLocalvar().get(i).getNome())){
+                        existe = true;
+                        var = func.getLocalvar().get(i);
+                    }
+                }
+            }else if(escopoAtual.equals("start")){
+                for(int i=0;i<STARTVAR.size();i++){
+                    if(STARTVAR.get(i).getNome().equals(atual.getLexemaString())){
+                        existe=true;
+                        var = STARTVAR.get(i);
+                    }
+                }
+            }
+        }
+        andaUm();
+        if(".".equals(atual.getLexemaString()) && existe == true){
+            andaUm();
+            if(!analiseSemStruct(var)){
+                Erro e = new Erro("Variável de struct não existente", atual.getLinha());
+                ERROS.add(e);
+            }
+        }else{
+            voltaUm();
+        }
+        if(!existe){
+            Erro e = new Erro("Variável não existente no escopo", atual.getLinha());
+            ERROS.add(e);
         }
     }
     private void AnalisePrint() {
@@ -855,7 +877,7 @@ public class AnalisadorSemantico {
                 }
                 else if("IDENTIFICADOR".equals(atual.getTipo()) || "global".equals(atual.getLexemaString()) 
               ||"local".equals(atual.getLexemaString())){
-                    variavel();
+                    variavel(null);
                 }
 
                if(",".equals(atual.getLexemaString())){
@@ -876,7 +898,7 @@ public class AnalisadorSemantico {
                  }
                  else if("IDENTIFICADOR".equals(atual.getTipo()) || "global".equals(atual.getLexemaString()) 
                ||"local".equals(atual.getLexemaString())){
-                     variavel();
+                     variavel(null);
                  }
                 if(",".equals(atual.getLexemaString())){
                     andaUm();
@@ -979,18 +1001,18 @@ public class AnalisadorSemantico {
                 return;
             }
         }else{
-            variavel();
+            variavel(null);
             return;
         }
     }
     
     private void AssignmentVariable() {
-        variavel();
+        variavel(null);
         if("=".equals(atual.getLexemaString())){
             andaUm();
             if("IDENTIFICADOR".equals(atual.getTipo()) || "global".equals(atual.getLexemaString()) 
                 ||"local".equals(atual.getLexemaString())){
-                variavel();
+                variavel(null);
                 return;
             }else if("NUMERO".equals(atual.getTipo())||"CADEIA DE CARACTERES".equals(atual.getTipo())
                     ||"true".equals(atual.getLexemaString())|| "false".equals(atual.getLexemaString())){
@@ -1042,7 +1064,7 @@ public class AnalisadorSemantico {
     private void auxLogica3() {
         if("IDENTIFICADOR".equals(atual.getTipo())|| "global".equals(atual.getLexemaString()) 
             ||"local".equals(atual.getLexemaString())){
-            variavel();
+            variavel(null);
             return;
         }
         else if("true".equals(atual.getLexemaString())||"false".equals(atual.getLexemaString())){
@@ -1068,7 +1090,7 @@ public class AnalisadorSemantico {
                 andaUm();
         }else if("IDENTIFICADOR".equals(atual.getTipo()) || "global".equals(atual.getLexemaString()) 
             ||"local".equals(atual.getLexemaString())){
-            variavel();
+            variavel(null);
             andaUm();
        }
         
@@ -1080,7 +1102,7 @@ public class AnalisadorSemantico {
             }
             else if("IDENTIFICADOR".equals(atual.getTipo()) || "global".equals(atual.getLexemaString()) 
             ||"local".equals(atual.getLexemaString())){
-                variavel();
+                variavel(null);
                 andaUm();
             }
         }
@@ -1089,7 +1111,7 @@ public class AnalisadorSemantico {
     private void Incremments(){
         if("IDENTIFICADOR".equals(atual.getTipo())){
             andaUm();
-            variavel();
+            variavel(null);
             incremment();
             andaUm();
             if(";".equals(atual.getLexemaString())){
