@@ -658,9 +658,50 @@ public class AnalisadorSemantico {
     }
     
     private void retorno(FunctionsProcedures func){
+        boolean isvar;
+        boolean erro = false;
         if("return".equals(atual.getLexemaString())){
             andaUm();
-            variavel(func);
+            isvar = variavel(func);
+            if(isvar){
+                System.out.println(isvar+"    EU TO AQUIIIIIIIIIIIIIIIIIIIIII   " + atual.getLexemaString());
+                if("matriz".equals(atualVar.getVetMat())){
+                    if(!func.getRetorno().equals(atualVar.getTipo()+"[][]")){
+                        erro = true;
+                    }
+                }else if("vetor".equals(atualVar.getVetMat())){
+                    if((!func.getRetorno().equals(atualVar.getTipo() +"[]"))){
+                        erro = true;
+                    }
+                }else if(!atualVar.getTipo().equals(func.getRetorno())){
+                    erro = true;
+                }
+            }else{
+                if("NUMERO".equals(atual.getTipo())){
+                    if(atual.getLexemaString().contains(".")){
+                        if(!func.getRetorno().equals("real")){
+                            erro = true;
+                        }
+                    }else{
+                        if(!func.getRetorno().equals("int")){
+                            erro = true;
+                        }
+                    }
+                }else if("CADEIA DE CARACTERES".equals(atual.getTipo())){
+                    if(!func.getRetorno().equals("string")){
+                        erro = true;
+                    }
+                }else if("true".equals(atual.getLexemaString()) || "false".equals(atual.getLexemaString())){
+                    if(!func.getRetorno().equals("boolean")){
+                        erro = true;
+                    }
+                }
+            }
+        }
+        
+        if(erro){
+            Erro e = new Erro("Tipo do retorno diferente", atual.getLinha());
+            ERROS.add(e);
         }
     }
     
@@ -808,7 +849,7 @@ public class AnalisadorSemantico {
                     }
             }
         }
-         return true;
+         return false;
     }
       
     private boolean varMatrizVetor(FunctionsProcedures func, String escopoAcesso, String vetMat){

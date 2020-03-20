@@ -23,17 +23,17 @@
         int n;
         string codigo[];
         boolean b = false;
-        real mille;
+        real mille[];
 
     }
 
     functions{
-        function real calcula_extra(real salario){
+        function real[] calcula_extra(real salario){
             var{
                 int a[][];
                 p pessoa;
             }
-            return local.a[6][5];
+            return global.mille[];
         }
         function int calcula(real salario){
             var{
@@ -44,7 +44,7 @@
     }
 
     procedures{
-        procedure altera_cidade(string cidade){
+        function real[] calcula_extra(real salario){
             var{
                 string estado;
             }

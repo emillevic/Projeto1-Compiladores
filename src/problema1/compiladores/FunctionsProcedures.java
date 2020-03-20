@@ -24,6 +24,15 @@ public class FunctionsProcedures {
     public FunctionsProcedures(String nome) {
         this.nome = nome;
     }
+
+    public String getRetorno() {
+        return retorno;
+    }
+
+    public void setRetorno(String retorno) {
+        this.retorno = retorno;
+    }
+    
     
     public void addParametro(Variaveis var){
         parametro.add(var);
