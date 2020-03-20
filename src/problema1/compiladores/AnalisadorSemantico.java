@@ -631,7 +631,7 @@ public class AnalisadorSemantico {
                             retorno(func);
 //                            andaUm();
                         }else{
-                            comandos();
+                            comandos(null);
                             retorno(func);
 //                            andaUm();
                         }
@@ -708,7 +708,7 @@ public class AnalisadorSemantico {
                     }
                     AnaliseVariavel("func", proc);
                     andaUm();
-                    comandos();
+                    comandos(null);
                     andaUm();
                     PROCEDURES.add(proc);
                     return;
@@ -741,36 +741,36 @@ public class AnalisadorSemantico {
         }
     }
     
-     private void comandos() {
+     private void comandos(FunctionsProcedures func) {
         if("print".equals(atual.getLexemaString())){
            andaUm();
-           AnalisePrint();
+           AnalisePrint(func);
            return;
         }else if("read".equals(atual.getLexemaString())){
            andaUm();
-           AnaliseRead();
+           AnaliseRead(func);
            return;
         }else if("while".equals(atual.getLexemaString())){
            andaUm();
-           AnaliseWhile();
+           AnaliseWhile(func);
            return;
         }else if("if".equals(atual.getLexemaString())){
            andaUm();
-           AnaliseIf();
+           AnaliseIf(func);
            return;
         }else if("++".equals(proximo.getLexemaString())||"--".equals(proximo.getLexemaString())){
-           Incremments();
+           Incremments(func);
            return;
         }else if("IDENTIFICADOR".equals(atual.getTipo()) || "global".equals(atual.getLexemaString()) 
                ||"local".equals(atual.getLexemaString())){
            andaUm(); andaUm();
            if("=".equals(proximo.getLexemaString())){
             voltaUm(); voltaUm();
-            AssignmentVariable();
+            AssignmentVariable(func);
             return;
         }else if("OPERADOR ARITMETICO".equals(proximo.getTipo())){
             voltaUm(); voltaUm();
-            ExpressaoAritimetica();
+            ExpressaoAritimetica(func);
             return;  
         }
        }
@@ -1158,16 +1158,26 @@ public class AnalisadorSemantico {
         }
         return true;
     }
-    private void AnalisePrint() {
+    private void AnalisePrint(FunctionsProcedures func) {
+        String tipoStruct;
+        Erro e;
         if("(".equals(atual.getLexemaString())){
             while(!")".equals(atual.getLexemaString())){
                 andaUm();
                 if("CADEIA DE CARACTERES".equals(atual.getTipo()) || "NUMERO".equals(atual.getTipo()) ){
                     andaUm();
                 }
-                else if("IDENTIFICADOR".equals(atual.getTipo()) || "global".equals(atual.getLexemaString()) 
+                else if(  "global".equals(atual.getLexemaString()) 
               ||"local".equals(atual.getLexemaString())){
-                    variavel(null);
+                    variavel(func);
+                    for(int i=0;i<STRUCTS.size();i++){
+                        tipoStruct=STRUCTS.get(i).getNome();
+                        if(atualVar.getTipo().equals(tipoStruct))
+                        {
+                             e=new Erro("impossivel imprimir Struct", atual.getLinha());
+                             ERROS.add(e);
+                        }
+                    }
                 }
 
                if(",".equals(atual.getLexemaString())){
@@ -1179,8 +1189,10 @@ public class AnalisadorSemantico {
          }
     }
     
-       private void AnaliseRead() {
-       if("(".equals(atual.getLexemaString())){
+       private void AnaliseRead(FunctionsProcedures func) {
+        String tipoStruct;
+        Erro e;
+        if("(".equals(atual.getLexemaString())){
              while(!")".equals(atual.getLexemaString())){
                  andaUm();
                  if("CADEIA DE CARACTERES".equals(atual.getTipo()) || "NUMERO".equals(atual.getTipo()) ){
@@ -1188,8 +1200,17 @@ public class AnalisadorSemantico {
                  }
                  else if("IDENTIFICADOR".equals(atual.getTipo()) || "global".equals(atual.getLexemaString()) 
                ||"local".equals(atual.getLexemaString())){
-                     variavel(null);
-                 }
+                     variavel(func);
+                        for(int i=0;i<STRUCTS.size();i++){
+                         tipoStruct = STRUCTS.get(i).getNome();
+                        if(atualVar.getTipo().equals(tipoStruct))
+                            {
+                              e = new Erro("impossivel imprimir Struct", atual.getLinha());
+                             ERROS.add(e);
+                            }
+                        }
+                    }
+                
                 if(",".equals(atual.getLexemaString())){
                     andaUm();
                 }
@@ -1198,7 +1219,7 @@ public class AnalisadorSemantico {
          }
     }
        
-    private void AnaliseIf() {
+    private void AnaliseIf(FunctionsProcedures func) {
         if("(".equals(atual.getLexemaString())){
             while(!")".equals(atual.getLexemaString())){
                 andaUm();
@@ -1209,13 +1230,13 @@ public class AnalisadorSemantico {
                     if("{".equals(atual.getLexemaString())){
                         while(!"}".equals(atual.getLexemaString())){
                           andaUm();
-                          comandos();
+                          comandos(null);
                       }
                     }
             }
             if("else".equals(atual.getLexemaString())){
                andaUm();
-               comandos(); //precisa de mais coisa aqui no else?
+               comandos(null); //precisa de mais coisa aqui no else?
            }
         }
     }
@@ -1231,7 +1252,7 @@ public class AnalisadorSemantico {
         }
     }
     
-    private void AnaliseWhile() {
+    private void AnaliseWhile(FunctionsProcedures func) {
         if("(".equals(atual.getLexemaString())){
              while(!")".equals(atual.getLexemaString())){
                  andaUm();
@@ -1239,7 +1260,7 @@ public class AnalisadorSemantico {
                   if("{".equals(atual.getLexemaString())){
                         while(!"}".equals(atual.getLexemaString())){
                           andaUm();
-                          comandos();
+                          comandos(null);
                       }
                     }
              }
@@ -1247,45 +1268,46 @@ public class AnalisadorSemantico {
         }
     }
     
-    private void ExpressaoAritimetica(){
+    private void ExpressaoAritimetica(FunctionsProcedures func){
         if("+".equals(proximo.getLexemaString())||"-".equals(proximo.getLexemaString())){
-          ExpressaoAritimetica();
+          ExpressaoAritimetica(func);
           andaUm(); andaUm();
-          MultExp();
+          MultExp(func);
         }else {
-            MultExp();
+            MultExp(func);
             return;
         }
     }
-    private void MultExp(){
+    private void MultExp(FunctionsProcedures func){
        if("*".equals(proximo.getLexemaString())|| "/".equals(proximo.getLexemaString())){
-           MultExp();
+           MultExp(func);
            andaUm(); andaUm();
-           ValorNeg();
+           ValorNeg(func);
        }
        else{
-           ValorNeg();
+           ValorNeg(func);
            return;
        }
         
     }
-    private void ValorNeg(){
+    private void ValorNeg(FunctionsProcedures func){
         if("-".equals(atual.getLexemaString())){
         andaUm();
-        ValorNumerico();
+        ValorNumerico(func);
         return;
         }else{
-            ValorNumerico();
+            ValorNumerico(func);
             return;
         }
     }
     
-    private void ValorNumerico(){
+    private void ValorNumerico(FunctionsProcedures func){
         if("NUMERO".equals(atual.getTipo())){
             return;
         }else if("(".equals(atual.getLexemaString())){
             andaUm();
-            ExpressaoAritimetica();
+            
+            ExpressaoAritimetica(func);
             if(")".equals(atual.getLexemaString())){
                 andaUm();
                 return;
@@ -1296,16 +1318,20 @@ public class AnalisadorSemantico {
         }
     }
     
-    private void AssignmentVariable() {
-        variavel(null);
+    private void AssignmentVariable(FunctionsProcedures func) {
+        
+        variavel(func);
+        Variaveis v1 = atualVar;
         if("=".equals(atual.getLexemaString())){
             andaUm();
             if("IDENTIFICADOR".equals(atual.getTipo()) || "global".equals(atual.getLexemaString()) 
                 ||"local".equals(atual.getLexemaString())){
-                variavel(null);
+                variavel(func);
+                atribuicaoVar(v1,atualVar);
                 return;
             }else if("NUMERO".equals(atual.getTipo())||"CADEIA DE CARACTERES".equals(atual.getTipo())
                     ||"true".equals(atual.getLexemaString())|| "false".equals(atual.getLexemaString())){
+                atribuicaoValor(v1, atual);
                 return;
             }
         }
@@ -1416,10 +1442,12 @@ public class AnalisadorSemantico {
         }
     }
     
-    private void Incremments(){
+    private void Incremments(FunctionsProcedures func){
         if("IDENTIFICADOR".equals(atual.getTipo())){
             andaUm();
-            variavel(null);
+            
+            variavel(func);
+            incrementoPermitido(atualVar);
             incremment();
             andaUm();
             if(";".equals(atual.getLexemaString())){
