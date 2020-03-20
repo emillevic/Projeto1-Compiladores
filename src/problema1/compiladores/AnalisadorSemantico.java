@@ -1153,7 +1153,25 @@ public class AnalisadorSemantico {
             }
         }
     }
-
+    private boolean atribuicaoVar(Variaveis v1, Variaveis v2){
+        if(!(CONSTS.contains(v1))){
+        return(v1.getTipo().equals(v2.getTipo()));
+        }
+        return false;
+    }
+     private boolean atribuicaoValor(Variaveis v, Tokens Valor){
+        if(Valor.equals("CADEIA DE CARACTERES") && v.getTipo().equals("string")){
+            return true;
+        }
+        else if(Valor.getTipo().equals("NUMERO") && v.getTipo().equals("int")){
+            return true;
+        }else if(Valor.getTipo().equals("NUMERO") && v.getTipo().equals("real")){
+            return true;
+        }else if((Valor.getLexemaString().equals("true") && v.getTipo().equals("boolean"))|| (Valor.getLexemaString().equals("false") && v.getTipo().equals("boolean"))){
+            return true;
+        }
+        return false;
+    }
     
     private void expressaoLogica() {
         if("!".equals(atual.getLexemaString())||"(".equals(atual.getLexemaString())){
@@ -1251,6 +1269,10 @@ public class AnalisadorSemantico {
                 return;
             }
         }
+    }
+     private boolean incrementoPermitido(Variaveis v){
+        return(v.getTipo().equals("int")||v.getTipo().equals("real"));
+        
     }
 
     private void incremment() {
