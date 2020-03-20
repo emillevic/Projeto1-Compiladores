@@ -1223,7 +1223,7 @@ public class AnalisadorSemantico {
         if("(".equals(atual.getLexemaString())){
             while(!")".equals(atual.getLexemaString())){
                 andaUm();
-                Condicao();
+                Condicao(func);
              }
             if("then".equals(atual.getLexemaString())){
                 andaUm();
@@ -1236,12 +1236,12 @@ public class AnalisadorSemantico {
             }
             if("else".equals(atual.getLexemaString())){
                andaUm();
-               comandos(null); //precisa de mais coisa aqui no else?
+               comandos(func); //precisa de mais coisa aqui no else?
            }
         }
     }
     
-    private void Condicao() {
+    private void Condicao(FunctionsProcedures func) {
         if("OPERADOR RELACIONAL".equals(proximo.getTipo())){
             expressaoRel();
         }else if("true".equals(atual.getLexemaString())|| "false".equals(atual.getLexemaString())){
@@ -1256,7 +1256,7 @@ public class AnalisadorSemantico {
         if("(".equals(atual.getLexemaString())){
              while(!")".equals(atual.getLexemaString())){
                  andaUm();
-                 Condicao();
+                 Condicao(func);
                   if("{".equals(atual.getLexemaString())){
                         while(!"}".equals(atual.getLexemaString())){
                           andaUm();
