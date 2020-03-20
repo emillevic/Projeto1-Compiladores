@@ -849,10 +849,19 @@ public class AnalisadorSemantico {
                             return true;
                         }
                     }
+                }else{
+                    Erro e = new Erro("Tipo do Acesso diferente", atual.getLinha());
+                    ERROS.add(e);
+                    andaUm();
+                    if("]".equals(atual.getLexemaString())){
+                            if("[".equals(proximo.getLexemaString())){
+                                return false;
+                            }
+                            return true;
+                        }
                 }
             }
         }else if("matriz".equals(vetMat)){
-            System.out.println("MATRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR");
             if("[".equals(atual.getLexemaString())){
                 andaUm();
                 if("]".equals(atual.getLexemaString())){
@@ -860,10 +869,9 @@ public class AnalisadorSemantico {
                             andaUm(); andaUm();
                             if("]".equals(atual.getLexemaString())){
                                 if("[".equals(proximo.getLexemaString())){
-
-                                }else{
                                     return false;
                                 }
+                                return true;
                             }else if(("NUMERO".equals(atual.getTipo()) && !atual.getLexemaString().contains("."))
                             || "local".equals(atual.getLexemaString()) || "global".equals(atual.getLexemaString())){
                                 if("local".equals(atual.getLexemaString()) || "global".equals(atual.getLexemaString())){
@@ -874,6 +882,9 @@ public class AnalisadorSemantico {
                                     }
                                     andaUm();
                                     if("]".equals(atual.getLexemaString())){
+                                         if("[".equals(proximo.getLexemaString())){
+                                            return false;
+                                        }
                                         return true;
                                     }
                                 }else{
@@ -885,8 +896,17 @@ public class AnalisadorSemantico {
                                         return true;
                                     }
                                 }
+                            }else{
+                                Erro e = new Erro("Tipo do Acesso diferente", atual.getLinha());
+                                ERROS.add(e);
+                                andaUm();
+                                if("]".equals(atual.getLexemaString())){
+                                    if("[".equals(proximo.getLexemaString())){
+                                        return false;
+                                    }
+                                    return true;
+                                }
                             }
-                        
                     }else{
                         return false;
                     }
@@ -900,16 +920,149 @@ public class AnalisadorSemantico {
                         }
                         andaUm();
                         if("]".equals(atual.getLexemaString())){
+                            if("[".equals(proximo.getLexemaString())){
+                                andaUm(); andaUm();
+                                if("]".equals(atual.getLexemaString())){
+                                    if("[".equals(proximo.getLexemaString())){
+                                        return false;
+                                    }
+                                    return true;
+                                }else if(("NUMERO".equals(atual.getTipo()) && !atual.getLexemaString().contains("."))
+                                || "local".equals(atual.getLexemaString()) || "global".equals(atual.getLexemaString())){
+                                    if("local".equals(atual.getLexemaString()) || "global".equals(atual.getLexemaString())){
+                                        variavel(func);
+                                        if(!"int".equals(atualVar.getTipo())){
+                                            Erro e = new Erro("Tipo do Acesso diferente", atual.getLinha());
+                                            ERROS.add(e);
+                                        }
+                                        andaUm();
+                                        if("]".equals(atual.getLexemaString())){
+                                             if("[".equals(proximo.getLexemaString())){
+                                                return false;
+                                            }
+                                            return true;
+                                        }
+                                    }else{
+                                        andaUm();
+                                        if("]".equals(atual.getLexemaString())){
+                                            if("[".equals(proximo.getLexemaString())){
+                                                return false;
+                                            }
+                                            return true;
+                                        }
+                                    }
+                                }else{
+                                    Erro e = new Erro("Tipo do Acesso diferente", atual.getLinha());
+                                    ERROS.add(e);
+                                    andaUm();
+                                    if("]".equals(atual.getLexemaString())){
+                                        if("[".equals(proximo.getLexemaString())){
+                                            return false;
+                                        }
+                                        return true;
+                                    }
+                                }
+                            }
                             return true;
                         }
                     }else{
                         andaUm();
                         if("]".equals(atual.getLexemaString())){
                             if("[".equals(proximo.getLexemaString())){
-                                return false;
+                                andaUm(); andaUm();
+                                if("]".equals(atual.getLexemaString())){
+                                    if("[".equals(proximo.getLexemaString())){
+                                        return false;
+                                    }
+                                    return true;
+                                }else if(("NUMERO".equals(atual.getTipo()) && !atual.getLexemaString().contains("."))
+                                || "local".equals(atual.getLexemaString()) || "global".equals(atual.getLexemaString())){
+                                    if("local".equals(atual.getLexemaString()) || "global".equals(atual.getLexemaString())){
+                                        variavel(func);
+                                        if(!"int".equals(atualVar.getTipo())){
+                                            Erro e = new Erro("Tipo do Acesso diferente", atual.getLinha());
+                                            ERROS.add(e);
+                                        }
+                                        andaUm();
+                                        if("]".equals(atual.getLexemaString())){
+                                             if("[".equals(proximo.getLexemaString())){
+                                                return false;
+                                            }
+                                            return true;
+                                        }
+                                    }else{
+                                        andaUm();
+                                        if("]".equals(atual.getLexemaString())){
+                                            if("[".equals(proximo.getLexemaString())){
+                                                return false;
+                                            }
+                                            return true;
+                                        }
+                                    }
+                                }else{
+                                    Erro e = new Erro("Tipo do Acesso diferente", atual.getLinha());
+                                    ERROS.add(e);
+                                    andaUm();
+                                    if("]".equals(atual.getLexemaString())){
+                                        if("[".equals(proximo.getLexemaString())){
+                                            return false;
+                                        }
+                                        return true;
+                                    }
+                                }
                             }
                             return true;
                         }
+                    }
+                }else{
+                    Erro e = new Erro("Tipo do Acesso diferente", atual.getLinha());
+                    ERROS.add(e);
+                    andaUm();
+                    if("]".equals(atual.getLexemaString())){
+                        if("[".equals(proximo.getLexemaString())){
+                                andaUm(); andaUm();
+                                if("]".equals(atual.getLexemaString())){
+                                    if("[".equals(proximo.getLexemaString())){
+                                        return false;
+                                    }
+                                    return true;
+                                }else if(("NUMERO".equals(atual.getTipo()) && !atual.getLexemaString().contains("."))
+                                || "local".equals(atual.getLexemaString()) || "global".equals(atual.getLexemaString())){
+                                    if("local".equals(atual.getLexemaString()) || "global".equals(atual.getLexemaString())){
+                                        variavel(func);
+                                        if(!"int".equals(atualVar.getTipo())){
+                                            Erro x = new Erro("Tipo do Acesso diferente", atual.getLinha());
+                                            ERROS.add(x);
+                                        }
+                                        andaUm();
+                                        if("]".equals(atual.getLexemaString())){
+                                             if("[".equals(proximo.getLexemaString())){
+                                                return false;
+                                            }
+                                            return true;
+                                        }
+                                    }else{
+                                        andaUm();
+                                        if("]".equals(atual.getLexemaString())){
+                                            if("[".equals(proximo.getLexemaString())){
+                                                return false;
+                                            }
+                                            return true;
+                                        }
+                                    }
+                                }else{
+                                    Erro y = new Erro("Tipo do Acesso diferente", atual.getLinha());
+                                    ERROS.add(y);
+                                    andaUm();
+                                    if("]".equals(atual.getLexemaString())){
+                                        if("[".equals(proximo.getLexemaString())){
+                                            return false;
+                                        }
+                                        return true;
+                                    }
+                                }
+                            }
+                            return true;
                     }
                 }
             }
@@ -919,6 +1072,10 @@ public class AnalisadorSemantico {
         return false;
     }
       
+    
+    private void auxMatriz(){
+        
+    }
 
     private boolean analiseSemVar(FunctionsProcedures func, String escopoAcesso){
         boolean existe  =false;
