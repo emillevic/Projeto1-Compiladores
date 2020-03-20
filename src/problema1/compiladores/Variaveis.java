@@ -12,11 +12,22 @@ package problema1.compiladores;
 public class Variaveis {
     public String nome;
     public String tipo;
+    public String vetMat;
 
     public Variaveis(String nome, String tipo) {
         this.nome = nome;
         this.tipo = tipo;
+        this.vetMat = null;
     }
+
+    public String getVetMat() {
+        return vetMat;
+    }
+
+    public void setVetMat(String vetMat) {
+        this.vetMat = vetMat;
+    }
+    
 
     public String getNome() {
         return nome;
@@ -36,7 +47,7 @@ public class Variaveis {
 
     @Override
     public String toString() {
-        return "Variaveis{" + "nome=" + nome + ", tipo=" + tipo + '}';
+        return "Variaveis{" + "nome=" + nome + ", tipo=" + tipo + ", vetMat=" + vetMat + '}';
     }
      
 }

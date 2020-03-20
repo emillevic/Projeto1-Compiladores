@@ -24,6 +24,7 @@ public class AnalisadorSemantico {
     private ArrayList<Variaveis> LOCALVAR;
     private ArrayList<Erro> ERROS = new ArrayList<Erro>();
     private String escopoAtual = new String();
+    private Variaveis atualVar;
    
     private Tokens atual;
     private Tokens anterior;
@@ -35,10 +36,10 @@ public class AnalisadorSemantico {
         this.codigoTratado = codigoTratado;
         this.indice = 0;
         
-       TIPO.add("int");
-       TIPO.add("real");
-       TIPO.add("boolean");
-       TIPO.add("string");
+        TIPO.add("int");
+        TIPO.add("real");
+        TIPO.add("boolean");
+        TIPO.add("string");
     }
 
     public ArrayList<String> getTIPO() {
@@ -483,8 +484,32 @@ public class AnalisadorSemantico {
     
     private void complementV(String tipo, FunctionsProcedures func, String tipoVar) {
         String flag = "";
+        String nomeVar ="";
+        String varMat = null;
         if("IDENTIFICADOR".equals(atual.getTipo())){
-            Variaveis var = new Variaveis(atual.getLexemaString(), anterior.getLexemaString());
+            nomeVar = atual.getLexemaString();
+            if("[".equals(proximo.getLexemaString())){
+                nomeVar = nomeVar + "[";
+                andaUm();andaUm();
+                if("]".equals(atual.getLexemaString())){
+                    nomeVar = nomeVar + "]";
+                    andaUm();
+                    if("[".equals(atual.getLexemaString())){
+                        nomeVar = nomeVar + "[";
+                        andaUm();
+                        if("]".equals(atual.getLexemaString())){
+                            nomeVar = nomeVar + "]";
+                            varMat = "matriz";
+                        }
+                    }else{
+                        varMat = "vetor";
+
+                        voltaUm();
+                    }
+                }
+            }
+            Variaveis var = new Variaveis(nomeVar, tipoVar);
+            var.setVetMat(varMat);
             if("global".equals(tipo)){
                 flag = "global";
                 verificaVariavelEscopo(tipo, func);
@@ -520,8 +545,8 @@ public class AnalisadorSemantico {
                                 Erro e = new Erro("Atribuição tipo diferente - boolean", atual.getLinha());
                                 ERROS.add(e);
                             }
-                        }else if(!"true".equals(atual.getLexemaString()) ||
-                                !"false".equals(atual.getLexemaString())){
+                        }else if(!("true".equals(atual.getLexemaString()) ||
+                                "false".equals(atual.getLexemaString()))){
                             Erro e = new Erro("Atribuição tipo diferente - boolean", atual.getLinha());
                             ERROS.add(e);
                         }
@@ -575,7 +600,6 @@ public class AnalisadorSemantico {
         if("{".equals(proximo.getLexemaString())){
             andaUm(); andaUm();
             while(!"}".equals(atual.getLexemaString())){
-                System.out.println(atual.getLexemaString()+ "                mmmmmmmmmmmmmmmmmmmmmm          " + FUNCTIONS.size() + "        HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH            " + FUNCTIONS.toString());
                 function();
                 andaUm();
             }
@@ -590,7 +614,6 @@ public class AnalisadorSemantico {
             if(TIPO.contains(atual.getLexemaString())){
                 andaUm();
                 if("IDENTIFICADOR".equals(atual.getTipo())){
-                    System.out.println("NOME DA FUNCAAAAAAAAAAAAAAO " + atual.getLexemaString());
                     func = new FunctionsProcedures(atual.getLexemaString(), anterior.getLexemaString());
                     andaUm();
                     if("(".equals(atual.getLexemaString())){
@@ -673,7 +696,6 @@ public class AnalisadorSemantico {
     private void procedures(){
         escopoAtual = "func";
         FunctionsProcedures proc;
-                    System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa " + atual.getLexemaString());
         if("procedure".equals(atual.getLexemaString())){
             andaUm();
             if("IDENTIFICADOR".equals(atual.getTipo())){
@@ -773,38 +795,7 @@ public class AnalisadorSemantico {
         
         return existeAtributoStruct;
     }
-      private void variavel(FunctionsProcedures func) {
-          
-        /* if("IDENTIFICADOR".equals(atual.getTipo())){
-             analiseSemStruct(atual,(codigoTratado.get(indice+2)));
-             andaUm();
-            
-            if(".".equals(atual.getLexemaString())){
-                andaUm();
-               if("IDENTIFICADOR".equals(atual.getTipo())) {
-                   return;
-               }
-            }else if("[".equals(atual.getLexemaString())){
-                andaUm();
-                if("IDENTIFICADOR".equals(atual.getTipo())|| "NUMERO".equals(atual.getTipo())){
-                    andaUm();
-                    if("]".equals(atual.getLexemaString())){
-                        andaUm();
-                        if(!"[".equals(atual.getLexemaString())){
-                            return;
-                        }else{
-                            andaUm();
-                            if("IDENTIFICADOR".equals(atual.getTipo())|| "NUMERO".equals(atual.getTipo())){
-                                andaUm();
-                                if("]".equals(atual.getLexemaString())){
-                                    andaUm();
-                                    return;
-                                }
-                            }
-                        }
-                    }
-                }
-            }*/
+      private boolean variavel(FunctionsProcedures func) {
         String escopoAcesso = "";
          if("local".equals(atual.getLexemaString()) ||"global".equals(atual.getLexemaString())){
             escopoAcesso = atual.getLexemaString();
@@ -812,36 +803,167 @@ public class AnalisadorSemantico {
                 if(".".equals(atual.getLexemaString())){
                     andaUm();
                     if("IDENTIFICADOR".equals(atual.getTipo())) {
-                        analiseSemVar(func, escopoAcesso);
-                        return;
+                        return analiseSemVar(func, escopoAcesso);
+                        
                     }
             }
         }
+         return true;
+    }
+      
+    private boolean varMatrizVetor(FunctionsProcedures func, String escopoAcesso, String vetMat){
+
+        boolean existe  =false;
+        Variaveis var = null;
+        
+        andaUm();
+        if("vetor".equals(vetMat)){
+            if("[".equals(atual.getLexemaString())){
+                andaUm();
+                if("]".equals(atual.getLexemaString())){
+                    if("[".equals(proximo.getLexemaString())){
+                        return false;
+                    }
+                    return true;
+                }else if(("NUMERO".equals(atual.getTipo()) && !atual.getLexemaString().contains("."))
+                || "local".equals(atual.getLexemaString()) || "global".equals(atual.getLexemaString())){
+                    if("local".equals(atual.getLexemaString()) || "global".equals(atual.getLexemaString())){
+                        variavel(func);
+                        if(!"int".equals(atualVar.getTipo())){
+                            Erro e = new Erro("Tipo do Acesso diferente", atual.getLinha());
+                            ERROS.add(e);
+                        }
+                        andaUm();
+                        if("]".equals(atual.getLexemaString())){
+                            if("[".equals(proximo.getLexemaString())){
+                                return false;
+                            }
+                            return true;
+                        }
+                    }else{
+                        andaUm();
+                        if("]".equals(atual.getLexemaString())){
+                            if("[".equals(proximo.getLexemaString())){
+                                return false;
+                            }
+                            return true;
+                        }
+                    }
+                }
+            }
+        }else if("matriz".equals(vetMat)){
+            System.out.println("MATRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR");
+            if("[".equals(atual.getLexemaString())){
+                andaUm();
+                if("]".equals(atual.getLexemaString())){
+                    if("[".equals(proximo.getLexemaString())){
+                            andaUm(); andaUm();
+                            if("]".equals(atual.getLexemaString())){
+                                if("[".equals(proximo.getLexemaString())){
+
+                                }else{
+                                    return false;
+                                }
+                            }else if(("NUMERO".equals(atual.getTipo()) && !atual.getLexemaString().contains("."))
+                            || "local".equals(atual.getLexemaString()) || "global".equals(atual.getLexemaString())){
+                                if("local".equals(atual.getLexemaString()) || "global".equals(atual.getLexemaString())){
+                                    variavel(func);
+                                    if(!"int".equals(atualVar.getTipo())){
+                                        Erro e = new Erro("Tipo do Acesso diferente", atual.getLinha());
+                                        ERROS.add(e);
+                                    }
+                                    andaUm();
+                                    if("]".equals(atual.getLexemaString())){
+                                        return true;
+                                    }
+                                }else{
+                                    andaUm();
+                                    if("]".equals(atual.getLexemaString())){
+                                        if("[".equals(proximo.getLexemaString())){
+                                            return false;
+                                        }
+                                        return true;
+                                    }
+                                }
+                            }
+                        
+                    }else{
+                        return false;
+                    }
+                }else if(("NUMERO".equals(atual.getTipo()) && !atual.getLexemaString().contains("."))
+                || "local".equals(atual.getLexemaString()) || "global".equals(atual.getLexemaString())){
+                    if("local".equals(atual.getLexemaString()) || "global".equals(atual.getLexemaString())){
+                        variavel(func);
+                        if(!"int".equals(atualVar.getTipo())){
+                            Erro e = new Erro("Tipo do Acesso diferente", atual.getLinha());
+                            ERROS.add(e);
+                        }
+                        andaUm();
+                        if("]".equals(atual.getLexemaString())){
+                            return true;
+                        }
+                    }else{
+                        andaUm();
+                        if("]".equals(atual.getLexemaString())){
+                            if("[".equals(proximo.getLexemaString())){
+                                return false;
+                            }
+                            return true;
+                        }
+                    }
+                }
+            }
+        }else{
+            return false;
+        }
+        return false;
     }
       
 
-    private void analiseSemVar(FunctionsProcedures func, String escopoAcesso){
+    private boolean analiseSemVar(FunctionsProcedures func, String escopoAcesso){
         boolean existe  =false;
         Variaveis var = null;
+
         if(escopoAcesso.equals("global")){
             for(int i=0;i<GLOBALVAR.size();i++){
                 if(GLOBALVAR.get(i).getNome().equals(atual.getLexemaString())){
                     existe=true;
                     var = GLOBALVAR.get(i);
+                    atualVar = GLOBALVAR.get(i);
+                }else if(GLOBALVAR.get(i).getNome().startsWith(atual.getLexemaString()) && 
+                           "[".equals(proximo.getLexemaString())){
+                    if("[".equals(proximo.getLexemaString())){
+                        existe = varMatrizVetor(func, escopoAcesso, GLOBALVAR.get(i).getVetMat());
+                        atualVar = GLOBALVAR.get(i);
+                    }
                 }
             }
             for(int i = 0; i< CONSTS.size(); i++){
                 if(CONSTS.get(i).getNome().equals(atual.getLexemaString())){
                     existe=true;
                     var = CONSTS.get(i);
+                    atualVar = CONSTS.get(i);
+                }else if(CONSTS.get(i).getNome().startsWith(atual.getLexemaString())  && 
+                           "[".equals(proximo.getLexemaString())){
+                    if("[".equals(proximo.getLexemaString())){
+                        existe = varMatrizVetor(func, escopoAcesso, CONSTS.get(i).getVetMat());
+                        atualVar = CONSTS.get(i);
+                    }
                 }
             }
         }else if(escopoAcesso.equals("local")){
             if(escopoAtual.equals("func")){
                 for(int i = 0; i< func.getLocalvar().size(); i++){
                     if(atual.getLexemaString().equals(func.getLocalvar().get(i).getNome())){
-                        existe = true;
+                        existe=true;
                         var = func.getLocalvar().get(i);
+                        atualVar = func.getLocalvar().get(i);
+                    }else if(func.getLocalvar().get(i).getNome().startsWith(atual.getLexemaString()) && 
+                           "[".equals(proximo.getLexemaString())){
+                        if("[".equals(proximo.getLexemaString())){
+                            existe = varMatrizVetor(func, escopoAcesso, func.getLocalvar().get(i).getVetMat());
+                            atualVar = func.getLocalvar().get(i);
+                        }
                     }
                 }
             }else if(escopoAtual.equals("start")){
@@ -849,6 +971,13 @@ public class AnalisadorSemantico {
                     if(STARTVAR.get(i).getNome().equals(atual.getLexemaString())){
                         existe=true;
                         var = STARTVAR.get(i);
+                        atualVar = STARTVAR.get(i);
+                    }else if(STARTVAR.get(i).getNome().startsWith(atual.getLexemaString()) && 
+                           "[".equals(proximo.getLexemaString())){
+                        if("[".equals(proximo.getLexemaString())){
+                            existe = varMatrizVetor(func, escopoAcesso, STARTVAR.get(i).getVetMat());
+                            atualVar = STARTVAR.get(i);
+                        }
                     }
                 }
             }
@@ -859,14 +988,18 @@ public class AnalisadorSemantico {
             if(!analiseSemStruct(var)){
                 Erro e = new Erro("Variável de struct não existente", atual.getLinha());
                 ERROS.add(e);
+                return false;
             }
         }else{
             voltaUm();
         }
         if(!existe){
+            System.out.println("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee " + existe);
             Erro e = new Erro("Variável não existente no escopo", atual.getLinha());
             ERROS.add(e);
+            return false;
         }
+        return true;
     }
     private void AnalisePrint() {
         if("(".equals(atual.getLexemaString())){

@@ -20,19 +20,20 @@
     }
 
     var{
+        int n;
         string codigo[];
-        real mille = 3.0;
+        boolean b = false;
+        real mille;
 
     }
 
     functions{
         function real calcula_extra(real salario){
             var{
-                int a;
-                int codigo;
+                int a[][];
                 p pessoa;
             }
-            return local.pessoa;
+            return local.a[][];
         }
         function int calcula(real salario){
             var{
