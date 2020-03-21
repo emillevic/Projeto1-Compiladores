@@ -622,7 +622,7 @@ public class AnalisadorSemantico {
                            func = DeclaraParam(func);
                         }
                         if(compareFuncProc(func)){
-                            Erro e = new Erro("Função/Procedimento já existente!", atual.getLinha());
+                            Erro e = new Erro("Função/Procedimento já existente", atual.getLinha());
                             ERROS.add(e);
                         }
                         AnaliseVariavel("func", func);
@@ -635,7 +635,9 @@ public class AnalisadorSemantico {
                             retorno(func);
 //                            andaUm();
                         }
+                        andaUm();
                         FUNCTIONS.add(func);
+                        andaUm();
                         return;
                     }
                 }
@@ -664,7 +666,6 @@ public class AnalisadorSemantico {
             andaUm();
             isvar = variavel(func);
             if(isvar){
-                System.out.println(isvar+"    EU TO AQUIIIIIIIIIIIIIIIIIIIIII   " + atual.getLexemaString());
                 if("matriz".equals(atualVar.getVetMat())){
                     if(!func.getRetorno().equals(atualVar.getTipo()+"[][]")){
                         erro = true;
@@ -710,6 +711,7 @@ public class AnalisadorSemantico {
             andaUm();
             if("IDENTIFICADOR".equals(atual.getTipo())){
                 Variaveis var = new Variaveis(atual.getLexemaString(), anterior.getLexemaString());
+                verificaParametro(func, var);
                 func.addParametro(var);
                 func.addVar(var);
                 if(",".equals(proximo.getLexemaString())){
@@ -722,14 +724,21 @@ public class AnalisadorSemantico {
         return func;
     }
     
+    private void verificaParametro(FunctionsProcedures func, Variaveis var){
+        for(int i = 0; i< func.getParametro().size(); i++){
+            if(var.getNome().equals(func.getParametro().get(i).getNome())){
+                Erro e = new Erro("Variável do parametro já existente", atual.getLinha());
+                ERROS.add(e);
+            }
+        }
+    }
+    
     private void AnaliseProcedures() {
         if("DELIMITADOR".equals(proximo.getTipo()) && "{".equals(proximo.getLexemaString())){
             andaUm(); andaUm();
             while(!"}".equals(atual.getLexemaString())){
                 procedures();
-                andaUm();
-//                comandos();
-                return;
+//                andaUm();
             }
         }
     }
@@ -747,11 +756,16 @@ public class AnalisadorSemantico {
                        andaUm();
                        proc = DeclaraParam(proc);
                     }
+                    if(compareFuncProc(proc)){
+                        Erro e = new Erro("Função/Procedimento já existente", atual.getLinha());
+                        ERROS.add(e);
+                    }
                     AnaliseVariavel("func", proc);
                     andaUm();
                     comandos(null);
                     andaUm();
                     PROCEDURES.add(proc);
+                    andaUm();
                     return;
                 }
             }

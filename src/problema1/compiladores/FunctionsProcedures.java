@@ -42,10 +42,20 @@ public class FunctionsProcedures {
     }
     
     public boolean compareTo(FunctionsProcedures obj){
+        boolean flag = false;
         if(this.nome.equals(obj.getNome())){
-            if(this.parametro.equals(obj.getParametro()))
-                return true;
+            if(this.parametro.size() == obj.getParametro().size()){
+                for(int i = 0; i< this.parametro.size(); i++){
+                    if(!parametro.get(i).getTipo().equals(obj.getParametro().get(i).getTipo())){
+                        flag = true;
+                        return false;
+                    }else if(i == this.parametro.size()-1){
+                        return true;
+                    }
+                }
+            }
         }
+
         return false;
     }
 
