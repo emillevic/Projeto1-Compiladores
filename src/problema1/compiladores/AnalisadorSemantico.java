@@ -1466,7 +1466,8 @@ public class AnalisadorSemantico {
         }else{
             auxOpRel(func);
             return;
-        }   
+        }  
+        return;
     }
     private void auxOpRel(FunctionsProcedures func) {
         if("!".equals(atual.getLexemaString())){
