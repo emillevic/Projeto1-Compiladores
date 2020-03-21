@@ -1297,13 +1297,22 @@ public class AnalisadorSemantico {
     }
     
     private void Condicao(FunctionsProcedures func) {
+        Erro e;
         if("OPERADOR RELACIONAL".equals(proximo.getTipo())){
-            expressaoRel();
+            expressaoRel(func);
         }else if("true".equals(atual.getLexemaString())|| "false".equals(atual.getLexemaString())){
             andaUm();
             return;
         }else if("!".equals(atual.getLexemaString())||"(".equals(atual.getLexemaString())){ 
-             expressaoLogica();   
+             expressaoLogica(func);   
+        }
+        else if("global".equals(atual.getLexemaString())|| "local".equals(atual.getLexemaString())){
+            variavel(func);
+            if(!(atualVar.getTipo().equals("boolean"))){
+                e= new Erro("condição esperada, boolean ou expressão", atual.getLinha());
+                ERROS.add(e);
+                 return;
+                         }
         }
     }
     
@@ -1357,6 +1366,7 @@ public class AnalisadorSemantico {
     }
     
     private void ValorNumerico(FunctionsProcedures func){
+        Erro e=null;
         if("NUMERO".equals(atual.getTipo())){
             return;
         }else if("(".equals(atual.getLexemaString())){
@@ -1368,8 +1378,12 @@ public class AnalisadorSemantico {
                 return;
             }
         }else{
-            variavel(null);
+            variavel(func);
+            if(!atualVar.getTipo().equals("int")||!atualVar.getTipo().equals("real")){
+              e= new Erro("uma expressão aritimetica so aceita numeros reais ou inteiros", atual.getLinha());
+              ERROS.add(e);
             return;
+            }
         }
     }
     
@@ -1411,90 +1425,116 @@ public class AnalisadorSemantico {
         return false;
     }
     
-    private void expressaoLogica() {
+    private void expressaoLogica(FunctionsProcedures func) {
         if("!".equals(atual.getLexemaString())||"(".equals(atual.getLexemaString())){
             andaUm();
-            auxLogica();
+            auxLogica(func);
          if("OPERADOR LOGICO".equals(atual.getTipo())){
              andaUm();
-             expressaoLogica();
+             expressaoLogica(func);
          }else{
              return;
          }
         }
     }
-    private void auxLogica() {
+    private void auxLogica(FunctionsProcedures func) {
         if("!".equals(atual.getLexemaString())){
             andaUm();
             if("(".equals(atual.getLexemaString())){
                 while(!")".equals(atual.getLexemaString())){
                     andaUm();
-                    auxLogica2();
+                    auxLogica2(func);
                 }
             }else{
-                auxLogica2();
+                auxLogica2(func);
             }
         }else if("(".equals(atual.getLexemaString())){
              while(!")".equals(atual.getLexemaString())){
                     andaUm();
-                    auxLogica2();
+                    auxLogica2(func);
                 }
         }else{
-            auxLogica2();
+            auxLogica2(func);
         }
     }
-    private void auxLogica2() {
-        auxLogica3();
+    private void auxLogica2(FunctionsProcedures func) {
+        
+        auxLogica3(func);
         if("OPERADOR LOGICO".equals(atual.getTipo())){
             andaUm();
         }
-        auxLogica3();
+        auxLogica3(func);
     }
-    private void auxLogica3() {
-        if("IDENTIFICADOR".equals(atual.getTipo())|| "global".equals(atual.getLexemaString()) 
+    private void auxLogica3(FunctionsProcedures func) {
+        
+        if( "global".equals(atual.getLexemaString()) 
             ||"local".equals(atual.getLexemaString())){
-            variavel(null);
+            variavel(func);
+            if(!atualVar.getTipo().equals("boolean"))
+                
             return;
         }
         else if("true".equals(atual.getLexemaString())||"false".equals(atual.getLexemaString())){
             andaUm();
             return;
         }else{
-            auxOpRel();
+            auxOpRel(func);
             return;
-        }   
+        }  
+        return;
     }
-    private void auxOpRel() {
+    private void auxOpRel(FunctionsProcedures func) {
         if("!".equals(atual.getLexemaString())){
             andaUm();
-            expressaoRel();
+            expressaoRel(func);
         }else{
-            expressaoRel();
+            expressaoRel(func);
         }
     }
 
-    private void expressaoRel() {
-        if("CADEIA DE CARACTERES".equals(atual.getTipo()) || "NUMERO".equals(atual.getTipo())
-                || "true".equals(atual.getLexemaString())||"false".equals(atual.getLexemaString())){
-                andaUm();
-        }else if("IDENTIFICADOR".equals(atual.getTipo()) || "global".equals(atual.getLexemaString()) 
+    private void expressaoRel(FunctionsProcedures func) {
+        String tipo1=null, tipo2=null;
+        Erro e;
+        if("CADEIA DE CARACTERES".equals(atual.getTipo())){
+                tipo1="string";
+            andaUm();
+        }else if("NUMERO".equals(atual.getTipo())){
+                if(atual.getLexemaString().contains("."))
+                    tipo1="real";
+                else
+                    tipo1="int";
+        }else if("true".equals(atual.getLexemaString())||"false".equals(atual.getLexemaString())){
+                tipo1="boolean";
+        }else if(  "global".equals(atual.getLexemaString()) 
             ||"local".equals(atual.getLexemaString())){
-            variavel(null);
+            variavel(func);
+            tipo1=atualVar.getTipo();
             andaUm();
        }
         
        if("OPERADOR RELACIONAL".equals(atual.getTipo())){
             andaUm();
-            if("CADEIA DE CARACTERES".equals(atual.getTipo()) || "NUMERO".equals(atual.getTipo())
-                    || "true".equals(atual.getLexemaString()) || "false".equals(atual.getLexemaString()) ){
-                andaUm();
-            }
-            else if("IDENTIFICADOR".equals(atual.getTipo()) || "global".equals(atual.getLexemaString()) 
+             if("CADEIA DE CARACTERES".equals(atual.getTipo())){
+                tipo2="string";
+            andaUm();
+            }else if("NUMERO".equals(atual.getTipo())){
+                if(atual.getLexemaString().contains("."))
+                    tipo2="real";
+                else
+                    tipo2="int";
+            }else if("true".equals(atual.getLexemaString())||"false".equals(atual.getLexemaString())){
+                tipo2="boolean";
+            }else if(  "global".equals(atual.getLexemaString()) 
             ||"local".equals(atual.getLexemaString())){
-                variavel(null);
-                andaUm();
+            variavel(func);
+            tipo2=atualVar.getTipo();
+            andaUm();
             }
         }
+       if(!tipo1.equals(tipo2)){
+           e=new Erro("comparação entre tipos diferentes", atual.getLinha());
+           ERROS.add(e);
+       }
     }
     
     private void Incremments(FunctionsProcedures func){
