@@ -227,14 +227,40 @@ public class AnalisadorSemantico {
     }
      
     private void attributes() {
+        String tipoVar = "";
+        String nomeVar = "";
+        String varMat = null;
         if(TIPO.contains(atual.getLexemaString())){
+            tipoVar = atual.getLexemaString();
             andaUm();
             if("IDENTIFICADOR".equals(atual.getTipo())){
+                nomeVar = atual.getLexemaString();
+                if("[".equals(proximo.getLexemaString())){
+                    nomeVar = nomeVar + "[";
+                    andaUm();andaUm();
+                    if("]".equals(atual.getLexemaString())){
+                        nomeVar = nomeVar + "]";
+                        andaUm();
+                        if("[".equals(atual.getLexemaString())){
+                            nomeVar = nomeVar + "[";
+                            andaUm();
+                            if("]".equals(atual.getLexemaString())){
+                                nomeVar = nomeVar + "]";
+                                varMat = "matriz";
+                            }
+                        }else{
+                            varMat = "vetor";
+
+                            voltaUm();
+                        }
+                    }
+                }
                 if(existVarStruct(STRUCTS.get(STRUCTS.size() - 1), atual.getLexemaString(), anterior.getLexemaString())){
                     Erro e = new Erro("Variavel ja existente", atual.getLinha());
                     ERROS.add(e);
                 }
-                Variaveis var = new Variaveis(atual.getLexemaString(), anterior.getLexemaString());
+                Variaveis var = new Variaveis(nomeVar, tipoVar);
+                var.setVetMat(varMat);
                 STRUCTS.get(STRUCTS.size()-1).addVar(var);
                 andaUm();
                 if(";".equals(atual.getLexemaString())){
@@ -427,30 +453,30 @@ public class AnalisadorSemantico {
         }
     }
     
-    private void verificaVariavelEscopo(String tipo, FunctionsProcedures func){
+    private void verificaVariavelEscopo(String tipo, FunctionsProcedures func, Variaveis var){
         for(int i = 0; i< CONSTS.size(); i++){
-            if(atual.getLexemaString().equals(CONSTS.get(i).getNome())){
+            if(var.getNome().equals(CONSTS.get(i).getNome())){
                 Erro e = new Erro("Variavel já existente no escopo", atual.getLinha());
                 ERROS.add(e);
             }
         }
         if("global".equals(tipo)){
             for(int i = 0; i<GLOBALVAR.size(); i++){
-                if(atual.getLexemaString().equals(GLOBALVAR.get(i).getNome())){
+                if(var.getNome().equals(GLOBALVAR.get(i).getNome())){
                     Erro e = new Erro("Variavel já existente no escopo", atual.getLinha());
                     ERROS.add(e);
                 }
             }
             } else if("start".equals(tipo)){
                 for(int i = 0; i<STARTVAR.size(); i++){
-                    if(atual.getLexemaString().equals(STARTVAR.get(i).getNome())){
+                    if(var.getNome().equals(STARTVAR.get(i).getNome())){
                         Erro e = new Erro("Variavel já existente no escopo", atual.getLinha());
                         ERROS.add(e);
                     }
                 }
             } else if("func".equals(tipo)){
                 for(int i = 0; i<func.getLocalvar().size(); i++){
-                    if(atual.getLexemaString().equals(func.getLocalvar().get(i).getNome())){
+                    if(var.getNome().equals(func.getLocalvar().get(i).getNome())){
                         Erro e = new Erro("Variavel já existente no escopo", atual.getLinha());
                         ERROS.add(e);
                     }
@@ -512,15 +538,15 @@ public class AnalisadorSemantico {
             var.setVetMat(varMat);
             if("global".equals(tipo)){
                 flag = "global";
-                verificaVariavelEscopo(tipo, func);
+                verificaVariavelEscopo(tipo, func, var);
                 GLOBALVAR.add(var);
             } else if("start".equals(tipo)){
                 flag = "start";
-                verificaVariavelEscopo(tipo, func);
+                verificaVariavelEscopo(tipo, func, var);
                 STARTVAR.add(var);
             } else if("func".equals(tipo)){
                 flag = "func";
-                verificaVariavelEscopo(tipo, func);
+                verificaVariavelEscopo(tipo, func, var);
                 func.addVar(var);
             }
             if("=".equals(proximo.getLexemaString())){
@@ -707,10 +733,35 @@ public class AnalisadorSemantico {
     }
     
     private FunctionsProcedures DeclaraParam(FunctionsProcedures func){
+        String nomeVar ="";
+        String varMat = null;
+        String tipoVar = "";
         if(TIPO.contains(atual.getLexemaString())){
+            tipoVar = atual.getLexemaString();
             andaUm();
             if("IDENTIFICADOR".equals(atual.getTipo())){
-                Variaveis var = new Variaveis(atual.getLexemaString(), anterior.getLexemaString());
+                nomeVar = atual.getLexemaString();
+                if("[".equals(proximo.getLexemaString())){
+                    nomeVar = nomeVar + "[";
+                    andaUm();andaUm();
+                    if("]".equals(atual.getLexemaString())){
+                        nomeVar = nomeVar + "]";
+                        andaUm();
+                        if("[".equals(atual.getLexemaString())){
+                            nomeVar = nomeVar + "[";
+                            andaUm();
+                            if("]".equals(atual.getLexemaString())){
+                                nomeVar = nomeVar + "]";
+                                varMat = "matriz";
+                            }
+                        }else{
+                            varMat = "vetor";
+                            voltaUm();
+                        }
+                    }
+                }
+                Variaveis var = new Variaveis(nomeVar, tipoVar);
+                var.setVetMat(varMat);
                 verificaParametro(func, var);
                 func.addParametro(var);
                 func.addVar(var);

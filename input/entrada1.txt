@@ -1,6 +1,6 @@
     structs{
         struct pessoa{
-            string nome;
+            string nome[];
             int idade;
         };
 
