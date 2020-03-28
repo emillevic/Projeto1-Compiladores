@@ -874,7 +874,7 @@ public class AnalisadorSemantico {
         }else if("++".equals(proximo.getLexemaString())||"--".equals(proximo.getLexemaString())){
            Incremments(func);
            return;
-        }else if("IDENTIFICADOR".equals(atual.getTipo()) || "global".equals(atual.getLexemaString()) 
+        }else if(  "global".equals(atual.getLexemaString()) 
                ||"local".equals(atual.getLexemaString())){
            andaUm(); andaUm();
            if("=".equals(proximo.getLexemaString())){
@@ -887,7 +887,10 @@ public class AnalisadorSemantico {
             ExpressaoAritimetica(func);
             return;  
         }
-       }
+       }else if("IDENTIFICADOR".equals(atual.getTipo())){
+         System.out.println("entrou chamada de func" +func.getNome());
+         chFunProc();
+     }
      return;
        
     }
@@ -1321,7 +1324,7 @@ public class AnalisadorSemantico {
                          tipoStruct = STRUCTS.get(i).getNome();
                         if(atualVar.getTipo().equals(tipoStruct))
                             {
-                              e = new Erro("impossivel imprimir Struct", atual.getLinha());
+                              e = new Erro("impossivel ler Struct", atual.getLinha());
                              ERROS.add(e);
                             }
                         }
