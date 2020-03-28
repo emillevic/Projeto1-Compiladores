@@ -1613,11 +1613,18 @@ public class AnalisadorSemantico {
         }
     }
     private void chFunProc(){
+        FunctionsProcedures func;
+        ArrayList<String> parametro = null;
         if("IDENTIFICADOR".equals(atual.getTipo())){
+            func = existeFunProc(atual.getLexemaString());
+            if(func == null){
+                Erro e = new Erro("Função/Procedimento não existente", atual.getLinha());
+                ERROS.add(e);
+            }
             andaUm();
             if("(".equals(atual.getLexemaString())){
                 andaUm();
-                chParam();
+                chParam(parametro);
                 andaUm();
                 if(")".equals(atual.getLexemaString())){
                     andaUm();
@@ -1629,33 +1636,47 @@ public class AnalisadorSemantico {
         }
         
     }
+    private FunctionsProcedures existeFunProc(String nome){
+        for(int i = 0; i< FUNCTIONS.size(); i++){
+            if(nome.equals(FUNCTIONS.get(i).getNome())){
+                return FUNCTIONS.get(i);
+            }
+        }
+        for(int i = 0; i< PROCEDURES.size(); i++){
+            if(nome.equals(PROCEDURES.get(i).getNome())){
+                return PROCEDURES.get(i);
+            }
+        }
+        
+        return null;
+    }
 
-    private void chParam() {
-        //To change body of generated methods, choose Tools | Templates.
+    private void chParam(ArrayList<String> parametro) {
+        
         if("IDENTIFICADOR".equals(atual.getTipo())){
             andaUm();
-            chParam2();
+            chParam2(parametro);
             return;
         }else if("CADEIA DE CARACTERES".equals(atual.getTipo()) || "NUMERO".equals(atual.getTipo())
                 || "true".equals(atual.getLexemaString()) || "false".equals(atual.getLexemaString())){
             andaUm();
-            chParam2();
+            chParam2(parametro);
             return;
         }
     }
 
-    private void chParam2() {
+    private void chParam2(ArrayList<String> parametro) {
          //To change body of generated methods, choose Tools | Templates.
          if(",".equals(atual.getLexemaString())){
              andaUm();
             if("IDENTIFICADOR".equals(atual.getTipo())){
                  andaUm();
-                 chParam2();
+                 chParam2(parametro);
             }else if("CADEIA DE CARACTERES".equals(atual.getTipo()) || "NUMERO".equals(atual.getTipo())
                      || "true".equals(atual.getLexemaString())|| "false".equals(atual.getLexemaString())){
                  
                  andaUm();
-                 chParam2();
+                 chParam2(parametro);
              }
          }
     }
