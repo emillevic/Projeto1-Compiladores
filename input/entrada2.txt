@@ -1,7 +1,74 @@
-if a==b
-else
-a!=c
-kkjnnms
-const 34
-4-56
-c--
+    structs{
+        struct pessoa{
+            string nome;
+            int idade;
+        };
+
+        struct funcionario extends struct pessoa{
+            real valor;
+        };
+
+    }
+
+    typedefs{
+        typedef struct funcionario func;
+        typedef struct pessoa p;
+    }
+
+    const{
+        real base_calculo = 0.2;
+    }
+
+    var{
+        int n;
+        string codigo[];
+        boolean b = false;
+        real mille[];
+
+    }
+
+    functions{
+        function real[] calcula_extra(real salario){
+            var{
+                int a[][];
+                p pessoa;
+            }
+            return global.mille[];
+        }
+        function int calcula(real salario){
+            var{
+                int a;
+            }
+            return local.a;
+        }
+    }
+
+    procedures{
+        function real[] calcula_extra(real salario){
+            var{
+                string estado;
+            }
+            global.cidade = local.cidade;
+        }
+    }
+
+    start(){
+        var{
+            int numero;
+            p pessoa;
+            int codigo;
+        }
+        print("pessoa: ", local.p);
+        p.nome = "emille";
+        p.idade = 21;
+        p.salario = calcula_extra(1000);
+        
+        while(a < 0.10){
+            a++;
+        }
+        
+        read(p.idade);
+
+        altera_cidade("fsa");
+    }
+ 

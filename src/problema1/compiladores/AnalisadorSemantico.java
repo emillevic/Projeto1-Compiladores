@@ -828,6 +828,7 @@ public class AnalisadorSemantico {
 //    Método de Start()
     private void AnaliseStart() {
         escopoAtual = "start";
+        FunctionsProcedures start= new FunctionsProcedures("start", null);
          if("DELIMITADOR".equals(proximo.getTipo()) && "(".equals(proximo.getLexemaString())){
            andaUm();
             if("DELIMITADOR".equals(proximo.getTipo()) && ")".equals(proximo.getLexemaString())){
@@ -839,7 +840,8 @@ public class AnalisadorSemantico {
                             andaUm();
                        }
                     while( !"}".equals(atual.getLexemaString())){
-//                       comandos();
+                        System.out.println("devia entrar em comandos aqui " +start.getNome());
+                       comandos(start);
                        andaUm();
                     }
                 }
@@ -848,15 +850,20 @@ public class AnalisadorSemantico {
     }
     
      private void comandos(FunctionsProcedures func) {
+         System.out.println("entrou COMANDOS");
         if("print".equals(atual.getLexemaString())){
-           andaUm();
+           System.out.println("entrou print" +func.getNome());
+            andaUm();
            AnalisePrint(func);
+           
            return;
         }else if("read".equals(atual.getLexemaString())){
+           System.out.println("entrou read" +func.getNome());
            andaUm();
            AnaliseRead(func);
            return;
         }else if("while".equals(atual.getLexemaString())){
+            System.out.println("entrou while" +func.getNome());
            andaUm();
            AnaliseWhile(func);
            return;
@@ -867,10 +874,11 @@ public class AnalisadorSemantico {
         }else if("++".equals(proximo.getLexemaString())||"--".equals(proximo.getLexemaString())){
            Incremments(func);
            return;
-        }else if("IDENTIFICADOR".equals(atual.getTipo()) || "global".equals(atual.getLexemaString()) 
+        }else if(  "global".equals(atual.getLexemaString()) 
                ||"local".equals(atual.getLexemaString())){
            andaUm(); andaUm();
            if("=".equals(proximo.getLexemaString())){
+               System.out.println("entrou atribucao" +func.getNome());
             voltaUm(); voltaUm();
             AssignmentVariable(func);
             return;
@@ -879,7 +887,10 @@ public class AnalisadorSemantico {
             ExpressaoAritimetica(func);
             return;  
         }
-       }
+       }else if("IDENTIFICADOR".equals(atual.getTipo())){
+         System.out.println("entrou chamada de func" +func.getNome());
+         chFunProc();
+     }
      return;
        
     }
@@ -1267,6 +1278,7 @@ public class AnalisadorSemantico {
     private void AnalisePrint(FunctionsProcedures func) {
         String tipoStruct;
         Erro e;
+        System.out.println("entrou print");
         if("(".equals(atual.getLexemaString())){
             while(!")".equals(atual.getLexemaString())){
                 andaUm();
@@ -1275,6 +1287,7 @@ public class AnalisadorSemantico {
                 }
                 else if(  "global".equals(atual.getLexemaString()) 
               ||"local".equals(atual.getLexemaString())){
+                    
                     variavel(func);
                     for(int i=0;i<STRUCTS.size();i++){
                         tipoStruct=STRUCTS.get(i).getNome();
@@ -1311,7 +1324,7 @@ public class AnalisadorSemantico {
                          tipoStruct = STRUCTS.get(i).getNome();
                         if(atualVar.getTipo().equals(tipoStruct))
                             {
-                              e = new Erro("impossivel imprimir Struct", atual.getLinha());
+                              e = new Erro("impossivel ler Struct", atual.getLinha());
                              ERROS.add(e);
                             }
                         }
