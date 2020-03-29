@@ -36,7 +36,7 @@
            
             return global.mille;
         }
-        function int calcula(real salario){
+        function int calcula_extra(real salario, int codigo){
             var{
                 int a;
             }
@@ -45,7 +45,7 @@
     }
 
     procedures{
-        procedure altera_cidade(string cidade){
+        procedure calcula_extra(string cidade){
             var{
                 string estado;
             }
@@ -60,6 +60,6 @@
             real r;
         }
 
-        altera_cidade();
+        calcula_extra(local.r);
        
     }

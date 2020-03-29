@@ -1665,13 +1665,13 @@ public class AnalisadorSemantico {
         }
     }
     private void chFunProc(){
-        FunctionsProcedures func;
+        ArrayList<FunctionsProcedures> func;
         boolean existe = false;
         ArrayList<String> parametro = new ArrayList<String>();
         if("IDENTIFICADOR".equals(atual.getTipo())){
             func = existeFunProc(atual.getLexemaString());
             System.out.println("CHAMAAAAAAAAAAAAAAAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA " + func);
-            if(func == null){
+            if(func.isEmpty()){
                 Erro e = new Erro("Função/Procedimento não existente", atual.getLinha());
                 ERROS.add(e);
             }
@@ -1681,7 +1681,10 @@ public class AnalisadorSemantico {
                 System.out.println("PARAMETROOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO     " + atual.getLexemaString());
                 parametro = chParam(parametro);
                 System.out.println("UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU " + parametro.toString());
-                existe = existWithParam(func, parametro);
+                if(func.size() == 1)
+                    existe = existWithParam(func.get(0), parametro);
+                else
+                    existe = existSeveralWithParam(func, parametro);
                 if(existe == false){
                     Erro e = new Erro("Função/Procedimento não existente - erro no parametro", atual.getLinha());
                     ERROS.add(e);
@@ -1697,6 +1700,24 @@ public class AnalisadorSemantico {
         }
         
     }
+    
+    private boolean existSeveralWithParam(ArrayList<FunctionsProcedures> func, ArrayList<String> parametro){
+        boolean flag = false;
+        for(int i = 0; i< func.size(); i++){
+            if(func.get(i).getParametro().size() == parametro.size()){
+                for(int j = 0; j<func.get(i).getParametro().size(); j++){
+                    if(!func.get(i).getParametro().get(j).getTipo().equals(parametro.get(j))){
+                        flag = false;
+                        break;
+                    }else{
+                        flag = true;
+                    }
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     private boolean existWithParam(FunctionsProcedures func, ArrayList<String> parametro){
         boolean flag = false;
         if(func.getParametro().size() == parametro.size()){
@@ -1710,21 +1731,22 @@ public class AnalisadorSemantico {
         }
         return flag;
     }
-    private FunctionsProcedures existeFunProc(String nome){
-
+    private ArrayList<FunctionsProcedures> existeFunProc(String nome){
+        ArrayList<FunctionsProcedures> lista = new ArrayList<FunctionsProcedures>();
+        System.out.println("KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK    " + lista);
         for(int i = 0; i< FUNCTIONS.size(); i++){
             if(nome.equals(FUNCTIONS.get(i).getNome())){
                 System.out.println("CHAMAAAAAAAAAAAAAAAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA " + FUNCTIONS.get(i).toString());
-                return FUNCTIONS.get(i);
+                lista.add(FUNCTIONS.get(i));
             }
         }
         for(int i = 0; i< PROCEDURES.size(); i++){
             if(nome.equals(PROCEDURES.get(i).getNome())){
-                return PROCEDURES.get(i);
+                lista.add(PROCEDURES.get(i));
             }
         }
         
-        return null;
+        return lista;
     }
 
     private ArrayList<String> chParam(ArrayList<String> parametro) {
