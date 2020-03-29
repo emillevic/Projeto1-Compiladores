@@ -33,6 +33,7 @@
                 int a[][];
                 p pessoa;
             }
+           
             return global.mille;
         }
         function int calcula(real salario){
@@ -48,7 +49,6 @@
             var{
                 string estado;
             }
-            //global.cidade = local.cidade;
         }
     }
 
@@ -57,15 +57,16 @@
             int numero;
             p pessoa;
             int codigo;
+            real r;
         }
         p.nome = "emille";
         p.idade = 21;
         p.salario = calcula_extra(1000);
         
-        while(a < 10){
-            a++;
+        while(local.numero < 10&& 11>r){
+            local.numero++;
         }
-        print("pessoa: ", p.nome);
+        print("pessoa: ", local.p.nome);
         read(p.idade);
 
         altera_cidade("fsa");

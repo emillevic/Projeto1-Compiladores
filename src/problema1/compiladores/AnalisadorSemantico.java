@@ -1634,9 +1634,14 @@ public class AnalisadorSemantico {
             andaUm();
             
             variavel(func);
-            incrementoPermitido(atualVar);
+             if(!incrementoPermitido(atualVar)){
+                Erro e = new Erro("incremento não permitido", atual.getLinha());
+                 ERROS.add(e);
+             }
             incremment();
             andaUm();
+           
+                
             if(";".equals(atual.getLexemaString())){
                 return;
             }
