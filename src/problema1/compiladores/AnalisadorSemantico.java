@@ -283,7 +283,6 @@ public class AnalisadorSemantico {
         
         return false;
     }
-
     
 //    Método de typedefs
     
@@ -837,12 +836,11 @@ public class AnalisadorSemantico {
         }
     }
     
-    
 //    Método de Start()
     private void AnaliseStart() {
         System.out.println("staaaaaaaaaaaaaaaaaaaaaaaaaaaaar   " + atual.getLexemaString() + proximo.getLexemaString());
         escopoAtual = "start";
-        FunctionsProcedures start= new FunctionsProcedures("start", null);
+//        FunctionsProcedures start= new FunctionsProcedures("start", null);
          if("DELIMITADOR".equals(proximo.getTipo()) && "(".equals(proximo.getLexemaString())){
            andaUm();
             if("DELIMITADOR".equals(proximo.getTipo()) && ")".equals(proximo.getLexemaString())){
@@ -855,12 +853,14 @@ public class AnalisadorSemantico {
                             System.out.println("ENTROU EM VAR START");
                             andaUm();
                        }
+                        System.out.println("devia entrar em comandos aqui ");
                     while( !"}".equals(atual.getLexemaString())){
-                        System.out.println("devia entrar em comandos aqui " +start.getNome());
-                        System.out.println("WHILEEEEEEEEEEEEEE START                      " + atual.getLexemaString());
-                       comandos(start);
+                       comandos(null);
                        andaUm();
+                        System.out.println("WHILEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE START                      "
+                              + anterior.getLexemaString()  + atual.getLexemaString());
                     }
+                    System.out.println("FIM DE PROGRAMA");
                 }
             }
         }
@@ -869,18 +869,18 @@ public class AnalisadorSemantico {
      private void comandos(FunctionsProcedures func) {
             System.out.println("------------------- entrou COMANDOS --------------------");
            if("print".equals(atual.getLexemaString())){
-              System.out.println("entrou print" +func.getNome());
+              System.out.println("entrou print");
                andaUm();
               AnalisePrint(func);
 
               return;
            }else if("read".equals(atual.getLexemaString())){
-              System.out.println("entrou read" +func.getNome());
+              System.out.println("entrou read");
               andaUm();
               AnaliseRead(func);
               return;
            }else if("while".equals(atual.getLexemaString())){
-               System.out.println("entrou while" +func.getNome());
+               System.out.println("entrou while" );
               andaUm();
               AnaliseWhile(func);
               return;
@@ -895,7 +895,7 @@ public class AnalisadorSemantico {
                   ||"local".equals(atual.getLexemaString())){
               andaUm(); andaUm();
                 if("=".equals(proximo.getLexemaString())){
-                      System.out.println("entrou atribucao" +func.getNome());
+                      System.out.println("entrou atribucao");
                         voltaUm(); voltaUm();
                         AssignmentVariable(func);
                         return;
@@ -905,7 +905,7 @@ public class AnalisadorSemantico {
                         return;  
                 }
           }else if("IDENTIFICADOR".equals(atual.getTipo())){
-            System.out.println("entrou chamada de func" +func.getNome());
+            System.out.println("entrou chamada de func" );
             chFunProc();
         }
           else{
@@ -1211,11 +1211,6 @@ public class AnalisadorSemantico {
         }
         return false;
     }
-      
-    
-    private void auxMatriz(){
-        
-    }
 
     private boolean analiseSemVar(FunctionsProcedures func, String escopoAcesso){
         boolean existe  =false;
@@ -1291,7 +1286,6 @@ public class AnalisadorSemantico {
             voltaUm();
         }
         if(!existe){
-            System.out.println("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee " + existe);
             Erro e = new Erro("Variável não existente no escopo", atual.getLinha());
             ERROS.add(e);
             return false;
@@ -1482,36 +1476,49 @@ public class AnalisadorSemantico {
     }
     
     private void AssignmentVariable(FunctionsProcedures func) {
-        
+        boolean flag;
         variavel(func);
         Variaveis v1 = atualVar;
+        if(CONSTS.contains(atualVar)){
+            Erro e = new Erro("Valor de Constante é imutável", atual.getLinha());
+            ERROS.add(e);
+        }
+        andaUm();
         if("=".equals(atual.getLexemaString())){
             andaUm();
             if("IDENTIFICADOR".equals(atual.getTipo()) || "global".equals(atual.getLexemaString()) 
                 ||"local".equals(atual.getLexemaString())){
                 variavel(func);
-                atribuicaoVar(v1,atualVar);
+                flag = atribuicaoVar(v1,atualVar);
+                if(!flag){
+                    Erro e = new Erro("Atribuição tipo diferente", atual.getLinha());
+                    ERROS.add(e);
+                }
+                andaUm();
                 return;
             }else if("NUMERO".equals(atual.getTipo())||"CADEIA DE CARACTERES".equals(atual.getTipo())
                     ||"true".equals(atual.getLexemaString())|| "false".equals(atual.getLexemaString())){
-                atribuicaoValor(v1, atual);
+                flag = atribuicaoValor(v1, atual);
+                if(!flag){
+                    Erro e = new Erro("Atribuição tipo diferente", atual.getLinha());
+                    ERROS.add(e);
+                }
+                andaUm();
+        System.out.println( "   ASSIGNMENT VARIAVEEEEEEEEEEEEEEEEEEEEEL   " + atual.getLexemaString());
+                
                 return;
             }
         }
     }
     private boolean atribuicaoVar(Variaveis v1, Variaveis v2){
-        if(!(CONSTS.contains(v1))){
         return(v1.getTipo().equals(v2.getTipo()));
-        }
-        return false;
     }
-     private boolean atribuicaoValor(Variaveis v, Tokens Valor){
-        if(Valor.equals("CADEIA DE CARACTERES") && v.getTipo().equals("string")){
+    private boolean atribuicaoValor(Variaveis v, Tokens Valor){
+        if(Valor.getTipo().equals("CADEIA DE CARACTERES") && v.getTipo().equals("string")){
             return true;
-        }
-        else if(Valor.getTipo().equals("NUMERO") && v.getTipo().equals("int")){
+        }else if((Valor.getTipo().equals("NUMERO") && !Valor.getLexemaString().contains(".")) && v.getTipo().equals("int")){
             return true;
-        }else if(Valor.getTipo().equals("NUMERO") && v.getTipo().equals("real")){
+        }else if((Valor.getTipo().equals("NUMERO") && Valor.getLexemaString().contains(".")) && v.getTipo().equals("real") ){
             return true;
         }else if((Valor.getLexemaString().equals("true") && v.getTipo().equals("boolean"))|| (Valor.getLexemaString().equals("false") && v.getTipo().equals("boolean"))){
             return true;
@@ -1642,7 +1649,7 @@ public class AnalisadorSemantico {
        }
     }
     
-    private void Incremments(FunctionsProcedures func){
+    private void Incremments(FunctionsProcedures func) {
         if("IDENTIFICADOR".equals(atual.getTipo())){
             andaUm();
             

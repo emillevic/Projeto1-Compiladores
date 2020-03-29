@@ -1,6 +1,6 @@
     structs{
         struct pessoa{
-            string nome[];
+            string nome;
             int idade;
         };
 
@@ -56,11 +56,9 @@
         var{
             int numero;
             p pessoa;
-            string codigo;
+            boolean codigo;
             real r;
         }
-
         calcula_extra(local.r);
-
-       
+        local.codigo = 10 >5;
     }
