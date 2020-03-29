@@ -789,7 +789,8 @@ public class AnalisadorSemantico {
             andaUm(); andaUm();
             while(!"}".equals(atual.getLexemaString())){
                 procedures();
-//                andaUm();
+                 System.out.println("procedures------------------ acabou?");
+                andaUm();
             }
         }
     }
@@ -833,10 +834,13 @@ public class AnalisadorSemantico {
            andaUm();
             if("DELIMITADOR".equals(proximo.getTipo()) && ")".equals(proximo.getLexemaString())){
                 andaUm();
+                System.out.println("acho start");
                 if("DELIMITADOR".equals(proximo.getTipo()) && "{".equals(proximo.getLexemaString())){
                     andaUm(); andaUm();
                     if("var".equals(atual.getLexemaString()) ){
+                            
                             AnaliseVariavel("start", null);
+                            System.out.println("acho comandos");
                             andaUm();
                        }
                     while( !"}".equals(atual.getLexemaString())){
@@ -850,48 +854,54 @@ public class AnalisadorSemantico {
     }
     
      private void comandos(FunctionsProcedures func) {
-         System.out.println("entrou COMANDOS");
-        if("print".equals(atual.getLexemaString())){
-           System.out.println("entrou print" +func.getNome());
-            andaUm();
-           AnalisePrint(func);
-           
-           return;
-        }else if("read".equals(atual.getLexemaString())){
-           System.out.println("entrou read" +func.getNome());
-           andaUm();
-           AnaliseRead(func);
-           return;
-        }else if("while".equals(atual.getLexemaString())){
-            System.out.println("entrou while" +func.getNome());
-           andaUm();
-           AnaliseWhile(func);
-           return;
-        }else if("if".equals(atual.getLexemaString())){
-           andaUm();
-           AnaliseIf(func);
-           return;
-        }else if("++".equals(proximo.getLexemaString())||"--".equals(proximo.getLexemaString())){
-           Incremments(func);
-           return;
-        }else if(  "global".equals(atual.getLexemaString()) 
-               ||"local".equals(atual.getLexemaString())){
-           andaUm(); andaUm();
-           if("=".equals(proximo.getLexemaString())){
-               System.out.println("entrou atribucao" +func.getNome());
-            voltaUm(); voltaUm();
-            AssignmentVariable(func);
-            return;
-        }else if("OPERADOR ARITMETICO".equals(proximo.getTipo())){
-            voltaUm(); voltaUm();
-            ExpressaoAritimetica(func);
-            return;  
+            System.out.println("entrou COMANDOS");
+           if("print".equals(atual.getLexemaString())){
+              System.out.println("entrou print" +func.getNome());
+               andaUm();
+              AnalisePrint(func);
+
+              return;
+           }else if("read".equals(atual.getLexemaString())){
+              System.out.println("entrou read" +func.getNome());
+              andaUm();
+              AnaliseRead(func);
+              return;
+           }else if("while".equals(atual.getLexemaString())){
+               System.out.println("entrou while" +func.getNome());
+              andaUm();
+              AnaliseWhile(func);
+              return;
+           }else if("if".equals(atual.getLexemaString())){
+              andaUm();
+              AnaliseIf(func);
+              return;
+           }else if("++".equals(proximo.getLexemaString())||"--".equals(proximo.getLexemaString())){
+              Incremments(func);
+              return;
+           }else if(  "global".equals(atual.getLexemaString()) 
+                  ||"local".equals(atual.getLexemaString())){
+              andaUm(); andaUm();
+              if("=".equals(proximo.getLexemaString())){
+                  System.out.println("entrou atribucao" +func.getNome());
+               voltaUm(); voltaUm();
+               AssignmentVariable(func);
+               return;
+           }else if("OPERADOR ARITMETICO".equals(proximo.getTipo())){
+               voltaUm(); voltaUm();
+               ExpressaoAritimetica(func);
+               return;  
+           }
+          }else if("IDENTIFICADOR".equals(atual.getTipo())){
+            System.out.println("entrou chamada de func" +func.getNome());
+            chFunProc();
         }
-       }else if("IDENTIFICADOR".equals(atual.getTipo())){
-         System.out.println("entrou chamada de func" +func.getNome());
-         chFunProc();
-     }
-     return;
+          else{
+              andaUm();
+                      
+              System.out.println("saiu de comandos" );
+              return;
+          }
+
        
     }
     private boolean analiseSemStruct(Variaveis var){
@@ -1355,12 +1365,17 @@ public class AnalisadorSemantico {
             }
             if("else".equals(atual.getLexemaString())){
                andaUm();
-               comandos(func); //precisa de mais coisa aqui no else?
+               while(!"}".equals(atual.getLexemaString())){
+                andaUm();
+                comandos(func); //precisa de mais coisa aqui no else?
+               }
            }
         }
     }
     
     private void Condicao(FunctionsProcedures func) {
+        System.out.println("acho condição 5"
+                   + "" +func.getNome());
         Erro e;
         if("OPERADOR RELACIONAL".equals(proximo.getTipo())){
             expressaoRel(func);
@@ -1383,6 +1398,8 @@ public class AnalisadorSemantico {
     private void AnaliseWhile(FunctionsProcedures func) {
         if("(".equals(atual.getLexemaString())){
              while(!")".equals(atual.getLexemaString())){
+                 System.out.println("achou isso aqui pelo menos?"
+                   + "" +func.getNome());
                  andaUm();
                  Condicao(func);
                   if("{".equals(atual.getLexemaString())){
@@ -1490,6 +1507,8 @@ public class AnalisadorSemantico {
     }
     
     private void expressaoLogica(FunctionsProcedures func) {
+        System.out.println("acho condicao 4"
+                   + "" +func.getNome());
         if("!".equals(atual.getLexemaString())||"(".equals(atual.getLexemaString())){
             andaUm();
             auxLogica(func);
@@ -1502,6 +1521,8 @@ public class AnalisadorSemantico {
         }
     }
     private void auxLogica(FunctionsProcedures func) {
+        System.out.println("acho condição 3"
+                   + "" +func.getNome());
         if("!".equals(atual.getLexemaString())){
             andaUm();
             if("(".equals(atual.getLexemaString())){
@@ -1530,7 +1551,8 @@ public class AnalisadorSemantico {
         auxLogica3(func);
     }
     private void auxLogica3(FunctionsProcedures func) {
-        
+        System.out.println("acho condição2"
+                   + "" +func.getNome());
         if( "global".equals(atual.getLexemaString()) 
             ||"local".equals(atual.getLexemaString())){
             variavel(func);
@@ -1548,6 +1570,8 @@ public class AnalisadorSemantico {
         return;
     }
     private void auxOpRel(FunctionsProcedures func) {
+        System.out.println("achou condição"
+                   + "" +func.getNome());
         if("!".equals(atual.getLexemaString())){
             andaUm();
             expressaoRel(func);
@@ -1557,7 +1581,9 @@ public class AnalisadorSemantico {
     }
 
     private void expressaoRel(FunctionsProcedures func) {
-        String tipo1=null, tipo2=null;
+        System.out.println("acho operacao relacional?1"
+                   + "" +func.getNome());
+        String tipo1="primeiro tipo1", tipo2="segundo tipo";
         Erro e;
         if("CADEIA DE CARACTERES".equals(atual.getTipo())){
                 tipo1="string";
@@ -1577,6 +1603,8 @@ public class AnalisadorSemantico {
        }
         
        if("OPERADOR RELACIONAL".equals(atual.getTipo())){
+           System.out.println("acho operacao relacional?2"
+                   + "" +func.getNome());
             andaUm();
              if("CADEIA DE CARACTERES".equals(atual.getTipo())){
                 tipo2="string";
@@ -1606,9 +1634,14 @@ public class AnalisadorSemantico {
             andaUm();
             
             variavel(func);
-            incrementoPermitido(atualVar);
+             if(!incrementoPermitido(atualVar)){
+                Erro e = new Erro("incremento não permitido", atual.getLinha());
+                 ERROS.add(e);
+             }
             incremment();
             andaUm();
+           
+                
             if(";".equals(atual.getLexemaString())){
                 return;
             }

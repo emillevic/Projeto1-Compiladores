@@ -63,8 +63,8 @@
         p.idade = 21;
         p.salario = calcula_extra(1000);
         
-        while(a < 0.10){
-            a++;
+        while(local.a < 0.10){
+            local.a++;
         }
         
         read(p.idade);
