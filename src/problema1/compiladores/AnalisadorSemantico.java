@@ -137,9 +137,7 @@ public class AnalisadorSemantico {
             }else if("procedures".equals(atual.getLexemaString())){
                 System.out.println("procedures------------------");
                 AnaliseProcedures();
-                 System.out.println("saiu de procedures------------------");
             }else if("start".equals(atual.getLexemaString())){
-                System.out.println("acho start");
                 System.out.println("start----------------");
                 AnaliseStart();
             }
@@ -655,7 +653,6 @@ public class AnalisadorSemantico {
                         }
                         AnaliseVariavel("func", func);
                         andaUm();
-                        
                         if("return".equals(atual.getLexemaString())){
                             retorno(func);
 //                            andaUm();
@@ -857,7 +854,6 @@ public class AnalisadorSemantico {
     }
     
      private void comandos(FunctionsProcedures func) {
-         
             System.out.println("entrou COMANDOS");
            if("print".equals(atual.getLexemaString())){
               System.out.println("entrou print" +func.getNome());
