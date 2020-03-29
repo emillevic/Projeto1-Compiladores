@@ -61,5 +61,6 @@
         }
 
         calcula_extra(local.r);
+
        
     }

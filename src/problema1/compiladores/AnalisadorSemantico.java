@@ -660,7 +660,10 @@ public class AnalisadorSemantico {
                             retorno(func);
 //                            andaUm();
                         }else{
-                            comandos(null);
+                            while(!"return".equals(atual.getLexemaString())){
+                                andaUm();
+                                comandos(null);
+                            }
                             retorno(func);
 //                            andaUm();
                         }
@@ -819,7 +822,11 @@ public class AnalisadorSemantico {
                     }
                     AnaliseVariavel("func", proc);
                     andaUm();
-                    comandos(null);
+                    while(!"}".equals(atual.getLexemaString())){
+                          andaUm();
+                          comandos(null);
+                      }
+//                    comandos(null);
 //                    andaUm();
                     PROCEDURES.add(proc);
 //                    andaUm();
