@@ -56,18 +56,10 @@
         var{
             int numero;
             p pessoa;
-            int codigo;
+            string codigo;
             real r;
         }
-        p.nome = "emille";
-        p.idade = 21;
-        p.salario = calcula_extra(1000);
-        
-        while(local.numero < 10&& 11>r){
-            local.numero++;
-        }
-        print("pessoa: ", local.p.nome);
-        read(p.idade);
 
-        altera_cidade("fsa");
+        altera_cidade();
+       
     }

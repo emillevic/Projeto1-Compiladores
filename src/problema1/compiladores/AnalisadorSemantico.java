@@ -82,7 +82,10 @@ public class AnalisadorSemantico {
         indice++;
         anterior=atual;
         atual=proximo;
-        proximo=codigoTratado.get(indice+1);
+        if(indice+1 < codigoTratado.size())
+            proximo=codigoTratado.get(indice+1);
+        else
+            proximo = null;
     }
     private void voltaUm(){
         indice--;
@@ -789,8 +792,10 @@ public class AnalisadorSemantico {
             andaUm(); andaUm();
             while(!"}".equals(atual.getLexemaString())){
                 procedures();
+                                    System.out.println("PROCEEEEEEEEEEEEEEEEEEEEEEEEEE " + anterior.getLexemaString() + atual.getLexemaString() + proximo.getLexemaString());
+
                  System.out.println("procedures------------------ acabou?");
-                andaUm();
+//                andaUm();
             }
         }
     }
@@ -815,9 +820,9 @@ public class AnalisadorSemantico {
                     AnaliseVariavel("func", proc);
                     andaUm();
                     comandos(null);
-                    andaUm();
+//                    andaUm();
                     PROCEDURES.add(proc);
-                    andaUm();
+//                    andaUm();
                     return;
                 }
             }
@@ -828,6 +833,7 @@ public class AnalisadorSemantico {
     
 //    Método de Start()
     private void AnaliseStart() {
+        System.out.println("staaaaaaaaaaaaaaaaaaaaaaaaaaaaar   " + atual.getLexemaString() + proximo.getLexemaString());
         escopoAtual = "start";
         FunctionsProcedures start= new FunctionsProcedures("start", null);
          if("DELIMITADOR".equals(proximo.getTipo()) && "(".equals(proximo.getLexemaString())){
@@ -838,13 +844,13 @@ public class AnalisadorSemantico {
                 if("DELIMITADOR".equals(proximo.getTipo()) && "{".equals(proximo.getLexemaString())){
                     andaUm(); andaUm();
                     if("var".equals(atual.getLexemaString()) ){
-                            
                             AnaliseVariavel("start", null);
-                            System.out.println("acho comandos");
+                            System.out.println("ENTROU EM VAR START");
                             andaUm();
                        }
                     while( !"}".equals(atual.getLexemaString())){
                         System.out.println("devia entrar em comandos aqui " +start.getNome());
+                        System.out.println("WHILEEEEEEEEEEEEEE START                      " + atual.getLexemaString());
                        comandos(start);
                        andaUm();
                     }
@@ -854,7 +860,7 @@ public class AnalisadorSemantico {
     }
     
      private void comandos(FunctionsProcedures func) {
-            System.out.println("entrou COMANDOS");
+            System.out.println("------------------- entrou COMANDOS --------------------");
            if("print".equals(atual.getLexemaString())){
               System.out.println("entrou print" +func.getNome());
                andaUm();
@@ -881,16 +887,16 @@ public class AnalisadorSemantico {
            }else if(  "global".equals(atual.getLexemaString()) 
                   ||"local".equals(atual.getLexemaString())){
               andaUm(); andaUm();
-              if("=".equals(proximo.getLexemaString())){
-                  System.out.println("entrou atribucao" +func.getNome());
-               voltaUm(); voltaUm();
-               AssignmentVariable(func);
-               return;
-           }else if("OPERADOR ARITMETICO".equals(proximo.getTipo())){
-               voltaUm(); voltaUm();
-               ExpressaoAritimetica(func);
-               return;  
-           }
+                if("=".equals(proximo.getLexemaString())){
+                      System.out.println("entrou atribucao" +func.getNome());
+                        voltaUm(); voltaUm();
+                        AssignmentVariable(func);
+                        return;
+                }else if("OPERADOR ARITMETICO".equals(proximo.getTipo())){
+                        voltaUm(); voltaUm();
+                        ExpressaoAritimetica(func);
+                        return;  
+                }
           }else if("IDENTIFICADOR".equals(atual.getTipo())){
             System.out.println("entrou chamada de func" +func.getNome());
             chFunProc();
@@ -1660,9 +1666,11 @@ public class AnalisadorSemantico {
     }
     private void chFunProc(){
         FunctionsProcedures func;
-        ArrayList<String> parametro = null;
+        boolean existe = false;
+        ArrayList<String> parametro = new ArrayList<String>();
         if("IDENTIFICADOR".equals(atual.getTipo())){
             func = existeFunProc(atual.getLexemaString());
+            System.out.println("CHAMAAAAAAAAAAAAAAAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA " + func);
             if(func == null){
                 Erro e = new Erro("Função/Procedimento não existente", atual.getLinha());
                 ERROS.add(e);
@@ -1670,8 +1678,15 @@ public class AnalisadorSemantico {
             andaUm();
             if("(".equals(atual.getLexemaString())){
                 andaUm();
-                chParam(parametro);
-                andaUm();
+                System.out.println("PARAMETROOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO     " + atual.getLexemaString());
+                parametro = chParam(parametro);
+                System.out.println("UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU " + parametro.toString());
+                existe = existWithParam(func, parametro);
+                if(existe == false){
+                    Erro e = new Erro("Função/Procedimento não existente - erro no parametro", atual.getLinha());
+                    ERROS.add(e);
+                }
+//                andaUm();
                 if(")".equals(atual.getLexemaString())){
                     andaUm();
                     if(";".equals(atual.getLexemaString())){
@@ -1682,9 +1697,24 @@ public class AnalisadorSemantico {
         }
         
     }
+    private boolean existWithParam(FunctionsProcedures func, ArrayList<String> parametro){
+        boolean flag = false;
+        if(func.getParametro().size() == parametro.size()){
+            for(int i = 0; i< func.getParametro().size(); i++){
+                if(func.getParametro().get(i).getTipo().equals(parametro.get(i))){
+                    flag = true;
+                }else{
+                    return false;
+                }
+            }
+        }
+        return flag;
+    }
     private FunctionsProcedures existeFunProc(String nome){
+
         for(int i = 0; i< FUNCTIONS.size(); i++){
             if(nome.equals(FUNCTIONS.get(i).getNome())){
+                System.out.println("CHAMAAAAAAAAAAAAAAAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA " + FUNCTIONS.get(i).toString());
                 return FUNCTIONS.get(i);
             }
         }
@@ -1697,33 +1727,62 @@ public class AnalisadorSemantico {
         return null;
     }
 
-    private void chParam(ArrayList<String> parametro) {
-        
-        if("IDENTIFICADOR".equals(atual.getTipo())){
-            andaUm();
-            chParam2(parametro);
-            return;
-        }else if("CADEIA DE CARACTERES".equals(atual.getTipo()) || "NUMERO".equals(atual.getTipo())
-                || "true".equals(atual.getLexemaString()) || "false".equals(atual.getLexemaString())){
-            andaUm();
-            chParam2(parametro);
-            return;
+    private ArrayList<String> chParam(ArrayList<String> parametro) {
+        if(atual.getLexemaString().equals("global") || atual.getLexemaString().equals("local")){
+            variavel(null);
+            parametro.add(atualVar.getTipo());
+        }else if(atual.getTipo().equals("CADEIA DE CARACTERES")){
+            parametro.add("string");
+        }else if(atual.getLexemaString().equals("true") || atual.getLexemaString().equals("false")){
+            parametro.add("boolean");
+        }else if(atual.getTipo().equals("NUMERO") && atual.getLexemaString().contains(".")){
+            parametro.add("real");
+        }else if(atual.getTipo().equals("NUMERO") && !atual.getLexemaString().contains(".")){
+            parametro.add("int");
         }
+        System.out.println("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM " + proximo.getLexemaString());
+        andaUm();
+        chParam2(parametro);
+        return parametro;
+//        if("IDENTIFICADOR".equals(atual.getTipo())){
+//            andaUm();
+//            chParam2(parametro);
+//            return;
+//        }else if("CADEIA DE CARACTERES".equals(atual.getTipo()) || "NUMERO".equals(atual.getTipo())
+//                || "true".equals(atual.getLexemaString()) || "false".equals(atual.getLexemaString())){
+//            andaUm();
+//            chParam2(parametro);
+//            return;
+//        }
     }
 
-    private void chParam2(ArrayList<String> parametro) {
+    private ArrayList<String> chParam2(ArrayList<String> parametro) {
          //To change body of generated methods, choose Tools | Templates.
          if(",".equals(atual.getLexemaString())){
              andaUm();
-            if("IDENTIFICADOR".equals(atual.getTipo())){
-                 andaUm();
-                 chParam2(parametro);
-            }else if("CADEIA DE CARACTERES".equals(atual.getTipo()) || "NUMERO".equals(atual.getTipo())
-                     || "true".equals(atual.getLexemaString())|| "false".equals(atual.getLexemaString())){
-                 
-                 andaUm();
-                 chParam2(parametro);
-             }
+              if(atual.getLexemaString().equals("global") || atual.getLexemaString().equals("local")){
+                variavel(null);
+                parametro.add(atualVar.getTipo());
+            }else if(atual.getTipo().equals("CADEIA DE CARACTERES")){
+                parametro.add("string");
+            }else if(atual.getLexemaString().equals("true") || atual.getLexemaString().equals("false")){
+                parametro.add("boolean");
+            }else if(atual.getTipo().equals("NUMERO") && atual.getLexemaString().contains(".")){
+                parametro.add("real");
+            }else if(atual.getTipo().equals("NUMERO") && !atual.getLexemaString().contains(".")){
+                parametro.add("int");
+            }
+             chParam2(parametro);
+//            if("IDENTIFICADOR".equals(atual.getTipo())){
+//                 andaUm();
+//                 chParam2(parametro);
+//            }else if("CADEIA DE CARACTERES".equals(atual.getTipo()) || "NUMERO".equals(atual.getTipo())
+//                     || "true".equals(atual.getLexemaString())|| "false".equals(atual.getLexemaString())){
+//                 
+//                 andaUm();
+//                 chParam2(parametro);
+//             }
          }
+         return parametro;
     }
 }
