@@ -893,14 +893,20 @@ public class AnalisadorSemantico {
               return;
            }else if(  "global".equals(atual.getLexemaString()) 
                   ||"local".equals(atual.getLexemaString())){
-              andaUm(); andaUm();
-                if("=".equals(proximo.getLexemaString())){
+              andaUm(); andaUm(); andaUm();
+
+                if("=".equals(atual.getLexemaString())){
                       System.out.println("entrou atribucao");
-                        voltaUm(); voltaUm();
+                        voltaUm(); voltaUm(); voltaUm();
                         AssignmentVariable(func);
                         return;
-                }else if("OPERADOR ARITMETICO".equals(proximo.getTipo())){
-                        voltaUm(); voltaUm();
+                }else if("++".equals(atual.getLexemaString()) || "--".equals(atual.getLexemaString())){
+                                                      System.out.println("VIM AQUI " + atual.getLexemaString());
+
+                    voltaUm(); voltaUm(); voltaUm();
+                    Incremments(func);
+                }else if("OPERADOR ARITMETICO".equals(atual.getTipo())){
+                        voltaUm(); voltaUm(); voltaUm();
                         ExpressaoAritimetica(func);
                         return;  
                 }
@@ -1421,13 +1427,14 @@ public class AnalisadorSemantico {
     }
     
     private void ExpressaoAritimetica(FunctionsProcedures func){
+        System.out.println("--------------------------------------- EXPRESSAO ARITMETICA");
         if("+".equals(proximo.getLexemaString())||"-".equals(proximo.getLexemaString())){
           ExpressaoAritimetica(func);
           andaUm(); andaUm();
           MultExp(func);
         }else {
             MultExp(func);
-            return;
+            return; 
         }
     }
     private void MultExp(FunctionsProcedures func){
@@ -1650,8 +1657,9 @@ public class AnalisadorSemantico {
     }
     
     private void Incremments(FunctionsProcedures func) {
-        if("IDENTIFICADOR".equals(atual.getTipo())){
-            andaUm();
+        System.out.println("INCREMENTEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEIO");
+//        if("local".equals(atual.getLexemaStr())){
+//            andaUm();
             
             variavel(func);
              if(!incrementoPermitido(atualVar)){
@@ -1659,13 +1667,13 @@ public class AnalisadorSemantico {
                  ERROS.add(e);
              }
             incremment();
-            andaUm();
+//            andaUm();
            
                 
             if(";".equals(atual.getLexemaString())){
                 return;
             }
-        }
+//        }
     }
      private boolean incrementoPermitido(Variaveis v){
         return(v.getTipo().equals("int")||v.getTipo().equals("real"));
