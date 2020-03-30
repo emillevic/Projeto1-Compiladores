@@ -60,5 +60,5 @@
             real r;
         }
         calcula_extra(local.r);
-        local.codigo++;
+        local.numero++;
     }
