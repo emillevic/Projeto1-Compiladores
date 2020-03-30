@@ -48,7 +48,7 @@ public class Principal  {
 //                analisadorSintatico = new AnalisadorSintatico(automatos.getTokens());
 //                ArrayList<String> sintatico = analisadorSintatico.Sintatico();;
 //                System.out.println(analisadorSintatico.getSaidaString().toString());
-//                manipuladorArquivo.escritor(arquivoSaida, sintatico);
+                manipuladorArquivo.escritor(arquivoSaida, analisadorSemantico.getSaidaString());
                 System.out.println("Analise do arquivo" + arquivoEntrada + "feita no arquivo" + arquivoSaida);
             }
             else{

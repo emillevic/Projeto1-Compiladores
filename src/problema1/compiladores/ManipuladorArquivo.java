@@ -53,6 +53,8 @@ public class ManipuladorArquivo {
     }
  
     public void escritor(String nome, ArrayList<String> tabela) throws IOException {
+        if(tabela.isEmpty())
+            tabela.add("CODIGO SEM ERRO");
         output = "output/" + nome;
          // Cria arquivo
             File file = new File(output);
