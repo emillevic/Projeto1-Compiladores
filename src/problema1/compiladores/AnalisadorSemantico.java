@@ -1442,7 +1442,7 @@ public class AnalisadorSemantico {
        }else if("/".equals(proximo.getLexemaString())){
            ValorNeg(func, v, false);
            andaUm(); andaUm();
-           System.out.println("mandou divisor true \n"+atual.getLexemaString());
+           //System.out.println("mandou divisor true \n"+atual.getLexemaString());
            MultExp(func, v, true);
        }
        else{
@@ -1458,14 +1458,14 @@ public class AnalisadorSemantico {
         ValorNumerico(func, v, Edivisor);
         return;
         }else{
-            System.out.println("veio pra neg com: \n" +Edivisor);
+          //  System.out.println("veio pra neg com: \n" +Edivisor);
             ValorNumerico(func, v, Edivisor);
             return;
         }
     }
     
      private void ValorNumerico(FunctionsProcedures func, Variaveis anterior, boolean Edivisor){
-        System.out.println("veio pra neg com: \n" +atual.getLexemaString()+" e a operacao"+proximo.getLexemaString()+"\n e divisor " +Edivisor );
+        //System.out.println("veio pra neg com: \n" +atual.getLexemaString()+" e a operacao"+proximo.getLexemaString()+"\n e divisor " +Edivisor );
         Erro e=null;
         if(!atual.getTipo().equals("NUMERO")){
         voltaUm(); voltaUm();
@@ -1473,7 +1473,7 @@ public class AnalisadorSemantico {
         // System.out.println("achou valor? parte1  "+ atual.getLexemaString());
         if("NUMERO".equals(atual.getTipo())){
             if(Edivisor && atual.getLexemaString().equals("0")){
-                System.out.println("ENTROU? \n");
+                
                 e= new Erro("divisao por 0", atual.getLinha());
                 ERROS.add(e);
             }
