@@ -54,12 +54,15 @@
 
     start(){
         var{
-            int numero;
+            int numero, a, c;
             p pessoa;
             boolean codigo;
             real r;
+            string b;
         }
         calcula_extra(local.r);
+         local.a/0;
+      
         local.numero++;
     }
 }

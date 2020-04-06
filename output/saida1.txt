@@ -1,1 +1,1 @@
-CODIGO SEM ERRO
+linha 64 - Erro: divisao por 0
